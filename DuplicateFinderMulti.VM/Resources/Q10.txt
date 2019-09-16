@@ -1,0 +1,8 @@
+10.
+An AWS CodePipeline in us-east 1 retums "InternalError with the code "JobFailed" when launching a deployment using an artifact from an Amazon S3 bucket in us-west-1
+What is causing this error?
+B.	The S3 bucket is not in the appropriate region
+C.	The S3 bucket is being throttled.
+D.	There are insufficient permissions on the artifact in Amazon S3
+A.	S3 Transfer Acceleration is not enabled
+https://docs.aws.amazon.com/codepipeline/latest/userguide/troubleshooting.html#troubleshooting-reg-1

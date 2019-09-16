@@ -1,0 +1,16 @@
+<project outputDir="{OutputDir}" baseDir="{OutputDir}" xmlns="http://confuser.codeplex.com">
+<rule pattern="true" />
+<module path="{ModuleName}">
+<rule pattern="true">
+<protection id="anti ildasm" />
+<protection id="anti tamper" />
+<protection id="ctrl flow" />
+<protection id="ref proxy" />
+</rule>
+  </module>
+<probePath>F:\ACTIVE\DuplicateFinderMulti\DuplicateFinderMulti\packages\DiffPlex.1.4.4\lib</probePath>
+<probePath>F:\ACTIVE\DuplicateFinderMulti\DuplicateFinderMulti\packages\DiffPlex.1.4.4\lib\net40</probePath>
+<probePath>F:\ACTIVE\DuplicateFinderMulti\DuplicateFinderMulti\packages</probePath>
+<probePath>F:\ACTIVE\DuplicateFinderMulti\DuplicateFinderMulti\packages\MvvmLightLibsStd10.5.4.1.1\lib\net45</probePath>
+<probePath>F:\ACTIVE\DuplicateFinderMulti\DuplicateFinderMulti\DuplicateFinderMultiCommon\bin\Release</probePath>
+</project>

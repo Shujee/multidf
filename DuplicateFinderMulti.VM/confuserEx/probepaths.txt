@@ -1,0 +1,5 @@
+F:\ACTIVE\DuplicateFinderMulti\DuplicateFinderMulti\packages\DiffPlex.1.4.4\lib
+F:\ACTIVE\DuplicateFinderMulti\DuplicateFinderMulti\packages\DiffPlex.1.4.4\lib\net40
+F:\ACTIVE\DuplicateFinderMulti\DuplicateFinderMulti\packages
+F:\ACTIVE\DuplicateFinderMulti\DuplicateFinderMulti\packages\MvvmLightLibsStd10.5.4.1.1\lib\net45
+F:\ACTIVE\DuplicateFinderMulti\DuplicateFinderMulti\DuplicateFinderMultiCommon\bin\Release
