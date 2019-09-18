@@ -59,5 +59,57 @@ namespace DuplicateFinderMulti.Views.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 10.
+        ///An AWS CodePipeline in us-east 1 retums &quot;InternalError with the code &quot;JobFailed&quot; when launching a deployment using an artifact from an Amazon S3 bucket in us-west-1
+        ///What is causing this error?
+        ///B.	The S3 bucket is not in the appropriate region
+        ///C.	The S3 bucket is being throttled.
+        ///D.	There are insufficient permissions on the artifact in Amazon S3
+        ///A.	S3 Transfer Acceleration is not enabled
+        ///https://docs.aws.amazon.com/codepipeline/latest/userguide/troubleshooting.html#troubleshooting-reg-1
+        ///.
+        /// </summary>
+        internal static string Q10 {
+            get {
+                return ResourceManager.GetString("Q10", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 34.
+        ///An AWS CodePipeline in us-east-1 returns &quot;InternalError” with the code &quot;JobFailed&quot; when launching a deployment using an artifact from an Amazon S3 bucket in us-west-1.
+        ///What is causing this error?
+        ///A.	S3 Transfer Acceleration is not enabled.
+        ///B.	The S3 bucket is not in the appropriate region.
+        ///C.	The S3 bucket is being throttled.
+        ///D.	There are insufficient permissions on the artifact in Amazon S3
+        ///https://docs.aws.amazon.com/codepipeline/latest/userguide/troubleshooting.html#troubleshooting-reg-1
+        ///.
+        /// </summary>
+        internal static string Q34 {
+            get {
+                return ResourceManager.GetString("Q34", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1.
+        ///A SysOps Administrator is notified that a security vulnerability affects a version of MySQL that is being used with Amazon RDS MySQL
+        ///Who is responsible for ensuring that the patch is applied to the MySQL cluster?
+        ///A.	The database vendor
+        ///B.	The Security department of the SysOps Administrator&apos;s company
+        ///C.	AWS
+        ///D.	The SysOps Administrator
+        ///https://aws.amazon.com/compliance/shared-responsibility-model/?nc1=h_ls
+        ///2.
+        ///A SysOps Administrator must automate the tagging of new Amazon EC2 instances deployed in  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SampleText {
+            get {
+                return ResourceManager.GetString("SampleText", resourceCulture);
+            }
+        }
     }
 }

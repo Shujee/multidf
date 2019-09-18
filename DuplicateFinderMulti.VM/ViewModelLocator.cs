@@ -22,9 +22,6 @@ namespace DuplicateFinderMulti.VM
 
       GalaSoft.MvvmLight.Threading.DispatcherHelper.Initialize();
 
-      if (GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
-        SimpleIoc.Default.Register<IWordService, DummyWordService>();
-
       SimpleIoc.Default.Unregister<RegisterVM>();
       SimpleIoc.Default.Unregister<DiffVM>();
       SimpleIoc.Default.Unregister<AboutVM>();
@@ -33,7 +30,9 @@ namespace DuplicateFinderMulti.VM
 
       SimpleIoc.Default.Register<RegisterVM>();
       SimpleIoc.Default.Register<DiffVM>();
+
       SimpleIoc.Default.Register<MainVM>();
+
       SimpleIoc.Default.Register<AboutVM>();
       SimpleIoc.Default.Register<IDupFinder, DupFinder>();
     }
@@ -48,11 +47,11 @@ namespace DuplicateFinderMulti.VM
     public static IDialogService DialogService => SimpleIoc.Default.GetInstance<IDialogService>();
     public static IWordService WordService => SimpleIoc.Default.GetInstance<IWordService>();
     public static IDupFinder DupFinderService => SimpleIoc.Default.GetInstance<IDupFinder>();
-
-    public static MainVM Main => SimpleIoc.Default.GetInstanceWithoutCaching<MainVM>();
-    public static RegisterVM Register => SimpleIoc.Default.GetInstance<RegisterVM>();
     public static DiffVM Diff => SimpleIoc.Default.GetInstanceWithoutCaching<DiffVM>();
 
+    public static MainVM Main => SimpleIoc.Default.GetInstance<MainVM>();
+
+    public static RegisterVM Register => SimpleIoc.Default.GetInstance<RegisterVM>();
     public static AboutVM About => SimpleIoc.Default.GetInstance<AboutVM>();
   }
 }

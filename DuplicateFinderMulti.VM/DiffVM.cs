@@ -13,7 +13,7 @@ namespace DuplicateFinderMulti.VM
     {      
       if(IsInDesignMode)
       {
-        PerformDiffCommand.Execute((Properties.Resources.Q10, Properties.Resources.Q34));
+        //PerformDiffCommand.Execute((Properties.Resources.Q10, Properties.Resources.Q34));
       }
     }
 

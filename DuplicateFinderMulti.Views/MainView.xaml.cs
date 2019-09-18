@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using DuplicateFinderMulti.VM;
+using GalaSoft.MvvmLight.Ioc;
+using System.Windows.Controls;
 
 namespace DuplicateFinderMulti.Views
 {
@@ -10,6 +12,9 @@ namespace DuplicateFinderMulti.Views
     public MainView()
     {
       InitializeComponent();
+
+      if (GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
+        SimpleIoc.Default.Register<IWordService, DummyWordService>();
     }
   }
 }

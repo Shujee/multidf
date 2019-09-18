@@ -1,7 +1,7 @@
 ﻿namespace DuplicateFinderMulti.VM
 {
   /// <summary>
-  /// Represents a Word paragraph.
+  /// Represents a text paragraph.
   /// </summary>
   public class WordParagraph
   {
@@ -20,9 +20,6 @@
     /// </summary>
     public int End { get; set; }
 
-    /// <summary>
-    /// Levenshtein distance of this paragraph from previous one.
-    /// </summary>
     public int Distance { get; set; }
   }
 }

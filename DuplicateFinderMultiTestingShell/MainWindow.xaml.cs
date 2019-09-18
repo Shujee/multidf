@@ -46,7 +46,7 @@ namespace DuplicateFinderMultiTestingShell
       return Res;
     }
 
-    public IEnumerable<WordParagraph> GetActiveDocumentParagraphs()
+    public List<WordParagraph> GetActiveDocumentParagraphs()
     {
       List<WordParagraph> Res = new List<WordParagraph>();
 
@@ -103,6 +103,16 @@ namespace DuplicateFinderMultiTestingShell
     private void DEFTXTButton_Click(object sender, RoutedEventArgs e)
     {
       TXT.Text = "Q1\rA quick brown fox A quick brown fox A quick brown fox A quick brown fox\rB\rC\r\rQ2\rA quick braun fixes A quick brown fox A quick brown fox A quick brown fox\rC\rB";
+    }
+
+    public List<WordParagraph> GetDocumentParagraphs(string docPath)
+    {
+      return new List<WordParagraph>();
+    }
+
+    public void OpenDocument(string docPath)
+    {
+      
     }
   }
 }

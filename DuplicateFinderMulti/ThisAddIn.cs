@@ -1,6 +1,7 @@
 ﻿using DuplicateFinderMulti.Views;
 using DuplicateFinderMulti.VM;
 using GalaSoft.MvvmLight.Ioc;
+using Microsoft.Office.Interop.Word;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,8 @@ namespace DuplicateFinderMulti
         GalaSoft.MvvmLight.Threading.DispatcherHelper.Initialize();
 
         Application.DocumentOpen += Application_DocumentOpen;
+
+        AddAllTaskPanes();
       }
       catch (Exception ee)
       {
@@ -39,7 +42,7 @@ namespace DuplicateFinderMulti
     {
       try
       {
-        //Remove all Glasshouse TaskPanes before quitting.
+        //Remove all our TaskPanes before quitting.
         RemoveOrphanedTaskPanes();
         if (IsPaneVisible && this.Application.ShowWindowsInTaskbar)
           AddTaskPane(Doc);
@@ -113,13 +116,13 @@ namespace DuplicateFinderMulti
     /// </summary>
     /// <param name="start"></param>
     /// <param name="end"></param>
-    public void SelectRange(int start, int end)
-    {
-      if (this.Application.ActiveDocument != null)
-      {
-        this.Application.ActiveDocument.Range(start, end).Select();
-      }
-    }
+    //public void SelectRange(int start, int end)
+    //{
+    //  if (this.Application.ActiveDocument != null)
+    //  {
+    //    this.Application.ActiveDocument.Range(start, end).Select();
+    //  }
+    //}
 
     /// <summary>
     /// Returns text content of the specified range from active Word document.
@@ -127,46 +130,85 @@ namespace DuplicateFinderMulti
     /// <param name="start"></param>
     /// <param name="end"></param>
     /// <returns></returns>
-    public string GetRangeText(int start, int end)
-    {
-      if (this.Application.ActiveDocument != null)
-      {
-        return this.Application.ActiveDocument.Range(start, end).Text;
-      }
-      else
-        return null;
-    }
+    //public string GetRangeText(int start, int end)
+    //{
+    //  if (this.Application.ActiveDocument != null)
+    //  {
+    //    return this.Application.ActiveDocument.Range(start, end).Text;
+    //  }
+    //  else
+    //    return null;
+    //}
 
     /// <summary>
     /// Returns the entire text of active Word document.
     /// </summary>
     /// <returns></returns>
-    public string GetActiveDocumentText()
-    {
-      return this.Application.ActiveDocument?.Content?.Text;
-    }
+    //public string GetActiveDocumentText()
+    //{
+    //  return this.Application.ActiveDocument?.Content?.Text;
+    //}
 
     /// <summary>
     /// Converts all paragraphs of the active Word document to a List of WordParagraph objects that store the start and end position of each paragraph
     /// in addition to its text.
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<WordParagraph> GetActiveDocumentParagraphs()
+    //public IEnumerable<WordParagraph> GetActiveDocumentParagraphs()
+    //{
+    //  if (this.Application.ActiveDocument != null)
+    //  {
+    //    foreach (Word.Paragraph p in this.Application.ActiveDocument.Paragraphs)
+    //    {
+    //      yield return new WordParagraph()
+    //      {
+    //        Start = p.Range.Start,
+    //        End = p.Range.End,
+    //        Text = p.Range.Text
+    //      };
+    //    }
+    //  }
+    //  else
+    //    yield return null;
+    //}
+
+    /// <summary>
+    /// Converts all paragraphs in the specified Word document to a List of WordParagraph objects that store the start and end position of each paragraph
+    /// in addition to the paragraph text.
+    /// </summary>
+    /// <param name="docPath"></param>
+    /// <returns></returns>
+    public List<WordParagraph> GetDocumentParagraphs(string docPath)
     {
-      if (this.Application.ActiveDocument != null)
+      if(!string.IsNullOrEmpty(docPath) && System.IO.File.Exists(docPath))
       {
-        foreach (Word.Paragraph p in this.Application.ActiveDocument.Paragraphs)
+        List<WordParagraph> Result = new List<WordParagraph>();
+
+        bool AlreadyOpen = false;
+        var Doc = this.Application.Documents.Cast<Document>().FirstOrDefault(d => d.FullName == docPath);
+
+        if (Doc == null)
+          Doc = this.Application.Documents.Open(docPath, ReadOnly: true, AddToRecentFiles: false, Visible: false);
+        else
+          AlreadyOpen = true;
+
+        foreach (Word.Paragraph p in Doc.Paragraphs)
         {
-          yield return new WordParagraph()
+          Result.Add(new WordParagraph()
           {
             Start = p.Range.Start,
             End = p.Range.End,
             Text = p.Range.Text
-          };
+          });
         }
+
+        if(!AlreadyOpen)
+          Doc.Close(SaveChanges: false);
+
+        return Result;
       }
       else
-        yield return null;
+        return null;
     }
 
     /// <summary>
@@ -176,6 +218,16 @@ namespace DuplicateFinderMulti
     public int? GetActiveDocumentParagraphsCount()
     {
       return this.Application.ActiveDocument?.Paragraphs?.Count;
+    }
+
+    public void OpenDocument(string docPath)
+    {
+      var Doc = this.Application.Documents.Cast<Document>().FirstOrDefault(d => d.FullName == docPath);
+
+      if (Doc == null)
+        Doc = this.Application.Documents.Open(docPath);
+      else
+        Doc.Activate();
     }
 
     #region VSTO generated code

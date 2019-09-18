@@ -13,7 +13,8 @@
              DataContext="{Binding Source={x:Static vm:ViewModelLocator.Main}}">
   <Grid>
     <Grid.Resources>
-        <local:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
+      <BooleanToVisibilityConverter x:Key="B2VConverter" />
+      <local:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
         <local:ConnectionStatusToStringConverter x:Key="ConnectionStatusToStringConverter" />
       <local:DistanceToColorConverter x:Key="DistanceToColorConverter" />
     </Grid.Resources>
@@ -21,113 +22,87 @@
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="Auto" />
-      <ColumnDefinition Width="*" />
-    </Grid.ColumnDefinitions>
+    <ToolBar>
+      <Button Command="{Binding NewCommand}" fa:Awesome.Content="FileOutline" ToolTip="Create a new Project" FontSize="18" />
+      <Button Command="{Binding OpenCommand}" fa:Awesome.Content="FolderOutlinepenOutline" ToolTip="Open an existing project" FontSize="18" />
+      <Button Command="{Binding SelectedProject.SaveCommand}" fa:Awesome.Content="Save" ToolTip="Save current project" FontSize="18" />
+      <Separator/>
+      <Button Command="{Binding SelectedProject.AddDocsCommand}" fa:Awesome.Content="PlusSquareOutline" ToolTip="Add one or more documents to current project" FontSize="18" />
+      <Button Command="{Binding SelectedProject.RemoveSelectedDocCommand}" fa:Awesome.Content="MinusSquareOutline" ToolTip="Remove selected document from current project" FontSize="18" />
+    </ToolBar>
 
-    <GroupBox Header="Analysis Type" Grid.ColumnSpan="2" Margin="3" Padding="6">
-      <Grid>
-        <Grid.RowDefinitions>
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <Border BorderBrush="Gray" Background="LightYellow" Grid.Row="1">
+      <TextBlock Margin="12,6" FontSize="18" TextTrimming="CharacterEllipsis">
+        <Run Text="Project:" />
+        <Run Text="{Binding SelectedProject.Name}" FontWeight="Bold" />
+      </TextBlock>
+      
+    </Border>
 
-        <RadioButton x:Name="ParaRadioButton" VerticalContentAlignment="Center" Margin="3" ToolTip="Treats one paragraph as one unique entity for comparison. Carriage return (\r) is used as delimiter.">
-          <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-            <TextBlock Text="Paragraph (Min. Length: " VerticalAlignment="Center" />
-            <xctk:IntegerUpDown Grid.Row="2" Value="{Binding MinParaLength}" Margin="3" Grid.Column="1" IsEnabled="{Binding ElementName=ParaRadioButton, Path=IsChecked, Mode=OneWay}" />
-            <TextBlock VerticalAlignment="Center" Text="chars)" />
-          </StackPanel>
-        </RadioButton>
-
-        <RadioButton x:Name="FullQARadioButton" VerticalContentAlignment="Center" IsChecked="True" Content="Full QA" Grid.Row="1" Margin="3" ToolTip="Treats one question and its answers as one unique entity for comparison. Document must use question numbers (an integer followed by a period) on separate lines as delimiters." />
-      </Grid>
-    </GroupBox>
-
-    <GroupBox Header="Max. Difference (%)" Grid.Row="1" Grid.ColumnSpan="2" Margin="3" Padding="6">
-      <Grid Grid.Row="3">
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="*" />
-          <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <Slider Value="{Binding MaxDistance}" Minimum="0" Maximum="100" Margin="3" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Value}" />
-        <xctk:IntegerUpDown Grid.Row="2" Value="{Binding MaxDistance}" Minimum="0" Maximum="100"  Margin="3" Grid.Column="1" />
-      </Grid>
-
-    </GroupBox>
-
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="2" Grid.ColumnSpan="2" >
-      <Button Width="90" Height="30" Margin="3" Content="Start"
-           Command="{Binding StartCommand}" CommandParameter="{Binding ElementName=FullQARadioButton, Path=IsChecked}" />
-
-      <Button Width="90" Height="30" Margin="3" Content="Stop" Command="{Binding StopCommand}" />
-
-      <Button Width="90" Height="30" Margin="3" Content="Clear Results"
-           Command="{Binding ClearContentCommand}" CommandParameter="{Binding ElementName=FullQARadioButton, Path=IsChecked}" />
-    </StackPanel>
-
-    <ListBox ItemsSource="{Binding Content}" Grid.Row="3" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Grid.ColumnSpan="2" Margin="3">
+    <ListBox Grid.Row="2" ItemsSource="{Binding SelectedProject.XMLDocs}" SelectedItem="{Binding SelectedProject.SelectedDoc}">
       <ListBox.ItemContainerStyle>
         <Style TargetType="ListBoxItem">
-          <Setter Property="HorizontalAlignment" Value="Stretch" />
           <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         </Style>
       </ListBox.ItemContainerStyle>
       <ListBox.ItemTemplate>
         <DataTemplate>
-          <ItemsControl ItemsSource="{Binding}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="0,3" BorderThickness="2" BorderBrush="Green">
-            
-            <ItemsControl.ItemTemplate>
-              <DataTemplate DataType="vm:WordParagraph">
-                <Grid Margin="3">
-                  <Grid.ToolTip>
-                    <TextBlock Text="{Binding Text}" MaxWidth="500" />
-                  </Grid.ToolTip>
-                  <Grid.Background>
-                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
-                      <GradientStop Offset="0" Color="Transparent" />
-                      <GradientStop Offset="1" Color="{Binding Distance, Converter={StaticResource DistanceToColorConverter}}" />
-                    </LinearGradientBrush>
-                  </Grid.Background>
-                  <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="54" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                  </Grid.ColumnDefinitions>
-                  <Border Background="Green" Width="42" Height="42" CornerRadius="4">
-                    <TextBlock Text="{Binding Path=Distance, StringFormat='\{0\}%'}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" />
-                  </Border>
-                  <TextBlock Grid.Column="1" Text="{Binding Text}" TextWrapping="Wrap" HorizontalAlignment="Stretch" TextTrimming="WordEllipsis" MaxHeight="42" VerticalAlignment="Center" Margin="3" />
-                  <Button Command="{Binding RelativeSource={RelativeSource AncestorType=local:MainView}, Path=DataContext.GoToParagraphCommand}" 
-                          CommandParameter="{Binding}" Grid.Column="2" Width="36" Margin="3">
-                    <fa:ImageAwesome Icon="ArrowCircleRight" Width="16" />
-                  </Button>
-                  <Button Command="{Binding RelativeSource={RelativeSource AncestorType=local:MainView}, Path=DataContext.OpenDiffCommand}" 
-                          CommandParameter="{Binding}" Grid.Column="3" Width="36" Margin="3">
-                    <fa:ImageAwesome Icon="BalanceScale" Width="16" />
-                  </Button>
-                </Grid>
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
+          <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="3" Padding="3">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="32" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+              </Grid.RowDefinitions>
+
+              <fa:FontAwesome Icon="FileWordOutline" Foreground="Blue" FontSize="20" VerticalAlignment="Center" />
+              <TextBlock Text="{Binding Name}" Grid.Column="1" FontWeight="Bold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+              <TextBlock Text="{Binding LastModified}" Grid.Row="1" Grid.Column="1" TextTrimming="CharacterEllipsis" />
+
+              <Button Command="{Binding OpenSourceCommand}" fa:Awesome.Content="FolderOpen" ToolTip="Click to open source document" FontSize="14" Grid.Column="3" Foreground="Orange" 
+                      Background="{x:Null}" BorderBrush="{x:Null}" Style="{DynamicResource ImageButtonStyle}" Margin="3" />
+
+              <fa:FontAwesome FontSize="14" Grid.Column="4" Margin="3">
+                <fa:FontAwesome.Style>
+                  <Style TargetType="fa:FontAwesome">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding IsSyncWithSource}" Value="True">
+                        <Setter Property="Icon" Value="Check" />
+                        <Setter Property="Foreground" Value="Green" />
+                        <Setter Property="ToolTip" Value="Sync with source document" />
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding IsSyncWithSource}" Value="False">
+                        <Setter Property="Icon" Value="ExclamationCircle" />
+                        <Setter Property="Foreground" Value="Red" />
+                        <Setter Property="ToolTip" Value="{Binding SyncErrors}" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </fa:FontAwesome.Style>
+              </fa:FontAwesome>
+            </Grid>
+          </Border>
         </DataTemplate>
       </ListBox.ItemTemplate>
     </ListBox>
 
-    <StatusBar Grid.Row="4" Height="30" Grid.ColumnSpan="2">
+    <StatusBar Grid.Row="4" Height="30">
       <StatusBar.ItemsPanel>
         <ItemsPanelTemplate>
           <Grid>
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="*" />
-              <ColumnDefinition Width="Auto" />
               <ColumnDefinition Width="Auto" />
               <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
@@ -148,7 +123,7 @@
           <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0" HorizontalAlignment="Stretch">
             <TextBlock Margin="3">
               <Run>Count = </Run>
-              <Run Text="{Binding Content.Count, Mode=OneWay, FallbackValue=0}" />
+              <!--<Run Text="{Binding Content.Count, Mode=OneWay, FallbackValue=0}" />-->
             </TextBlock>
           </Border>
         </Border>
@@ -158,41 +133,6 @@
         <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1" Margin="1,0" Grid.Column="1">
           <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0">
             <ProgressBar Value="{Binding ProgressValue, Mode=OneWay}" Maximum="100" Width="100" Height="10" Margin="3" />
-          </Border>
-        </Border>
-      </StatusBarItem>
-
-      <StatusBarItem Grid.Column="3">
-        <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1" Margin="1,0" Grid.Column="2">
-          <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0">
-
-
-            <Ellipse Width="12" Height="12" Stroke="Gray" HorizontalAlignment="Right" Margin="3" Fill="Green">
-              <Ellipse.Style>
-                <Style TargetType="Ellipse">
-                  <Style.Resources>
-                    <Storyboard x:Key="ConnectingStoryBoard" RepeatBehavior="Forever">
-                      <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:.7" />
-                      <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:.7" BeginTime="0:0:.7" />
-                    </Storyboard>
-                  </Style.Resources>
-                  <Style.Triggers>
-                    <DataTrigger Binding="{Binding IsProcessing}" Value="True">
-                      <Setter Property="ToolTip" Value="Database Connection Status: Connecting" />
-                      <DataTrigger.EnterActions>
-                        <BeginStoryboard Name="ConnectingStoryBoardBegin" Storyboard="{StaticResource ConnectingStoryBoard}" />
-                      </DataTrigger.EnterActions>
-                      <DataTrigger.ExitActions>
-                        <StopStoryboard BeginStoryboardName="ConnectingStoryBoardBegin" />
-                      </DataTrigger.ExitActions>
-                    </DataTrigger>
-                  </Style.Triggers>
-                </Style>
-              </Ellipse.Style>
-              <Ellipse.Effect>
-                <DropShadowEffect Color="Green" BlurRadius="7" Direction="90" ShadowDepth="0" />
-              </Ellipse.Effect>
-            </Ellipse>
           </Border>
         </Border>
       </StatusBarItem>

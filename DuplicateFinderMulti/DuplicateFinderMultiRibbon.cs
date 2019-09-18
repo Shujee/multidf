@@ -37,7 +37,7 @@ namespace DuplicateFinderMulti
 
             if (MV != null)
             {
-              ((VM.MainVM)MV.DataContext).StartCommand.RaiseCanExecuteChanged();
+              //((VM.MainVM)MV.DataContext).StartCommand.RaiseCanExecuteChanged();
             }
           }
         }
