@@ -9,7 +9,6 @@
         Title="DuplicateFinderMulti Diff" Width="850"
         WindowStartupLocation="CenterScreen" 
         FocusManager.FocusedElement="{Binding ElementName=txtEmail}" ShowInTaskbar="False"
-        DataContext="{x:Static vm:ViewModelLocator.Diff}"
         d:DataContext="{d:DesignInstance Type=vm:DiffVM, IsDesignTimeCreatable=True}">
 
   <Grid Margin="12">

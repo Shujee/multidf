@@ -77,7 +77,6 @@ namespace DuplicateFinderMulti.VM
                 this._XMLDocs.Add(new XMLDoc()
                 {
                   Name = System.IO.Path.GetFileNameWithoutExtension( Doc),
-                  Paragraphs = ViewModelLocator.WordService.GetDocumentParagraphs(Doc),
                   LastModified = FileInfo.LastWriteTimeUtc,
                   Size = FileInfo.Length,
                   SourcePath = Doc

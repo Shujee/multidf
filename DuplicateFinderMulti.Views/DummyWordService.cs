@@ -14,16 +14,10 @@ namespace DuplicateFinderMulti.Views
       int i = 1;
       foreach (var Line in Lines)
       {
-        var WP = new WordParagraph()
-        {
-          Start = i,
-          End = i + Line.Length,
-          Text = Line
-        };
-
+        var WP = new WordParagraph(Line, i, i + Line.Length, false);
         i = WP.End + 1;
 
-        Result .Add(WP);
+        Result.Add(WP);
       }
 
       return Result;

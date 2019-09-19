@@ -31,13 +31,6 @@ namespace DuplicateFinderMulti.VM
           LastModified = System.DateTime.Now.AddDays(-1),
           Size = 123456,
           SourcePath = @"F:\Office\Larry Gong\DuplicateFinder\Analysis\Sample Question for DF Multi.docx",
-          Paragraphs = new List<WordParagraph>()
-           {
-              new WordParagraph() { Text="Something in the woods", Start=1, End=243, Distance=0},
-              new WordParagraph() { Text="Something in the woods", Start=244, End=260, Distance=0},
-              new WordParagraph() { Text="Something in the woods", Start=261, End=295, Distance=0},
-              new WordParagraph() { Text="Something in the woods", Start=296, End=343, Distance=0}
-           }
         });
 
         _SelectedProject.XMLDocs.Add(new XMLDoc()
@@ -46,13 +39,6 @@ namespace DuplicateFinderMulti.VM
           LastModified = System.DateTime.Now.AddDays(-8),
           Size = 6487987,
           SourcePath = @"F:\Office\Larry Gong\DuplicateFinder\Analysis\File 1 for DF.docx",
-          Paragraphs = new List<WordParagraph>()
-           {
-              new WordParagraph() { Text="Something in the woods", Start=1, End=243, Distance=0},
-              new WordParagraph() { Text="Something in the woods", Start=244, End=260, Distance=0},
-              new WordParagraph() { Text="Something in the woods", Start=261, End=295, Distance=0},
-              new WordParagraph() { Text="Something in the woods", Start=296, End=343, Distance=0}
-           }
         });
 
         _SelectedProject.XMLDocs.Add(new XMLDoc()
@@ -61,13 +47,6 @@ namespace DuplicateFinderMulti.VM
           LastModified = System.DateTime.Now.AddDays(-15),
           Size = 6487987,
           SourcePath = @"F:\Office\Larry Gong\DuplicateFinder\Analysis\File 2 for DF.docx",
-          Paragraphs = new List<WordParagraph>()
-           {
-              new WordParagraph() { Text="Something in the woods", Start=1, End=243, Distance=0},
-              new WordParagraph() { Text="Something in the woods", Start=244, End=260, Distance=0},
-              new WordParagraph() { Text="Something in the woods", Start=261, End=295, Distance=0},
-              new WordParagraph() { Text="Something in the woods", Start=296, End=343, Distance=0}
-           }
         });
 
         _SelectedProject.XMLDocs.Add(new XMLDoc()
@@ -76,13 +55,6 @@ namespace DuplicateFinderMulti.VM
           LastModified = System.DateTime.Now.AddDays(-1),
           Size = 123456,
           SourcePath = @"F:\Office\Larry Gong\DuplicateFinder\Analysis\File 3 for DF.docx",
-          Paragraphs = new List<WordParagraph>()
-           {
-              new WordParagraph() { Text="Something in the woods", Start=1, End=243, Distance=0},
-              new WordParagraph() { Text="Something in the woods", Start=244, End=260, Distance=0},
-              new WordParagraph() { Text="Something in the woods", Start=261, End=295, Distance=0},
-              new WordParagraph() { Text="Something in the woods", Start=296, End=343, Distance=0}
-           }
         });
 
         _SelectedProject.XMLDocs.Add(new XMLDoc()
@@ -91,13 +63,6 @@ namespace DuplicateFinderMulti.VM
           LastModified = System.DateTime.Now.AddDays(-8),
           Size = 6487987,
           SourcePath = @"F:\Office\Larry Gong\DuplicateFinder\Analysis\Doc that does not exist.docx",
-          Paragraphs = new List<WordParagraph>()
-           {
-              new WordParagraph() { Text="Something in the woods", Start=1, End=243, Distance=0},
-              new WordParagraph() { Text="Something in the woods", Start=244, End=260, Distance=0},
-              new WordParagraph() { Text="Something in the woods", Start=261, End=295, Distance=0},
-              new WordParagraph() { Text="Something in the woods", Start=296, End=343, Distance=0}
-           }
         });
       }
 

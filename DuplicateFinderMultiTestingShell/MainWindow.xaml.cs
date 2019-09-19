@@ -60,7 +60,7 @@ namespace DuplicateFinderMultiTestingShell
       int Start = 0;
       for (int i = 0; i < Data.Length; i++)
       {
-        Res.Add(new WordParagraph() { Start = Start, End = Start + Data[i].Length, Text = Data[i] });
+        Res.Add(new WordParagraph(Data[i], Start,Start + Data[i].Length, false));
         Start += Data[i].Length;
       }
 

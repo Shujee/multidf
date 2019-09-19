@@ -23,18 +23,20 @@ namespace DuplicateFinderMulti.VM
       GalaSoft.MvvmLight.Threading.DispatcherHelper.Initialize();
 
       SimpleIoc.Default.Unregister<RegisterVM>();
-      SimpleIoc.Default.Unregister<DiffVM>();
+      //SimpleIoc.Default.Unregister<DiffVM>();
       SimpleIoc.Default.Unregister<AboutVM>();
       SimpleIoc.Default.Unregister<MainVM>();
-      SimpleIoc.Default.Unregister<IDupFinder>();
+      //SimpleIoc.Default.Unregister<IDupFinder>();
+      SimpleIoc.Default.Unregister<IQAExtractionStrategy>();
 
       SimpleIoc.Default.Register<RegisterVM>();
-      SimpleIoc.Default.Register<DiffVM>();
+      //SimpleIoc.Default.Register<DiffVM>();
 
       SimpleIoc.Default.Register<MainVM>();
+      SimpleIoc.Default.Register<IQAExtractionStrategy, DefaultQAExtractionStrategy>();
 
       SimpleIoc.Default.Register<AboutVM>();
-      SimpleIoc.Default.Register<IDupFinder, DupFinder>();
+      //SimpleIoc.Default.Register<IDupFinder, DupFinder>();
     }
 
     /// <summary>
@@ -46,12 +48,14 @@ namespace DuplicateFinderMulti.VM
 
     public static IDialogService DialogService => SimpleIoc.Default.GetInstance<IDialogService>();
     public static IWordService WordService => SimpleIoc.Default.GetInstance<IWordService>();
-    public static IDupFinder DupFinderService => SimpleIoc.Default.GetInstance<IDupFinder>();
-    public static DiffVM Diff => SimpleIoc.Default.GetInstanceWithoutCaching<DiffVM>();
+    //public static IDupFinder DupFinderService => SimpleIoc.Default.GetInstance<IDupFinder>();
+    //public static DiffVM Diff => SimpleIoc.Default.GetInstanceWithoutCaching<DiffVM>();
 
     public static MainVM Main => SimpleIoc.Default.GetInstance<MainVM>();
 
     public static RegisterVM Register => SimpleIoc.Default.GetInstance<RegisterVM>();
     public static AboutVM About => SimpleIoc.Default.GetInstance<AboutVM>();
+
+    public static IQAExtractionStrategy QAExtractionStrategy { get; internal set; }
   }
 }

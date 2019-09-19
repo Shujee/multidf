@@ -194,12 +194,7 @@ namespace DuplicateFinderMulti
 
         foreach (Word.Paragraph p in Doc.Paragraphs)
         {
-          Result.Add(new WordParagraph()
-          {
-            Start = p.Range.Start,
-            End = p.Range.End,
-            Text = p.Range.Text
-          });
+          Result.Add(new WordParagraph(p.Range.Text, p.Range.Start, p.Range.End, p.Range.ListFormat.ListType != WdListType.wdListSimpleNumbering));
         }
 
         if(!AlreadyOpen)

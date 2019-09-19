@@ -121,11 +121,14 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AboutVM.cs" />
+    <Compile Include="DefaultQAExtractionStrategy.cs" />
     <Compile Include="DiffVM.cs" />
     <Compile Include="DupFinderMulti.cs" />
     <Compile Include="Interfaces\IDupFinder.cs" />
+    <Compile Include="IQAExtractionStrategy.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Interfaces\IWordService.cs" />
+    <Compile Include="QA.cs" />
     <Compile Include="StaticExtensions.cs" />
     <Compile Include="XMLDoc.cs" />
     <Compile Include="RegisterVM.cs" />

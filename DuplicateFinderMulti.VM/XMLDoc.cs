@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DuplicateFinderMulti.VM
@@ -50,11 +51,11 @@ namespace DuplicateFinderMulti.VM
       }
     }
 
-    private List<WordParagraph> _Paragraphs;
-    public List<WordParagraph> Paragraphs
+    private List<QA> _QAs;
+    public List<QA> QAs
     {
-      get => _Paragraphs;
-      set => Set(ref _Paragraphs, value);
+      get => _QAs;
+      set => Set(ref _QAs, value);
     }
 
     /// <summary>
@@ -125,11 +126,13 @@ namespace DuplicateFinderMulti.VM
       }
     }
 
-    public void UpdateParagraphs()
+    public void UpdateQAs()
     {
       if (!string.IsNullOrEmpty(_SourcePath) && System.IO.File.Exists(_SourcePath))
       {
-        _Paragraphs = ViewModelLocator.WordService.GetDocumentParagraphs(_SourcePath);
+        CancellationToken c = new CancellationToken();
+        var Paragraphs = ViewModelLocator.WordService.GetDocumentParagraphs(_SourcePath);
+        QAs = ViewModelLocator.QAExtractionStrategy.Extract(Paragraphs, c);
         RaisePropertyChanged(nameof(Paragraphs));
       }
     }
