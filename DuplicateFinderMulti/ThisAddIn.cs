@@ -194,7 +194,20 @@ namespace DuplicateFinderMulti
 
         foreach (Word.Paragraph p in Doc.Paragraphs)
         {
-          Result.Add(new WordParagraph(p.Range.Text, p.Range.Start, p.Range.End, p.Range.ListFormat.ListType != WdListType.wdListSimpleNumbering));
+          var PType = ParagraphType.Text;
+
+          if (p.Range.Tables.Count > 0)
+          {
+            if (p.Range.Tables[1].ApplyStyleHeadingRows && p.Range.Rows.First.Index == 1)
+              PType = ParagraphType.TableHeader;
+            else
+              PType = ParagraphType.TableRow;
+          }
+          else if (p.Range.ListFormat.ListType == WdListType.wdListSimpleNumbering)
+            PType = ParagraphType.NumberedList;
+          
+
+          Result.Add(new WordParagraph(p.Range.Text, p.Range.Start, p.Range.End, PType));
         }
 
         if(!AlreadyOpen)

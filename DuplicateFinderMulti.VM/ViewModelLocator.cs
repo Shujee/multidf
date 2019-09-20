@@ -56,6 +56,6 @@ namespace DuplicateFinderMulti.VM
     public static RegisterVM Register => SimpleIoc.Default.GetInstance<RegisterVM>();
     public static AboutVM About => SimpleIoc.Default.GetInstance<AboutVM>();
 
-    public static IQAExtractionStrategy QAExtractionStrategy { get; internal set; }
+    public static IQAExtractionStrategy QAExtractionStrategy => SimpleIoc.Default.GetInstance<IQAExtractionStrategy>();
   }
 }

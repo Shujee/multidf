@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace DuplicateFinderMulti.VM
@@ -14,10 +15,11 @@ namespace DuplicateFinderMulti.VM
     }
 
     //This RegEx will find Question Number paragraphs
-    System.Text.RegularExpressions.Regex RE_QNumberWithHardReturn = new System.Text.RegularExpressions.Regex(@"^(((?<Index>\d+)\.)|([Q](?<Index>\d+)\.?))\s*[\r\n\x0B]", System.Text.RegularExpressions.RegexOptions.ExplicitCapture);
-                                                                                                             
+    private Regex RE_QNumberWithHardReturn = new Regex(@"^(((?<Index>\d+)\.)|([Q](?<Index>\d+)\.?))\s*[\r\n\x0B]", RegexOptions.ExplicitCapture);
+    private char[] TrimChars = new char[] { '\r', '\n', '\a',  ' ', '\t' };
 
-    public List<QA> Extract(List<WordParagraph> paragraphs, CancellationToken tok)
+
+  public List<QA> Extract(List<WordParagraph> paragraphs, CancellationToken tok)
     {
       if (paragraphs == null || paragraphs.Count == 0)
         return null;
@@ -37,7 +39,9 @@ namespace DuplicateFinderMulti.VM
       while (i < paragraphs.Count - 1)
       {
         var QA = ExtractQA(paragraphs, ref i);
-        Result.Add(QA);
+
+        if(QA != null)
+          Result.Add(QA);
 
         tok.ThrowIfCancellationRequested();
       }
@@ -71,37 +75,69 @@ namespace DuplicateFinderMulti.VM
         QA.Index = int.Parse(Match.Groups["Index"].Value);
         i++;
 
+        //skip any empty lines after the question delimiter and before the question body
+        while (i < paragraphs.Count && string.IsNullOrWhiteSpace(paragraphs[i].Text.Trim(TrimChars)))
+          i++;
+
         //subsequent paragraphs constitute question body till we find the next paragraph that uses list style
         while (i < paragraphs.Count && !RE_QNumberWithHardReturn.IsMatch(paragraphs[i].Text))
         {
+          string NormalizedText = paragraphs[i].Text.ToLower().Trim(TrimChars);
+
+          //skip empty paragraphs
+          if (string.IsNullOrWhiteSpace(NormalizedText))
+          {
+            i++;
+            continue;
+          }
+
           switch (state)
           {
             case QAExtractionState.Question:
-              if (paragraphs[i].IsSimpleNumberingListStyle)
+              if (paragraphs[i].Type == ParagraphType.NumberedList)
               {
                 state = QAExtractionState.Choices;
                 QA.Choices.Add(paragraphs[i].Text);
               }
+              else if(NormalizedText.Contains( "answer area:"))
+              {
+                state = QAExtractionState.Choices;
+              }
               else
               {
-                QA.Question += paragraphs[i];
+                //Append to question body, but skip empty lines.
+                if (!string.IsNullOrWhiteSpace(NormalizedText))
+                {
+                  QA.Question += paragraphs[i].Text;
+                }
               }
               break;
 
             case QAExtractionState.Choices:
-              if (paragraphs[i].IsSimpleNumberingListStyle)
-                QA.Choices.Add(paragraphs[i].Text);
+              if (paragraphs[i].Type == ParagraphType.NumberedList || paragraphs[i].Type == ParagraphType.TableRow)
+              {
+                  QA.Choices.Add(paragraphs[i].Text);
+              }
               else
-                state = QAExtractionState.Answer;
+              {
+                if (paragraphs[i].Type != ParagraphType.TableHeader)
+                {
+                  if (NormalizedText.StartsWith("answer:"))
+                  {
+                    QA.Answer = paragraphs[i].Text.Trim().Remove(0, 7).Trim(TrimChars);
+                    state = QAExtractionState.Answer;
+                  }
+                  else if (NormalizedText.StartsWith("ans:"))
+                  {
+                    QA.Answer = paragraphs[i].Text.Trim().Remove(0, 4).Trim(TrimChars);
+                    state = QAExtractionState.Answer;
+                  }
+                }
+              }
               break;
 
             case QAExtractionState.Answer:
-              string NormalizedText = paragraphs[i].Text.ToLower().Trim();
-              if (NormalizedText.StartsWith("answer:"))
-                QA.Answer = NormalizedText.Remove(0, 7).Trim();
-              else if (NormalizedText.StartsWith("ans:"))
-                QA.Answer = NormalizedText.Remove(0, 4).Trim();
-
+              QA.Answer += paragraphs[i].Text;
               break;
           }
 
@@ -114,7 +150,10 @@ namespace DuplicateFinderMulti.VM
 
       QA.End = paragraphs[i - 1].End;
 
-      return QA;
+      if (string.IsNullOrWhiteSpace(QA.Question)) //couldn't even find the question body? return null (this can happen if there are empty lines after the last question)
+        return null;
+      else
+        return QA;
     }
   }
 }

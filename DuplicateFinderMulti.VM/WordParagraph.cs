@@ -1,5 +1,14 @@
 ﻿namespace DuplicateFinderMulti.VM
 {
+  public enum ParagraphType
+  {
+    Text,
+    NumberedList,
+    BulletedList,
+    TableHeader,
+    TableRow
+  }
+
   /// <summary>
   /// Represents a text paragraph.
   /// </summary>
@@ -21,18 +30,18 @@
     public int End { get; set; }
 
     /// <summary>
-    /// Whether this paragraph uses list style (bullet or numbering) in Word. True for the paragraphs of "Choices" section.
+    /// Whether this paragraph uses list style (bullet or numbering) in Word, or is part of a table. True for the paragraphs of "Choices" section.
     /// </summary>
-    public bool IsSimpleNumberingListStyle { get; set; }
+    public ParagraphType Type { get; set; }
 
     public int Distance { get; set; }
 
-    public WordParagraph(string text, int start, int end, bool listStyle)
+    public WordParagraph(string text, int start, int end, ParagraphType type)
     {
       Text = text;
       Start = start;
       End = end;
-      IsSimpleNumberingListStyle = listStyle;
+      Type = type;
     }
   }
 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29230.47
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DuplicateFinderMulti", "DuplicateFinderMulti\DuplicateFinderMulti.csproj", "{8AC0906A-5C64-43DC-8463-86ED6207E81B}"
 EndProject
@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DuplicateFinderMultiTest", "DuplicateFinderMultiTest\DuplicateFinderMultiTest.csproj", "{70907141-7686-4ED2-BBDB-4EF0783AD999}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -145,6 +147,22 @@ Global
 		{73855FCF-BA21-4447-AB46-303506516534}.UITest|Any CPU.Build.0 = Release|Any CPU
 		{73855FCF-BA21-4447-AB46-303506516534}.UITest|x86.ActiveCfg = Release|Any CPU
 		{73855FCF-BA21-4447-AB46-303506516534}.UITest|x86.Build.0 = Release|Any CPU
+		{70907141-7686-4ED2-BBDB-4EF0783AD999}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70907141-7686-4ED2-BBDB-4EF0783AD999}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70907141-7686-4ED2-BBDB-4EF0783AD999}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{70907141-7686-4ED2-BBDB-4EF0783AD999}.Debug|x86.Build.0 = Debug|Any CPU
+		{70907141-7686-4ED2-BBDB-4EF0783AD999}.Release_x86|Any CPU.ActiveCfg = Release|Any CPU
+		{70907141-7686-4ED2-BBDB-4EF0783AD999}.Release_x86|Any CPU.Build.0 = Release|Any CPU
+		{70907141-7686-4ED2-BBDB-4EF0783AD999}.Release_x86|x86.ActiveCfg = Release|Any CPU
+		{70907141-7686-4ED2-BBDB-4EF0783AD999}.Release_x86|x86.Build.0 = Release|Any CPU
+		{70907141-7686-4ED2-BBDB-4EF0783AD999}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70907141-7686-4ED2-BBDB-4EF0783AD999}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70907141-7686-4ED2-BBDB-4EF0783AD999}.Release|x86.ActiveCfg = Release|Any CPU
+		{70907141-7686-4ED2-BBDB-4EF0783AD999}.Release|x86.Build.0 = Release|Any CPU
+		{70907141-7686-4ED2-BBDB-4EF0783AD999}.UITest|Any CPU.ActiveCfg = Release|Any CPU
+		{70907141-7686-4ED2-BBDB-4EF0783AD999}.UITest|Any CPU.Build.0 = Release|Any CPU
+		{70907141-7686-4ED2-BBDB-4EF0783AD999}.UITest|x86.ActiveCfg = Release|Any CPU
+		{70907141-7686-4ED2-BBDB-4EF0783AD999}.UITest|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
