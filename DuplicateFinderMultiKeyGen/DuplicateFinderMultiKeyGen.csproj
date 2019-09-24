@@ -54,10 +54,10 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>9C6E2576DCFF38396078A8C30305A0F4E8C8E6AE</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>B60C88ED0F43AA60CE1D00286C0FA7FA23B2A25A</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>DuplicateFinderMultiKeyGen_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>DuplicateFinderMultiKeyGen_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -115,6 +115,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="DuplicateFinderMultiKeyGen_1_TemporaryKey.pfx" />
     <None Include="DuplicateFinderMultiKeyGen_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

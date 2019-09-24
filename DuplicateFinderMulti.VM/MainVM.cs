@@ -1,11 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Ioc;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace DuplicateFinderMulti.VM
 {
@@ -140,11 +136,33 @@ namespace DuplicateFinderMulti.VM
       }
     }
 
+    private RelayCommand _ProcessCommand;
+    public RelayCommand ProcessCommand
+    {
+      get
+      {
+        if (_ProcessCommand == null)
+        {
+          _ProcessCommand = new RelayCommand(() =>
+          {
+            IsProcessing = true;
+
+
+
+          },
+          () => _SelectedProject != null);
+        }
+
+        return _ProcessCommand;
+      }
+    }
+
     #region "Status"
     private bool _IsProcessing = false;
     public bool IsProcessing
     {
       get { return _IsProcessing; }
+      private set { Set(ref _IsProcessing, value); }
     }
 
     private string _ProgressMessage;

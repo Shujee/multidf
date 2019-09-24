@@ -224,6 +224,7 @@
     </Compile>
     <None Include="app.config" />
     <None Include="DuplicateFinderMulti_1_TemporaryKey.pfx" />
+    <None Include="DuplicateFinderMulti_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -263,10 +264,10 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>DuplicateFinderMulti_1_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>DuplicateFinderMulti_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>AAA9B5DA8390D802CC074C7D1FDD26AF9C996EA1</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>F1678FD79FAC526698E34366281D9E3A52258466</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

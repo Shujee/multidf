@@ -52,5 +52,38 @@ namespace DuplicateFinderMulti.Test
       Assert.IsTrue(QAs[5].Choices.Count == 3);
       Assert.IsTrue(QAs[9].Answer == "Drive Maps, Update");
     }
+
+    [TestMethod]
+    public void TestDefaultQAComparer()
+    {
+      var Q1 = new QA()
+      {
+        Question = "A very simple question",
+        Choices = new System.Collections.Generic.List<string>()
+                        {
+                          "Choice 1",
+                          "Choice 2",
+                          "Choice 3",
+                          "Choice 4",
+                          "Choice 5",
+                        }
+      };
+
+      var Q2 = new QA()
+      {
+        Question = "A very simple question with minor change",
+        Choices = new System.Collections.Generic.List<string>()
+                        {
+                          "Choice 2",
+                          "Choice 5",
+                          "Choice 41",
+                          "Choice 3",
+                          "Choice 1",
+                        }
+      };
+
+      var Dist = ViewModelLocator.QAComparer.Distance(Q1, Q2, true);
+      Assert.IsTrue(Dist > 0);
+    }
   }
 }
