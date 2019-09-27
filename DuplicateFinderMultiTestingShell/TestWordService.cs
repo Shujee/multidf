@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using DuplicateFinderMulti.VM;
 using Microsoft.Office.Interop.Word;
 
-namespace DuplicateFinderMulti.Test
+namespace DuplicateFinderMulti.TestingShell
 {
   class TestWordService : VM.IWordService
   {
@@ -54,7 +54,10 @@ namespace DuplicateFinderMulti.Test
 
     public void OpenDocument(string docPath)
     {
-      
+      var Doc = App.Documents.Cast<Document>().FirstOrDefault(d => d.FullName == docPath);
+
+      if (Doc == null)
+        Doc = App.Documents.Open(docPath);
     }
   }
 }

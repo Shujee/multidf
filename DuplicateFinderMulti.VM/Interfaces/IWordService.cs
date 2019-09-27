@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 
 namespace DuplicateFinderMulti.VM
 {
@@ -10,7 +11,7 @@ namespace DuplicateFinderMulti.VM
     //void SelectRange(int start, int end);
     //string GetRangeText(int start, int end);
 
-    List<WordParagraph> GetDocumentParagraphs(string docPath);
+    List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token);
     void OpenDocument(string docPath);
   }
 }

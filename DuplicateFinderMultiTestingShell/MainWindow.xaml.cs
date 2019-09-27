@@ -3,9 +3,10 @@ using DuplicateFinderMulti.VM;
 using GalaSoft.MvvmLight.Ioc;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 
-namespace DuplicateFinderMultiTestingShell
+namespace DuplicateFinderMulti.TestingShell
 {
   /// <summary>
   /// Interaction logic for MainWindow.xaml
@@ -17,7 +18,7 @@ namespace DuplicateFinderMultiTestingShell
       InitializeComponent();
 
       if (!GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
-        SimpleIoc.Default.Register<IWordService>(() => this);
+        SimpleIoc.Default.Register<IWordService, TestWordService>();
 
       SimpleIoc.Default.Register<IDialogService, DialogPresenter>();
     }
@@ -105,7 +106,7 @@ namespace DuplicateFinderMultiTestingShell
       TXT.Text = "Q1\rA quick brown fox A quick brown fox A quick brown fox A quick brown fox\rB\rC\r\rQ2\rA quick braun fixes A quick brown fox A quick brown fox A quick brown fox\rC\rB";
     }
 
-    public List<WordParagraph> GetDocumentParagraphs(string docPath)
+    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token)
     {
       return new List<WordParagraph>();
     }

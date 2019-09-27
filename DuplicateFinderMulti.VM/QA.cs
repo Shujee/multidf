@@ -15,5 +15,19 @@ namespace DuplicateFinderMulti.VM
 
     public int Start { get; set; }
     public int End { get; set; }
+    public string Doc { get; set; }
+
+    public override bool Equals(object obj)
+    {
+      if (obj == null || GetType() != obj.GetType())
+        return false;
+
+      return this.Doc == ((QA)obj).Doc && this.Index == ((QA)obj).Index;    
+    }
+
+    public override int GetHashCode()
+    {     
+      return (this.Doc + this.Index.ToString()).GetHashCode();
+    }
   }
 }

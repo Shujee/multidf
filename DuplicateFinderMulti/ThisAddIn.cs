@@ -5,6 +5,7 @@ using Microsoft.Office.Interop.Word;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using Word = Microsoft.Office.Interop.Word;
 
@@ -178,7 +179,7 @@ namespace DuplicateFinderMulti
     /// </summary>
     /// <param name="docPath"></param>
     /// <returns></returns>
-    public List<WordParagraph> GetDocumentParagraphs(string docPath)
+    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token)
     {
       if(!string.IsNullOrEmpty(docPath) && System.IO.File.Exists(docPath))
       {
@@ -208,10 +209,15 @@ namespace DuplicateFinderMulti
           
 
           Result.Add(new WordParagraph(p.Range.Text, p.Range.Start, p.Range.End, PType));
+
+          if (token.IsCancellationRequested)
+            break;
         }
 
-        if(!AlreadyOpen)
-          Doc.Close(SaveChanges: false);
+        if (!AlreadyOpen)
+        {
+          System.Threading.Tasks.Task.Run(() => Doc.Close(SaveChanges: false));
+        }
 
         return Result;
       }

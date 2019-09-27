@@ -19,7 +19,7 @@ namespace DuplicateFinderMulti.VM
     private char[] TrimChars = new char[] { '\r', '\n', '\a',  ' ', '\t' };
 
 
-  public List<QA> Extract(List<WordParagraph> paragraphs, CancellationToken tok)
+  public List<QA> Extract(List<WordParagraph> paragraphs, CancellationToken token)
     {
       if (paragraphs == null || paragraphs.Count == 0)
         return null;
@@ -43,7 +43,8 @@ namespace DuplicateFinderMulti.VM
         if(QA != null)
           Result.Add(QA);
 
-        tok.ThrowIfCancellationRequested();
+        if (token.IsCancellationRequested)
+          break;
       }
 
       return Result;

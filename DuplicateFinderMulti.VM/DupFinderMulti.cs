@@ -4,11 +4,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
+using System.Collections.Concurrent;
+using System.IO;
+
+
 namespace DuplicateFinderMulti.VM
 {
-  class DupFinder : IDupFinder
+  class DupFinderMulti : IDupFinder
   {
-    public List<WordParagraph[]> Find(List<WordParagraph> paras, int maxDistance, bool ignoreCase, int? minParaLength, Action<int, int, string, bool> updateStatusLabel, CancellationToken tok)
+    public List<WordParagraph[]> Find(XMLDoc p, int maxDistance, bool ignoreCase, Action<int, int, string, bool> updateStatusLabel, CancellationToken tok)
     {
       Func<string, string, int> DistFunc;
 
@@ -17,15 +21,9 @@ namespace DuplicateFinderMulti.VM
       else
         DistFunc = CalcLevenshteinDistance;
 
-      if (paras.Count > 1)
+      if (p.QAs.Count > 1)
       {
         updateStatusLabel(20, 100, "Filtering small paragraphs", true);
-
-        if (minParaLength.HasValue)
-        {
-          //Drop all paragraphs that are shorter than min. paragraph length setting.
-          paras.RemoveAll(p => p.Text.Length < minParaLength.Value);
-        }
 
         Dictionary<WordParagraph, List<WordParagraph>> Neighbors = new Dictionary<WordParagraph, List<WordParagraph>>();
         
@@ -34,20 +32,20 @@ namespace DuplicateFinderMulti.VM
         Stopwatch MyStopwatch = new Stopwatch();
         MyStopwatch.Start();
 
-        for (int i = 0; i < paras.Count; i++)
+        for (int i = 0; i < p.QAs.Count; i++)
         {
-          var MyGroup = Neighbors.FirstOrDefault(n => (DistFunc(n.Key.Text, paras[i].Text) / (float)paras[i].Text.Length) * 100 < maxDistance);
+          var MyGroup = Neighbors.FirstOrDefault(n => (DistFunc(n.Key.Text, p.QAs[i].Question) / (float)p.QAs[i].Question.Length) * 100 < maxDistance);
 
           if (MyGroup.Key != null)
           {
-            MyGroup.Value.Add(paras[i]);
-            paras[i].Distance = (int)Math.Round((DistFunc(MyGroup.Key.Text, paras[i].Text) / (float)paras[i].Text.Length) * 100, 0);
+            MyGroup.Value.Add(p.QAs[i]);
+            paras[i].Distance = (int)Math.Round((DistFunc(MyGroup.Key.Text, p.QAs[i].Question) / (float)p.QAs[i].Question.Length) * 100, 0);
           }
           else
           {
             var NewList = new List<WordParagraph> { paras[i] };
             Neighbors.Add(paras[i], NewList);
-            paras[i].Distance = 0;
+            p.QAs[i].Distance = 0;
           }
 
           var Timespent = MyStopwatch.Elapsed.ToString(@"hh\:mm\:ss");
@@ -68,8 +66,8 @@ namespace DuplicateFinderMulti.VM
       {
         List<WordParagraph[]> NewList = new List<WordParagraph[]>();
 
-        if(paras.Count > 0)
-          NewList.Add(new[] { paras[0] });
+        if(p.QAs.Count > 0)
+          NewList.Add(new[] { p.QAs[0] });
 
         return NewList;
       }
@@ -153,4 +151,66 @@ namespace DuplicateFinderMulti.VM
       return distances[lengthA, lengthB];
     }
   }
+
+
+  
+  class aabc
+  {
+    public partial class Form2 : Form
+    {
+      public string startfiledir { get; private set; }
+      public string[] fileContent { get; private set; }
+      public string saveFolder { get; private set; }
+      public string filePath { get; private set; }
+
+      private ConcurrentDictionary<string, StreamWriter> writers = new ConcurrentDictionary<string, StreamWriter>();
+
+      OpenFileDialog openFileDialog = new OpenFileDialog();
+
+      private void Button1_Click(object sender, EventArgs e)
+      {
+
+        this.button1.Enabled = false;
+        Refresh();
+
+        openFileDialog.InitialDirectory = startfiledir;
+        openFileDialog.Filter = "txt files (*.txt)|*.txt";
+        openFileDialog.FilterIndex = 2;
+        openFileDialog.RestoreDirectory = true;
+
+        openFileDialog.ShowDialog();
+
+        //Get the path of specified file
+        filePath = openFileDialog.FileName;
+
+        fileContent = File.ReadAllLines(filePath);
+
+        //show the button again
+        this.button1.Enabled = Enabled;
+        Refresh();
+
+
+      }
+
+
+      private void SplitDatabutton_Click(object sender, EventArgs e)
+      {
+        //float splitNum = Int32.Parse(numToSplit.Text);
+        float splitNum = 100000;
+
+        var Tasks = System.Threading.Tasks.Parallel.For(0, fileContent.Length, (i) =>
+        {
+          string MyFile = Path.Combine(saveFolder, ((int)(i / ((float)splitNum))).ToString("0000") + ".txt");
+          writers.GetOrAdd(MyFile, File.AppendText(MyFile)).WriteLine(fileContent[i]);
+        });
+
+        foreach (var writer in writers)
+        {
+          writer.Value.Close();
+        }
+      }
+    }
+  }
 }
+
+

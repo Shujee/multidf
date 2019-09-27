@@ -11,13 +11,23 @@ namespace DuplicateFinderMulti.VM
 {
   public class XMLDoc : ObservableObject
   {
+    //This class allows QA Update process to be cancelled at any stage. The following token objects provide task cancellation mechanism.
+    private CancellationTokenSource _TokenSource;
+    private CancellationToken _Token;
+
+    public XMLDoc()
+    {
+      _TokenSource = new CancellationTokenSource();
+      _Token = _TokenSource.Token;
+    }
+
     private string _Name;
     public string Name
     {
       get => _Name;
       set => Set(ref _Name, value);
     }
-    
+
     private string _SourcePath;
     public string SourcePath
     {
@@ -28,7 +38,7 @@ namespace DuplicateFinderMulti.VM
         RaisePropertyChanged(nameof(IsSyncWithSource));
       }
     }
-    
+
     private long _Size;
     public long Size
     {
@@ -86,7 +96,7 @@ namespace DuplicateFinderMulti.VM
 
           string Errors = "";
 
-          if(fileInfo.LastWriteTimeUtc != LastModified)
+          if (fileInfo.LastWriteTimeUtc != LastModified)
           {
             Errors += "Last Modified Date (local): " + LastModified.ToString();
             Errors += Environment.NewLine + "Last Modified Date (source): " + fileInfo.LastWriteTimeUtc.ToString();
@@ -119,7 +129,7 @@ namespace DuplicateFinderMulti.VM
             else
               ViewModelLocator.DialogService.ShowMessage("Source document does not exist.", true);
           },
-          () => !string.IsNullOrEmpty( _SourcePath) && System.IO.File.Exists(_SourcePath));
+          () => !string.IsNullOrEmpty(_SourcePath) && System.IO.File.Exists(_SourcePath));
         }
 
         return _OpenSourceCommand;
@@ -130,11 +140,26 @@ namespace DuplicateFinderMulti.VM
     {
       if (!string.IsNullOrEmpty(_SourcePath) && System.IO.File.Exists(_SourcePath))
       {
-        CancellationToken c = new CancellationToken();
-        var Paragraphs = ViewModelLocator.WordService.GetDocumentParagraphs(_SourcePath);
-        QAs = ViewModelLocator.QAExtractionStrategy.Extract(Paragraphs, c);
-        RaisePropertyChanged(nameof(Paragraphs));
+        Task.Run(() =>
+        {
+          
+          var Paragraphs = ViewModelLocator.WordService.GetDocumentParagraphs(_SourcePath, _Token);
+          QAs = ViewModelLocator.QAExtractionStrategy.Extract(Paragraphs, _Token);
+
+          if (QAs != null)
+          {
+            foreach (var QA in QAs)
+              QA.Doc = this._SourcePath;
+          }
+
+          RaisePropertyChanged(nameof(QAs));
+        });
       }
+    }
+
+    public void CancelUpdateQAs()
+    {
+      _TokenSource.Cancel();
     }
   }
 }

@@ -143,6 +143,28 @@ namespace DuplicateFinderMulti.VM
     }
 
 
+    private RelayCommand _UpdateQAsCommand;
+    public RelayCommand UpdateQAsCommand
+    {
+      get
+      {
+        if (_UpdateQAsCommand == null)
+        {
+          _UpdateQAsCommand = new RelayCommand(() =>
+          {
+            foreach (var Doc in this.XMLDocs)
+              Doc.UpdateQAs();
+          },
+          () => true);
+        }
+
+        return _UpdateQAsCommand;
+      }
+    }
+
+
+
+
     public static Project FromXML(string xml)
     {
       return xml.Deserialize<Project>();

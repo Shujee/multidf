@@ -1,11 +1,12 @@
 ﻿using DuplicateFinderMulti.VM;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace DuplicateFinderMulti.Views
 {
   public class DummyWordService : IWordService
   {
-    public List<WordParagraph> GetDocumentParagraphs(string docPath)
+    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token)
     {
       List<WordParagraph> Result = new List<WordParagraph>();
 
