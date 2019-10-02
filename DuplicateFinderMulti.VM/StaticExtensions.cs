@@ -4,6 +4,8 @@ using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.Linq;
+using QuickGraph;
+using System.Collections.Generic;
 
 namespace DuplicateFinderMulti.VM
 {
@@ -12,12 +14,26 @@ namespace DuplicateFinderMulti.VM
   /// </summary>
   public static class StaticExtensions
   {
-    private static Type[] AllObjectTypes = {
-      typeof(XMLDoc),
-      typeof(QA),
+    /// <summary>
+    /// This setting is required to prevent exceptions that are thrown by the serialization when it encounters control characters used by
+    /// Microsoft Word to denote newlines and non-breaking newlines.
+    /// </summary>
+    private static readonly XmlWriterSettings xmlWriterSettingsForWordDocs = new XmlWriterSettings()
+    {
+      NewLineChars = "\a\r\n",
+      CheckCharacters = false,
+      Encoding = System.Text.Encoding.UTF8,
+      NewLineHandling = NewLineHandling.Entitize,
     };
 
-    private static DataContractSerializer DSSerializer = new DataContractSerializer(typeof(Project), AllObjectTypes, 0x7fff, false, true, null);
+    private static readonly Type[] AllObjectTypes = {
+      typeof(QA),
+      typeof(XMLDoc),
+      typeof(DFResultRow),
+      typeof(DFResult),
+    };
+
+    private static readonly DataContractSerializer DSSerializer = new DataContractSerializer(typeof(Project), AllObjectTypes, 0x7fff, false, true, null);
 
     /// <summary>
     /// Exports the contents of this list to XML.
@@ -25,18 +41,18 @@ namespace DuplicateFinderMulti.VM
     /// <param name="selectedOnly">If True, only selected objects are exported, otherwise the entire list is exported.</param>
     /// <returns></returns>
     /// <remarks></remarks>
-    public static string SerializeDC(this object drawing)
+    public static string SerializeDC(this object obj)
     {
-      XmlSerializerNamespaces Namespaces = new XmlSerializerNamespaces();
-      Namespaces.Add(string.Empty, string.Empty);
-
       System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
       using (StringWriter writer = new StringWriter(sb))
       {
-        using (XmlWriter xmlWriter = XmlWriter.Create(writer, new XmlWriterSettings { Indent = false, OmitXmlDeclaration = true }))
+        using (XmlWriter xmlWriter = XmlWriter.Create(writer, xmlWriterSettingsForWordDocs))
         {
-          DSSerializer.WriteObject(xmlWriter, drawing);
+          DSSerializer.WriteStartObject(xmlWriter, obj);
+          DSSerializer.WriteObjectContent(xmlWriter, obj);
+          DSSerializer.WriteEndObject(xmlWriter);
+
           xmlWriter.Close();
         }
 
@@ -50,11 +66,11 @@ namespace DuplicateFinderMulti.VM
     {
       try
       {
-        var X = XElement.Parse(xml);
+        StringReader s = new StringReader(xml);
 
-        using (var XReader = X.CreateReader())
+        using (var reader = XmlReader.Create(s, new XmlReaderSettings() { CheckCharacters = false }))
         {
-          return (T)DSSerializer.ReadObject(XReader);
+          return (T)DSSerializer.ReadObject(reader, true);
         }
       }
       catch
@@ -71,7 +87,7 @@ namespace DuplicateFinderMulti.VM
       {
         var xmlserializer = new XmlSerializer(value.GetType());
         var stringWriter = new StringWriter();
-        using (var writer = XmlWriter.Create(stringWriter, new XmlWriterSettings() { NewLineChars = "\a\r\n", CheckCharacters = false, Encoding = System.Text.Encoding.UTF8, NewLineHandling = NewLineHandling.Entitize }))
+        using (var writer = XmlWriter.Create(stringWriter, xmlWriterSettingsForWordDocs))
         {
           xmlserializer.Serialize(writer, value);
           return stringWriter.ToString();
@@ -84,7 +100,7 @@ namespace DuplicateFinderMulti.VM
       using (StringReader s = new StringReader(xml))
       {
         using (XmlReader reader = XmlReader.Create(s, new XmlReaderSettings() { CheckCharacters = false }))
-        { 
+        {
           return (T)new XmlSerializer(typeof(T)).Deserialize(reader);
         }
       }

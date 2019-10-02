@@ -4,8 +4,13 @@ using System.Linq;
 
 namespace DuplicateFinderMulti.VM
 {
-  class DefaultQAComparer : IQAComparer
+  public class DefaultQAComparer : IQAComparer
   {
+    /// <summary>
+    /// Weight of the Choices section when computing distance between two QAs.
+    /// </summary>
+    public double ChoiceSectionWeightage => .1;
+
     public double Distance(QA q1, QA q2, bool ignoreCase)
     {
       Func<string, string, int> DistFunc;
@@ -19,16 +24,23 @@ namespace DuplicateFinderMulti.VM
 
       var ChoicesDist = CalcSetDistance(q1.Choices, q2.Choices, DistFunc);
 
-      return QDist + ChoicesDist;
+      return QDist * (1 - ChoiceSectionWeightage) + ChoicesDist * ChoiceSectionWeightage;
     }
 
     private double CalcSetDistance(List<string> choices1, List<string> choices2, Func<string, string, int> distFunction)
     {
-      //for each choice in first list, we'll try to find its closest cousin in the second list
-      if (choices1.Count >= choices2.Count)
-        return choices1.Select(c1 => choices2.Min(c2 => distFunction(c1, c2) / (float)Math.Max(c1.Length, c2.Length))).Average();
+      if (choices1.Count == 0 && choices2.Count == 0)
+        return 0;
+      else if (choices1.Count == 0 || choices2.Count == 0)
+        return 1;
       else
-        return choices2.Select(c2 => choices1.Min(c1 => distFunction(c1, c2) / (float)Math.Max(c1.Length, c2.Length))).Average();
+      {
+        //for each choice in first list, we'll try to find its closest cousin in the second list
+        if (choices1.Count >= choices2.Count)
+          return choices1.Select(c1 => choices2.Min(c2 => distFunction(c1, c2) / (float)Math.Max(c1.Length, c2.Length))).Average();
+        else
+          return choices2.Select(c2 => choices1.Min(c1 => distFunction(c1, c2) / (float)Math.Max(c1.Length, c2.Length))).Average();
+      }
     }
 
     /// <summary>   bnvLevenshtein Distance is a measure of similarity between two string.

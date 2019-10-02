@@ -125,6 +125,7 @@
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibsStd10.5.4.1.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -136,17 +137,21 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AboutVM.cs" />
+    <Compile Include="DefaultDocComparer.cs" />
     <Compile Include="DefaultQAExtractionStrategy.cs" />
     <Compile Include="DFResult.cs" />
     <Compile Include="DiffVM.cs" />
     <Compile Include="Interfaces\IDupFinder.cs" />
-    <Compile Include="IQAComparer.cs" />
-    <Compile Include="IQAExtractionStrategy.cs" />
+    <Compile Include="Interfaces\IDocComparer.cs" />
+    <Compile Include="Interfaces\IQAComparer.cs" />
+    <Compile Include="Interfaces\IQAExtractionStrategy.cs" />
+    <Compile Include="OurEdge.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Interfaces\IWordService.cs" />
     <Compile Include="QA.cs" />
     <Compile Include="QAComparer.cs" />
     <Compile Include="StaticExtensions.cs" />
+    <Compile Include="UnitTestDetector.cs" />
     <Compile Include="XMLDoc.cs" />
     <Compile Include="RegisterVM.cs" />
     <Compile Include="MainVM.cs" />

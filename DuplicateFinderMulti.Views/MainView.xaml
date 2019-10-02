@@ -1,22 +1,34 @@
 ﻿<UserControl x:Class="DuplicateFinderMulti.Views.MainView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:DuplicateFinderMulti.Views"
              xmlns:vm="clr-namespace:DuplicateFinderMulti.VM;assembly=DuplicateFinderMulti.VM"
-             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-             xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="350"
              d:DataContext="{d:DesignInstance Type=vm:MainVM, IsDesignTimeCreatable=True}"
              DataContext="{Binding Source={x:Static vm:ViewModelLocator.Main}}">
   <Grid>
     <Grid.Resources>
-      <BooleanToVisibilityConverter x:Key="B2VConverter" />
-      <local:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
+      <ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries>
+          <ResourceDictionary Source="StretchedTreeViewItemStyle.xaml" />
+        </ResourceDictionary.MergedDictionaries>
+
+        <BooleanToVisibilityConverter x:Key="B2VConverter" />
+        <local:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
         <local:ConnectionStatusToStringConverter x:Key="ConnectionStatusToStringConverter" />
-      <local:DistanceToColorConverter x:Key="DistanceToColorConverter" />
+        <local:DistanceToColorConverter x:Key="DistanceToColorConverter" />
+        <local:PathToFileNameConverter x:Key="PathToFileNameConverter" />
+        <local:GraphToEdgeTagConverter x:Key="GraphToEdgeTagConverter" />
+
+        <Style TargetType="Button" x:Key="ToolbarButton">
+          <Setter Property="Padding" Value="6" />
+          <Setter Property="FontSize" Value="24" />
+        </Style>
+      </ResourceDictionary>
     </Grid.Resources>
 
     <Grid.RowDefinitions>
@@ -24,28 +36,32 @@
       <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
       <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
     <ToolBar>
-      <Button Command="{Binding NewCommand}" fa:Awesome.Content="FileOutline" ToolTip="Create a new Project" FontSize="18" />
-      <Button Command="{Binding OpenCommand}" fa:Awesome.Content="FolderOutlinepenOutline" ToolTip="Open an existing project" FontSize="18" />
-      <Button Command="{Binding SelectedProject.SaveCommand}" fa:Awesome.Content="Save" ToolTip="Save current project" FontSize="18" />
+      <Button Command="{Binding NewCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="FileOutline" ToolTip="Create a new Project" />
+      <Button Command="{Binding OpenCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="FolderOutlinepenOutline" ToolTip="Open an existing project" />
+      <Button Command="{Binding SelectedProject.SaveCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="Save" ToolTip="Save current project" />
       <Separator/>
-      <Button Command="{Binding SelectedProject.AddDocsCommand}" fa:Awesome.Content="PlusSquareOutline" ToolTip="Add one or more documents to current project" FontSize="18" />
-      <Button Command="{Binding SelectedProject.RemoveSelectedDocCommand}" fa:Awesome.Content="MinusSquareOutline" ToolTip="Remove selected document from current project" FontSize="18" />
+      <Button Command="{Binding SelectedProject.AddDocsCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="PlusSquareOutline" ToolTip="Add one or more documents to current project" />
+      <Button Command="{Binding SelectedProject.RemoveSelectedDocCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="MinusSquareOutline" ToolTip="Remove selected document from current project" />
 
-      <Button Command="{Binding SelectedProject.UpdateQAsCommand}" fa:Awesome.Content="Refresh" ToolTip="Updates the list of QAs of all documents in the current project" FontSize="18" />
+      <Button Command="{Binding SelectedProject.UpdateQAsCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="Refresh" ToolTip="Updates the list of QAs of all documents in the current project" />
+
+      <Separator/>
+      <Button Command="{Binding SelectedProject.ProcessCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="Flash" ToolTip="Starts finding duplicates in the current project" />
+      <Button Command="{Binding SelectedProject.AbortProcessCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="Close" ToolTip="Starts finding duplicates in the current project" />
     </ToolBar>
 
     <Border BorderBrush="Gray" Background="LightYellow" Grid.Row="1">
-      <TextBlock Margin="12,6" FontSize="18" TextTrimming="CharacterEllipsis">
-        <Run Text="Project:" />
+      <TextBlock Margin="12,6" FontSize="18" TextTrimming="CharacterEllipsis" HorizontalAlignment="Center">
         <Run Text="{Binding SelectedProject.Name}" FontWeight="Bold" />
       </TextBlock>
-      
     </Border>
 
-    <ListBox Grid.Row="2" ItemsSource="{Binding SelectedProject.XMLDocs}" SelectedItem="{Binding SelectedProject.SelectedDoc}">
+    <ListBox Grid.Row="2" ItemsSource="{Binding SelectedProject.AllXMLDocs}" SelectedItem="{Binding SelectedProject.SelectedDoc}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
       <ListBox.ItemContainerStyle>
         <Style TargetType="ListBoxItem">
           <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -53,10 +69,9 @@
       </ListBox.ItemContainerStyle>
       <ListBox.ItemTemplate>
         <DataTemplate>
-          <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="3" Padding="3">
+          <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" CornerRadius="3" Padding="3">
             <Grid>
               <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="32" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -67,16 +82,17 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
               </Grid.RowDefinitions>
 
-              <fa:FontAwesome Icon="FileWordOutline" Foreground="Blue" FontSize="20" VerticalAlignment="Center" />
+              <fa:FontAwesome Icon="FileWordOutline" Foreground="Blue" FontSize="20" VerticalAlignment="Center" Margin="12,6" />
               <TextBlock Text="{Binding Name}" Grid.Column="1" FontWeight="Bold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
               <TextBlock Text="{Binding LastModified}" Grid.Row="1" Grid.Column="1" TextTrimming="CharacterEllipsis" />
 
-              <Button Command="{Binding OpenSourceCommand}" fa:Awesome.Content="FolderOpen" ToolTip="Click to open source document" FontSize="14" Grid.Column="3" Foreground="Orange" 
+              <Button Command="{Binding OpenSourceCommand}" fa:Awesome.Content="FolderOpen" ToolTip="Click to open source document" FontSize="14" Grid.Column="2" Foreground="Orange" 
                       Background="{x:Null}" BorderBrush="{x:Null}" Style="{DynamicResource ImageButtonStyle}" Margin="3" Grid.RowSpan="2" VerticalAlignment="Center" />
 
-              <fa:FontAwesome FontSize="14" Grid.Column="4" Margin="3" Grid.RowSpan="2" VerticalAlignment="Center">
+              <fa:FontAwesome FontSize="14" Grid.Column="3" Margin="3" Grid.RowSpan="2" VerticalAlignment="Center">
                 <fa:FontAwesome.Style>
                   <Style TargetType="fa:FontAwesome">
                     <Style.Triggers>
@@ -95,17 +111,112 @@
                 </fa:FontAwesome.Style>
               </fa:FontAwesome>
 
-              <Border BorderBrush="WhiteSmoke" BorderThickness="1" CornerRadius="25" Padding="3,2" Margin="3" Grid.Column="5" Grid.RowSpan="2" MinWidth="30" MinHeight="30" 
+              <Border BorderBrush="WhiteSmoke" BorderThickness="1" CornerRadius="25" Padding="3,2" Margin="3" Grid.Column="4" Grid.RowSpan="2" MinWidth="30" MinHeight="30" 
                       HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Number of Questions in this document" Background="DodgerBlue">
                 <Label Content="{Binding QAs.Count}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
               </Border>
+
+              <ProgressBar Value="{Binding ProcessingProgress}" Margin="0,3" Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="4" Height="5" />
             </Grid>
           </Border>
         </DataTemplate>
       </ListBox.ItemTemplate>
     </ListBox>
 
-    <StatusBar Grid.Row="4" Height="30">
+    <GridSplitter Grid.Row="3" Height="5"  ResizeBehavior="PreviousAndNext" Background="DarkGray" HorizontalAlignment="Stretch" />
+
+    <TreeView Grid.Row="4" ItemsSource="{Binding SelectedProject.Graph, Converter={StaticResource GraphToEdgeTagConverter}}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+      <TreeView.ItemContainerStyle>
+        <Style TargetType="TreeViewItem" BasedOn="{StaticResource StretchedTreeViewItemStyle}">
+          <Setter Property="IsExpanded" Value="True" />
+          <Setter Property="HorizontalAlignment" Value="Stretch" />
+          <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+      </TreeView.ItemContainerStyle>
+
+      <TreeView.ItemTemplate>
+        <HierarchicalDataTemplate DataType="vm:DFResult" ItemsSource="{Binding Items}">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="120" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+              <fa:FontAwesome Icon="FileWordOutline" Foreground="Blue" FontSize="14" VerticalAlignment="Center" Margin="3" />
+              <TextBlock VerticalAlignment="Center" Margin="0,3" Width="150" TextTrimming="CharacterEllipsis">
+              <Run Text="{Binding Doc1.SourcePath, Converter={StaticResource PathToFileNameConverter}}" />
+              (QAs: <Run Text="{Binding Count1, Mode=OneWay}" />)
+              </TextBlock>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center">
+              <fa:FontAwesome Icon="FileWordOutline" Foreground="Blue" FontSize="14" VerticalAlignment="Center" Margin="3" Grid.Column="2" />
+              <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="0,3" Width="150" TextTrimming="CharacterEllipsis">
+              <Run Text="{Binding Doc2.SourcePath, Converter={StaticResource PathToFileNameConverter}}" />
+              (QAs: <Run Text="{Binding Count2, Mode=OneWay}" />)
+              </TextBlock>
+            </StackPanel>
+
+            <Border BorderBrush="Green" BorderThickness="1" CornerRadius="5" Grid.Column="4" Margin="3"
+                            HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="Number of Questions in this document" >
+              <TextBlock Text="{Binding Count, StringFormat='Total Matches: {0}'}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Green" Margin="3" />
+            </Border>
+          </Grid>
+
+          <HierarchicalDataTemplate.ItemContainerStyle>
+            <Style TargetType="TreeViewItem" BasedOn="{StaticResource StretchedTreeViewItemStyle}">
+              <Setter Property="IsExpanded" Value="True" />
+              <Setter Property="HorizontalAlignment" Value="Stretch" />
+              <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+              <Setter Property="Margin" Value="0" />
+              <Setter Property="Padding" Value="0" />
+            </Style>
+          </HierarchicalDataTemplate.ItemContainerStyle>
+
+
+          <HierarchicalDataTemplate.ItemTemplate>
+            <DataTemplate DataType="vm:DFResultRow">
+              <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" CornerRadius="3">
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="120" />
+                  </Grid.ColumnDefinitions>
+
+                  <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <fa:FontAwesome Icon="PuzzlePiece" FontSize="14" VerticalAlignment="Center" Margin="9,3" />
+                    <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="0,3" Width="100">
+                    <Hyperlink NavigateUri="{Binding Q1.Doc.SourcePath}" RequestNavigate="Hyperlink_RequestNavigate">
+                      Question <Run Text="{Binding Q1.Index, Mode=OneWay}" />
+                    </Hyperlink>
+                    </TextBlock>
+                  </StackPanel>
+
+                  <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center">
+                    <fa:FontAwesome Icon="PuzzlePiece" FontSize="14" VerticalAlignment="Center" Margin="9,3" />
+                    <TextBlock VerticalAlignment="Center">
+                    <Hyperlink NavigateUri="{Binding Q2.Doc.SourcePath}" RequestNavigate="Hyperlink_RequestNavigate2">
+                      Question <Run Text="{Binding Q2.Index, Mode=OneWay}" />
+                    </Hyperlink>
+                    </TextBlock>
+                  </StackPanel>
+
+                  <Border BorderBrush="DodgerBlue" BorderThickness="1" CornerRadius="5" Grid.Column="5" 
+                            HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="Number of Questions in this document" Margin="3" >
+                    <TextBlock Text="{Binding Distance, StringFormat={}{0:P0}}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="DodgerBlue" Margin="3" />
+                  </Border>
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </HierarchicalDataTemplate.ItemTemplate>
+        </HierarchicalDataTemplate>
+      </TreeView.ItemTemplate>
+    </TreeView>
+
+    <StatusBar Grid.Row="5" Height="30">
       <StatusBar.ItemsPanel>
         <ItemsPanelTemplate>
           <Grid>

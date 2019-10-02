@@ -1,4 +1,5 @@
 ﻿using DuplicateFinderMulti.VM;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -6,7 +7,7 @@ namespace DuplicateFinderMulti.Views
 {
   public class DummyWordService : IWordService
   {
-    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token)
+    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token, Action<int, int> progressCallback)
     {
       List<WordParagraph> Result = new List<WordParagraph>();
 
@@ -18,13 +19,14 @@ namespace DuplicateFinderMulti.Views
         var WP = new WordParagraph(Line, i, i + Line.Length, ParagraphType.Text);
         i = WP.End + 1;
 
+        progressCallback?.Invoke(i, Lines.Length);
         Result.Add(WP);
       }
 
       return Result;
     }
 
-    public void OpenDocument(string docPath)
+    public void OpenDocument(string docPath, int? start)
     {
       
     }

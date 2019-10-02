@@ -11,14 +11,14 @@ namespace DuplicateFinderMulti.TestingShell
 {
   class TestWordService : VM.IWordService
   {
-    Application App;
+    private readonly Application App;
 
     public TestWordService()
     {
       App = new Application();
     }
 
-    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token)
+    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token, Action<int, int> progressCallback)
     {
       if (!string.IsNullOrEmpty(docPath) && System.IO.File.Exists(docPath))
       {
@@ -26,6 +26,7 @@ namespace DuplicateFinderMulti.TestingShell
 
         var Doc = App.Documents.Open(docPath, ReadOnly: true, AddToRecentFiles: false, Visible: false);
 
+        int i = 0;
         foreach (Paragraph p in Doc.Paragraphs)
         {
           var PType = ParagraphType.Text;
@@ -42,6 +43,7 @@ namespace DuplicateFinderMulti.TestingShell
 
 
           Result.Add(new WordParagraph(p.Range.Text, p.Range.Start, p.Range.End, PType));
+          progressCallback?.Invoke(i++, Doc.Paragraphs.Count);
         }
 
         Doc.Close(SaveChanges: false);
@@ -52,12 +54,15 @@ namespace DuplicateFinderMulti.TestingShell
         return null;
     }
 
-    public void OpenDocument(string docPath)
+    public void OpenDocument(string docPath, int? start)
     {
       var Doc = App.Documents.Cast<Document>().FirstOrDefault(d => d.FullName == docPath);
 
       if (Doc == null)
         Doc = App.Documents.Open(docPath);
+
+      if (start != null)
+        App.Selection.Start = start.Value;
     }
   }
 }

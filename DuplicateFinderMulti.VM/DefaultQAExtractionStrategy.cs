@@ -15,7 +15,7 @@ namespace DuplicateFinderMulti.VM
     }
 
     //This RegEx will find Question Number paragraphs
-    private Regex RE_QNumberWithHardReturn = new Regex(@"^(((?<Index>\d+)\.)|([Q](?<Index>\d+)\.?))\s*[\r\n\x0B]", RegexOptions.ExplicitCapture);
+    private Regex RE_QNumberWithHardReturn = new Regex(@"^(((?<Index>\d+)\s*\.)|([Q]\s*(?<Index>\d+)\s*\.?))\s*[\r\n\x0B]", RegexOptions.ExplicitCapture);
     private char[] TrimChars = new char[] { '\r', '\n', '\a',  ' ', '\t' };
 
 

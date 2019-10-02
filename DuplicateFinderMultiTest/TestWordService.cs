@@ -11,14 +11,14 @@ namespace DuplicateFinderMulti.Test
 {
   class TestWordService : VM.IWordService
   {
-    Application App;
+    private readonly Application App;
 
     public TestWordService()
     {
       App = new Application();
     }
 
-    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token)
+    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token, Action<int, int> progressCallback)
     {
       if (!string.IsNullOrEmpty(docPath) && System.IO.File.Exists(docPath))
       {
@@ -26,6 +26,7 @@ namespace DuplicateFinderMulti.Test
 
         var Doc = App.Documents.Open(docPath, ReadOnly: true, AddToRecentFiles: false, Visible: false);
 
+        int i = 0;
         foreach (Paragraph p in Doc.Paragraphs)
         {
           var PType = ParagraphType.Text;
@@ -42,6 +43,7 @@ namespace DuplicateFinderMulti.Test
 
 
           Result.Add(new WordParagraph(p.Range.Text, p.Range.Start, p.Range.End, PType));
+          progressCallback?.Invoke(i, Doc.Paragraphs.Count);
         }
 
         Doc.Close(SaveChanges: false);
@@ -52,7 +54,7 @@ namespace DuplicateFinderMulti.Test
         return null;
     }
 
-    public void OpenDocument(string docPath)
+    public void OpenDocument(string docPath, int? start)
     {
       
     }

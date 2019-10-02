@@ -1,7 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using System.Diagnostics;
-using System.Threading;
 
 namespace DuplicateFinderMulti.VM
 {
@@ -18,51 +16,65 @@ namespace DuplicateFinderMulti.VM
         {
           IsDirty = false,
           Name = "Project 1",
-          XMLDocs = new System.Collections.ObjectModel.ObservableCollection<XMLDoc>()
+          AllXMLDocs = new System.Collections.ObjectModel.ObservableCollection<XMLDoc>()
         };
 
-        _SelectedProject.XMLDocs.Add(new XMLDoc()
+        _SelectedProject.AllXMLDocs.Add(new XMLDoc()
         {
-          Name = "Sample Question for DF Multi",
           LastModified = System.DateTime.Now.AddDays(-1),
           Size = 123456,
           SourcePath = @"F:\Office\Larry Gong\DuplicateFinder\Analysis\Sample Question for DF Multi.docx",
         });
 
-        _SelectedProject.XMLDocs.Add(new XMLDoc()
+        _SelectedProject.AllXMLDocs.Add(new XMLDoc()
         {
-          Name = "File 1 for DF.docx",
           LastModified = System.DateTime.Now.AddDays(-8),
           Size = 6487987,
           SourcePath = @"F:\Office\Larry Gong\DuplicateFinder\Analysis\File 1 for DF.docx",
         });
 
-        _SelectedProject.XMLDocs.Add(new XMLDoc()
+        _SelectedProject.AllXMLDocs.Add(new XMLDoc()
         {
-          Name = "File 2 for DF.docx",
           LastModified = System.DateTime.Now.AddDays(-15),
           Size = 6487987,
           SourcePath = @"F:\Office\Larry Gong\DuplicateFinder\Analysis\File 2 for DF.docx",
         });
 
-        _SelectedProject.XMLDocs.Add(new XMLDoc()
+        _SelectedProject.AllXMLDocs.Add(new XMLDoc()
         {
-          Name = "File 3 for DF.docx",
           LastModified = System.DateTime.Now.AddDays(-1),
           Size = 123456,
           SourcePath = @"F:\Office\Larry Gong\DuplicateFinder\Analysis\File 3 for DF.docx",
         });
 
-        _SelectedProject.XMLDocs.Add(new XMLDoc()
+        _SelectedProject.AllXMLDocs.Add(new XMLDoc()
         {
-          Name = "Doc that does not exist.docx",
           LastModified = System.DateTime.Now.AddDays(-8),
           Size = 6487987,
           SourcePath = @"F:\Office\Larry Gong\DuplicateFinder\Analysis\Doc that does not exist.docx",
         });
-      }
 
-      NewCommand.Execute(null);
+        //var DFRes1 = new DFResult("Doc1", "Doc2", 31, 12);
+        //DFRes1.AddResultRow(new QA() { Doc = "Doc1", Index = 51, Question = "Some very long string" }, new QA() { Doc = "Doc2", Index = 78, Question = "Another very long string" }, 1.4);
+        //DFRes1.AddResultRow(new QA() { Doc = "Doc1", Index = 51, Question = "Some very long string" }, new QA() { Doc = "Doc2", Index = 78, Question = "Another very long string" }, 1.4);
+        //DFRes1.AddResultRow(new QA() { Doc = "Doc1", Index = 51, Question = "Some very long string" }, new QA() { Doc = "Doc2", Index = 78, Question = "Another very long string" }, 1.4);
+        //_SelectedProject.Graph.AddEdge(new QuickGraph.OurEdge<XMLDoc, DFResult>(new XMLDoc { SourcePath = "Doc1" }, new XMLDoc { SourcePath = "Doc2" }, DFRes1));
+
+        //var DFRes2 = new DFResult("Doc1", "Doc2", 200, 155);
+        //DFRes2.AddResultRow(new QA() { Doc = "Doc1", Index = 23, Question = "Some very long string" }, new QA() { Doc = "Doc2", Index = 5, Question = "Another very long string" }, 0.6434);
+        //DFRes2.AddResultRow(new QA() { Doc = "Doc1", Index = 23, Question = "Some very long string" }, new QA() { Doc = "Doc2", Index = 5, Question = "Another very long string" }, 0.6434);
+        //_SelectedProject.Graph.AddEdge(new QuickGraph.OurEdge<XMLDoc, DFResult>(new XMLDoc { SourcePath = "Doc1" }, new XMLDoc { SourcePath = "Doc2" }, DFRes2));
+
+        //var DFRes3 = new DFResult("Doc1", "Doc2", 144, 27);
+        //DFRes3.AddResultRow(new QA() { Doc = "Doc1", Index = 36, Question = "Some very long string" }, new QA() { Doc = "Doc2", Index = 154, Question = "Another very long string" }, 0.8763);
+        //DFRes3.AddResultRow(new QA() { Doc = "Doc1", Index = 36, Question = "Some very long string" }, new QA() { Doc = "Doc2", Index = 154, Question = "Another very long string" }, 0.8763);
+        //DFRes3.AddResultRow(new QA() { Doc = "Doc1", Index = 36, Question = "Some very long string" }, new QA() { Doc = "Doc2", Index = 154, Question = "Another very long string" }, 0.8763);
+        //_SelectedProject.Graph.AddEdge(new QuickGraph.OurEdge<XMLDoc, DFResult>(new XMLDoc { SourcePath = "Doc1" }, new XMLDoc { SourcePath = "Doc2" }, DFRes3));
+      }
+      else
+      {
+        NewCommand.Execute(null);
+      }
     }
 
     protected Project _SelectedProject;
@@ -73,17 +85,20 @@ namespace DuplicateFinderMulti.VM
       {
         //unbind old project's event listener
         if(_SelectedProject!=null)
-          _SelectedProject.PropertyChanged -= _SelectedProject_PropertyChanged;
+          _SelectedProject.PropertyChanged -= SelectedProject_PropertyChanged;
 
         Set(ref _SelectedProject, value);
 
+        NewCommand.RaiseCanExecuteChanged();
+        OpenCommand.RaiseCanExecuteChanged();
+
         //bind new project's event listener
         if (_SelectedProject != null)
-          _SelectedProject.PropertyChanged -= _SelectedProject_PropertyChanged;
+          _SelectedProject.PropertyChanged -= SelectedProject_PropertyChanged;
       }
     }
 
-    private void _SelectedProject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    private void SelectedProject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
       if (e.PropertyName == nameof(Project.IsDirty))
       {
@@ -104,7 +119,7 @@ namespace DuplicateFinderMulti.VM
             SelectedProject = new Project() { Name = "New Project" };
             _SelectedProject.SavePath = null;
           },
-          () => _SelectedProject?.IsDirty??false == false);
+          () => (_SelectedProject?.IsDirty??false) == false);
         }
 
         return _NewCommand;
@@ -136,35 +151,7 @@ namespace DuplicateFinderMulti.VM
       }
     }
 
-    private RelayCommand _ProcessCommand;
-    public RelayCommand ProcessCommand
-    {
-      get
-      {
-        if (_ProcessCommand == null)
-        {
-          _ProcessCommand = new RelayCommand(() =>
-          {
-            IsProcessing = true;
-
-
-
-          },
-          () => _SelectedProject != null);
-        }
-
-        return _ProcessCommand;
-      }
-    }
-
     #region "Status"
-    private bool _IsProcessing = false;
-    public bool IsProcessing
-    {
-      get { return _IsProcessing; }
-      private set { Set(ref _IsProcessing, value); }
-    }
-
     private string _ProgressMessage;
     public string ProgressMessage
     {
@@ -177,19 +164,6 @@ namespace DuplicateFinderMulti.VM
     {
       get { return _ProgressValue; }
       set { Set(ref _ProgressValue, value); }
-    }
-
-    void UpdateStatusLabel(int currentStep, int totalSteps, string statusText, bool newMessage)
-    {
-      GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
-      {
-        if (newMessage)
-          ProgressMessage = statusText;
-        else
-          ProgressMessage = $"{statusText} (step {currentStep} of {totalSteps})";
-
-        ProgressValue = (100 * ((currentStep - 1) / (float)totalSteps));
-      });
     }
     #endregion
 
@@ -222,11 +196,11 @@ namespace DuplicateFinderMulti.VM
     //  set { Set(ref _Content, value); }
     //}
 
-    private CancellationTokenSource source;
-    private CancellationToken tok;
-    private Stopwatch _stopwatch = new Stopwatch();
+    //private CancellationTokenSource source;
+    //private CancellationToken tok;
+    //private Stopwatch _stopwatch = new Stopwatch();
 
-    private RelayCommand<bool> _StartCommand;
+    //private RelayCommand<bool> _StartCommand;
 
     /// <summary>
     /// Processes active Word document by splitting its text and then searching for similar chunks.

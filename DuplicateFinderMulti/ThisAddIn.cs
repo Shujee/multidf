@@ -179,7 +179,7 @@ namespace DuplicateFinderMulti
     /// </summary>
     /// <param name="docPath"></param>
     /// <returns></returns>
-    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token)
+    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token, Action<int, int> progressCallback)
     {
       if(!string.IsNullOrEmpty(docPath) && System.IO.File.Exists(docPath))
       {
@@ -193,6 +193,8 @@ namespace DuplicateFinderMulti
         else
           AlreadyOpen = true;
 
+        int i = 0;
+        int Total = Doc.Paragraphs.Count;
         foreach (Word.Paragraph p in Doc.Paragraphs)
         {
           var PType = ParagraphType.Text;
@@ -210,6 +212,8 @@ namespace DuplicateFinderMulti
 
           Result.Add(new WordParagraph(p.Range.Text, p.Range.Start, p.Range.End, PType));
 
+          progressCallback?.Invoke(i++, Total);
+
           if (token.IsCancellationRequested)
             break;
         }
@@ -218,6 +222,8 @@ namespace DuplicateFinderMulti
         {
           System.Threading.Tasks.Task.Run(() => Doc.Close(SaveChanges: false));
         }
+
+        progressCallback?.Invoke(Total, Total);
 
         return Result;
       }
@@ -234,7 +240,7 @@ namespace DuplicateFinderMulti
       return this.Application.ActiveDocument?.Paragraphs?.Count;
     }
 
-    public void OpenDocument(string docPath)
+    public void OpenDocument(string docPath, int? start)
     {
       var Doc = this.Application.Documents.Cast<Document>().FirstOrDefault(d => d.FullName == docPath);
 
@@ -242,6 +248,12 @@ namespace DuplicateFinderMulti
         Doc = this.Application.Documents.Open(docPath);
       else
         Doc.Activate();
+
+      if (start != null)
+      {
+        this.Application.Selection.Start = start.Value;
+        this.Application.ActiveWindow.ScrollIntoView(this.Application.Selection.Range);
+      }
     }
 
     #region VSTO generated code

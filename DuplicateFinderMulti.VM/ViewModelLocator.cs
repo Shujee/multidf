@@ -29,6 +29,7 @@ namespace DuplicateFinderMulti.VM
       //SimpleIoc.Default.Unregister<IDupFinder>();
       SimpleIoc.Default.Unregister<IQAExtractionStrategy>();
       SimpleIoc.Default.Unregister<IQAComparer>();
+      SimpleIoc.Default.Unregister<IDocComparer>();
 
       SimpleIoc.Default.Register<RegisterVM>();
       //SimpleIoc.Default.Register<DiffVM>();
@@ -36,6 +37,7 @@ namespace DuplicateFinderMulti.VM
       SimpleIoc.Default.Register<MainVM>();
       SimpleIoc.Default.Register<IQAExtractionStrategy, DefaultQAExtractionStrategy>();
       SimpleIoc.Default.Register<IQAComparer, DefaultQAComparer>();
+      SimpleIoc.Default.Register<IDocComparer, DefaultDocComparer>();
 
       SimpleIoc.Default.Register<AboutVM>();
       //SimpleIoc.Default.Register<IDupFinder, DupFinder>();
@@ -59,6 +61,7 @@ namespace DuplicateFinderMulti.VM
     public static AboutVM About => SimpleIoc.Default.GetInstance<AboutVM>();
 
     public static IQAExtractionStrategy QAExtractionStrategy => SimpleIoc.Default.GetInstance<IQAExtractionStrategy>();
+    public static IDocComparer DocComparer => SimpleIoc.Default.GetInstance<IDocComparer>();
     public static IQAComparer QAComparer => SimpleIoc.Default.GetInstance<IQAComparer>();
   }
 }

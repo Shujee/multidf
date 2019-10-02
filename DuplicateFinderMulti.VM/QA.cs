@@ -15,7 +15,7 @@ namespace DuplicateFinderMulti.VM
 
     public int Start { get; set; }
     public int End { get; set; }
-    public string Doc { get; set; }
+    public XMLDoc Doc { get; set; }
 
     public override bool Equals(object obj)
     {
@@ -26,8 +26,8 @@ namespace DuplicateFinderMulti.VM
     }
 
     public override int GetHashCode()
-    {     
-      return (this.Doc + this.Index.ToString()).GetHashCode();
+    {
+      return (Doc.SourcePath + (Index * 397)).GetHashCode();
     }
   }
 }

@@ -1,9 +1,11 @@
 ﻿using DiffPlex.DiffBuilder.Model;
+using DuplicateFinderMulti.VM;
+using QuickGraph;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
+using System.Linq;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Media;
 
 namespace DuplicateFinderMulti.Views
@@ -143,6 +145,49 @@ namespace DuplicateFinderMulti.Views
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
       throw new NotImplementedException();
+    }
+  }
+
+  /// <summary>
+  /// Extracts and returns file name part from a path
+  /// </summary>
+  [ValueConversion(typeof(string), typeof(string))]
+  public class PathToFileNameConverter : IValueConverter
+  {
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      var Path = (string)value;
+
+      if (!string.IsNullOrEmpty(Path))
+        return System.IO.Path.GetFileName(Path);
+      else
+        return "<None>";
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      throw new NotSupportedException();
+    }
+  }
+
+  /// <summary>
+  /// Takes an undirected tagged QuickGraph object and returns all the tags associated with its edges. Used to convert processing results graph
+  /// to list of DFResults for showing in Results Tree.
+  /// </summary>
+  [ValueConversion(typeof(UndirectedGraph<XMLDoc, OurEdge>), typeof(IEnumerable<DFResult>))]
+  public class GraphToEdgeTagConverter : IValueConverter
+  {
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      if (value is UndirectedGraph<XMLDoc, OurEdge> g)
+        return g.Edges.Select(e => e.Tag);
+      else
+        throw new ArgumentException("value must be of type UndirectedGraph<XMLDoc, OurEdge<XMLDoc, DFResult>>." + value.GetType());
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      throw new NotSupportedException();
     }
   }
 }

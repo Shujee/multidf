@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace DuplicateFinderMulti.VM
   public class XMLDoc : ObservableObject
   {
     //This class allows QA Update process to be cancelled at any stage. The following token objects provide task cancellation mechanism.
-    private CancellationTokenSource _TokenSource;
+    private readonly CancellationTokenSource _TokenSource;
     private CancellationToken _Token;
 
     public XMLDoc()
@@ -21,12 +22,7 @@ namespace DuplicateFinderMulti.VM
       _Token = _TokenSource.Token;
     }
 
-    private string _Name;
-    public string Name
-    {
-      get => _Name;
-      set => Set(ref _Name, value);
-    }
+    public string Name => string.IsNullOrEmpty(_SourcePath) ? "" : System.IO.Path.GetFileName(_SourcePath);
 
     private string _SourcePath;
     public string SourcePath
@@ -49,6 +45,17 @@ namespace DuplicateFinderMulti.VM
         RaisePropertyChanged(nameof(IsSyncWithSource));
       }
     }
+
+
+    private double _ProcessingProgress;
+
+    //[IgnoreDataMember]
+    public double ProcessingProgress
+    {
+      get => _ProcessingProgress;
+      set => Set(ref _ProcessingProgress, value);
+    }
+
 
     private DateTime _LastModified;
     public DateTime LastModified
@@ -142,14 +149,13 @@ namespace DuplicateFinderMulti.VM
       {
         Task.Run(() =>
         {
-          
-          var Paragraphs = ViewModelLocator.WordService.GetDocumentParagraphs(_SourcePath, _Token);
+          var Paragraphs = ViewModelLocator.WordService.GetDocumentParagraphs(_SourcePath, _Token, (i, Total) => ProcessingProgress = (i / (float)Total) * 100);
           QAs = ViewModelLocator.QAExtractionStrategy.Extract(Paragraphs, _Token);
 
           if (QAs != null)
           {
             foreach (var QA in QAs)
-              QA.Doc = this._SourcePath;
+              QA.Doc = this;
           }
 
           RaisePropertyChanged(nameof(QAs));

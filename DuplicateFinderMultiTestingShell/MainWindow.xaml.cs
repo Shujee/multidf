@@ -1,6 +1,7 @@
 ﻿using DuplicateFinderMulti.Views;
 using DuplicateFinderMulti.VM;
 using GalaSoft.MvvmLight.Ioc;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -70,11 +71,8 @@ namespace DuplicateFinderMulti.TestingShell
 
     public void SelectRange(int start, int end)
     {
-      GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
-      {
         TXT.SelectionStart = start;
         TXT.SelectionLength = end - start;
-      });
     }
 
     public string GetRangeText(int start, int end)
@@ -106,12 +104,12 @@ namespace DuplicateFinderMulti.TestingShell
       TXT.Text = "Q1\rA quick brown fox A quick brown fox A quick brown fox A quick brown fox\rB\rC\r\rQ2\rA quick braun fixes A quick brown fox A quick brown fox A quick brown fox\rC\rB";
     }
 
-    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token)
+    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token, Action<int, int> progressCallback)
     {
       return new List<WordParagraph>();
     }
 
-    public void OpenDocument(string docPath)
+    public void OpenDocument(string docPath, int? start)
     {
       
     }
