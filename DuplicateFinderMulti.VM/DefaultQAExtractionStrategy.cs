@@ -15,8 +15,8 @@ namespace DuplicateFinderMulti.VM
     }
 
     //This RegEx will find Question Number paragraphs
-    private Regex RE_QNumberWithHardReturn = new Regex(@"^(((?<Index>\d+)\s*\.)|([Q]\s*(?<Index>\d+)\s*\.?))\s*[\r\n\x0B]", RegexOptions.ExplicitCapture);
-    private char[] TrimChars = new char[] { '\r', '\n', '\a',  ' ', '\t' };
+    private readonly Regex RE_QNumberWithHardReturn = new Regex(@"^(((?<Index>\d+)\s*\.)|([Q]\s*(?<Index>\d+)\s*\.?))\s*[\r\n\x0B]", RegexOptions.ExplicitCapture);
+    private readonly char[] TrimChars = new char[] { '\r', '\n', '\a',  ' ', '\t' };
 
 
   public List<QA> Extract(List<WordParagraph> paragraphs, CancellationToken token)
@@ -60,7 +60,7 @@ namespace DuplicateFinderMulti.VM
     {
       QA QA = new QA();
 
-      QAExtractionState state = QAExtractionState.Start;
+      QAExtractionState state;
 
       //skip empty lines at the start till we find the Question Number paragraph
       while (i < paragraphs.Count && !RE_QNumberWithHardReturn.IsMatch(paragraphs[i].Text))
