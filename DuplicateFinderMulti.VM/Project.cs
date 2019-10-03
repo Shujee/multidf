@@ -1,8 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Command;
-using QuickGraph;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -130,9 +128,8 @@ namespace DuplicateFinderMulti.VM
         {
           _RemoveSelectedDocCommand = new RelayCommand(() =>
           {
-            this._AllXMLDocs.Remove(_SelectedDoc);
-
             graph.RemoveVertex(_SelectedDoc);
+            this._AllXMLDocs.Remove(_SelectedDoc);
 
             this.IsDirty = true;
           },
@@ -198,6 +195,25 @@ namespace DuplicateFinderMulti.VM
         }
 
         return _UpdateQAsCommand;
+      }
+    }
+
+    private RelayCommand _CheckSyncWithSourceCommand;
+    public RelayCommand CheckSyncWithSourceCommand
+    {
+      get
+      {
+        if (_CheckSyncWithSourceCommand == null)
+        {
+          _CheckSyncWithSourceCommand = new RelayCommand(() =>
+          {
+            foreach (var Doc in this.AllXMLDocs)
+              Doc.RaisePropertyChanged(nameof(XMLDoc.IsSyncWithSource));
+          },
+          () => true);
+        }
+
+        return _CheckSyncWithSourceCommand;
       }
     }
 
@@ -278,7 +294,25 @@ namespace DuplicateFinderMulti.VM
         return _AbortProcessCommand;
       }
     }
+    
+    private RelayCommand<DFResultRow> _OpenDiffCommand;
+    public RelayCommand<DFResultRow> OpenDiffCommand
+    {
+      get
+      {
+        if (_OpenDiffCommand == null)
+        {
+          _OpenDiffCommand = new RelayCommand<DFResultRow>((row) =>
+          {
+            ViewModelLocator.DialogService.OpenDiffWindow(row.Q1.Question, row.Q2.Question);
+          },
+          (row) => true);
+        }
 
+        return _OpenDiffCommand;
+      }
+    }
+    
     private bool _IsProcessing = false;
 
     [XmlIgnore]

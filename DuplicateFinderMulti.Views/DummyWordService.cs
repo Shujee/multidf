@@ -26,7 +26,7 @@ namespace DuplicateFinderMulti.Views
       return Result;
     }
 
-    public void OpenDocument(string docPath, int? start)
+    public void OpenDocument(string docPath, int? start, int? end)
     {
       
     }

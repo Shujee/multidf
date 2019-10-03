@@ -24,7 +24,20 @@ namespace DuplicateFinderMulti.Test
       {
         List<WordParagraph> Result = new List<WordParagraph>();
 
-        var Doc = App.Documents.Open(docPath, ReadOnly: true, AddToRecentFiles: false, Visible: false);
+        Document Doc;
+        int ParaCount;
+
+        try
+        {
+          Doc = App.Documents.Open(docPath, ReadOnly: true, AddToRecentFiles: false, Visible: false);
+        }
+        catch (Exception ee)
+        {
+          ViewModelLocator.DialogService.ShowMessage("The following error occurred while trying to open specified document: " + ee.Message, true);
+          return null;
+        }
+
+        ParaCount = Doc.Paragraphs.Count;
 
         int i = 0;
         foreach (Paragraph p in Doc.Paragraphs)
@@ -54,7 +67,7 @@ namespace DuplicateFinderMulti.Test
         return null;
     }
 
-    public void OpenDocument(string docPath, int? start)
+    public void OpenDocument(string docPath, int? start, int? end)
     {
       
     }

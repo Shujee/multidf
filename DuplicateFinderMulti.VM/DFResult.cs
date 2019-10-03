@@ -1,9 +1,11 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace DuplicateFinderMulti.VM
 {
@@ -55,14 +57,31 @@ namespace DuplicateFinderMulti.VM
   /// <summary>
   /// Represents results of duplicate finding process.
   /// </summary>
-  public class DFResult 
+  [Serializable]
+  [KnownType(typeof(XMLDoc))]
+  [KnownType(typeof(DFResultRow))]
+  [KnownType(typeof(SynchronizedCollection<DFResultRow>))]
+  public class DFResult : ObservableObject, ISerializable
   {
     public XMLDoc Doc1 { get; set; }
     public XMLDoc Doc2 { get; set; }
     public int Count1 { get; set; }
     public int Count2 { get; set; }
 
+    private double _DiffThreshold;
+    public double DiffThreshold
+    {
+      get => _DiffThreshold;
+      set
+      {
+        _DiffThreshold = value;
+        RaisePropertyChanged(nameof(FilteredItems));
+      }
+    }
+    
     public SynchronizedCollection<DFResultRow> Items { get; set; } = new SynchronizedCollection<DFResultRow>();
+
+    public IEnumerable<DFResultRow> FilteredItems => Items.Where(i => i.Distance <= DiffThreshold);
 
     /// <summary>
     /// only for serialization. do not use this constructor.
@@ -72,12 +91,38 @@ namespace DuplicateFinderMulti.VM
 
     }
 
+    protected DFResult(SerializationInfo info, StreamingContext context)
+    {
+      // Perform your deserialization here...
+      this.Doc1 = (XMLDoc)info.GetValue("Doc1", typeof(XMLDoc));
+      this.Doc2 = (XMLDoc)info.GetValue("Doc2", typeof(XMLDoc));
+      this.Count1 = (int)info.GetValue("Count1", typeof(int));
+      this.Count2 = (int)info.GetValue("Count2", typeof(int));
+      this.DiffThreshold = (double)info.GetValue("DiffThreshold", typeof(double));
+
+      this.Items = (SynchronizedCollection<DFResultRow>)info.GetValue("Items", typeof(SynchronizedCollection<DFResultRow>));
+    }
+
     public DFResult(XMLDoc d1, XMLDoc d2, int c1, int c2)
     {
       Doc1 = d1;
       Doc2 = d2;
       Count1 = c1;
       Count2 = c2;
+    }
+
+    public void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      if (info == null)
+        return;
+
+      info.AddValue("Doc1", Doc1);
+      info.AddValue("Doc2", Doc2);
+      info.AddValue("Count1", Count1);
+      info.AddValue("Count2", Count2);
+      info.AddValue("DiffThreshold", DiffThreshold);
+      
+      info.AddValue("Items", Items);
     }
   }
 }

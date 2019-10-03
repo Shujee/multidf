@@ -23,30 +23,44 @@ namespace DuplicateFinderMulti.TestingShell
       if (!string.IsNullOrEmpty(docPath) && System.IO.File.Exists(docPath))
       {
         List<WordParagraph> Result = new List<WordParagraph>();
+        Document Doc;
+        int ParaCount;
 
-        var Doc = App.Documents.Open(docPath, ReadOnly: true, AddToRecentFiles: false, Visible: false);
+        try
+        {
+          Doc = App.Documents.Open(docPath, ReadOnly: true, AddToRecentFiles: false, Visible: false);
+        }
+        catch (Exception ee)
+        {
+          ViewModelLocator.DialogService.ShowMessage("The following error occurred while trying to open specified document: " + ee.Message, true);
+          return null;
+        }
 
-        int i = 0;
-        foreach (Paragraph p in Doc.Paragraphs)
+        ParaCount = Doc.Paragraphs.Count;
+        for (int i = 1; i <= ParaCount; i++)
         {
           var PType = ParagraphType.Text;
+          var Para = ((Paragraph)Doc.Paragraphs[i]).Range;
 
-          if (p.Range.Tables.Count > 0)
+          if (Para.Tables.Count > 0)
           {
-            if (p.Range.Tables[1].ApplyStyleHeadingRows && p.Range.Rows.First.Index == 1)
+            if (Para.Tables[1].ApplyStyleHeadingRows && Para.Rows.First.Index == 1)
               PType = ParagraphType.TableHeader;
             else
               PType = ParagraphType.TableRow;
           }
-          else if (p.Range.ListFormat.ListType == WdListType.wdListSimpleNumbering)
+          else if (Para.ListFormat.ListType == WdListType.wdListSimpleNumbering)
             PType = ParagraphType.NumberedList;
 
 
-          Result.Add(new WordParagraph(p.Range.Text, p.Range.Start, p.Range.End, PType));
-          progressCallback?.Invoke(i++, Doc.Paragraphs.Count);
+          Result.Add(new WordParagraph(Para.Text, Para.Start, Para.End, PType));
+
+          if (i % 5 == 0) //keep indicating progress once in a while
+            progressCallback?.Invoke(i, ParaCount);
         }
 
         Doc.Close(SaveChanges: false);
+        progressCallback?.Invoke(ParaCount, ParaCount);
 
         return Result;
       }
@@ -54,7 +68,7 @@ namespace DuplicateFinderMulti.TestingShell
         return null;
     }
 
-    public void OpenDocument(string docPath, int? start)
+    public void OpenDocument(string docPath, int? start, int? end)
     {
       var Doc = App.Documents.Cast<Document>().FirstOrDefault(d => d.FullName == docPath);
 
@@ -63,6 +77,9 @@ namespace DuplicateFinderMulti.TestingShell
 
       if (start != null)
         App.Selection.Start = start.Value;
+
+      if(end != null)
+        App.Selection.End = end.Value;
     }
   }
 }

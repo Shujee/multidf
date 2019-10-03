@@ -160,6 +160,9 @@
       <DependentUpon>DiffWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="DummyWordService.cs" />
+    <Compile Include="FileComparisonTooltip.xaml.cs">
+      <DependentUpon>FileComparisonTooltip.xaml</DependentUpon>
+    </Compile>
     <Compile Include="InputBox.xaml.cs">
       <DependentUpon>InputBox.xaml</DependentUpon>
     </Compile>
@@ -172,6 +175,10 @@
     <Page Include="AboutWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="FileComparisonTooltip.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ImageButtonStyle.xaml">
       <SubType>Designer</SubType>

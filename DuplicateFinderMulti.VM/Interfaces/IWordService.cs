@@ -13,6 +13,6 @@ namespace DuplicateFinderMulti.VM
     //string GetRangeText(int start, int end);
 
     List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token, Action<int, int> progressCallback);
-    void OpenDocument(string docPath, int? start = null);
+    void OpenDocument(string docPath, int? start = null, int? end = null);
   }
 }

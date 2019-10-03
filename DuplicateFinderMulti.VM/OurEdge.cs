@@ -1,10 +1,8 @@
 ﻿using QuickGraph;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Xml.Serialization;
 
 namespace DuplicateFinderMulti.VM
 {
@@ -51,20 +49,6 @@ namespace DuplicateFinderMulti.VM
     }
   }
 
-  //[CollectionDataContract(Name = "Docs", Namespace = "", ItemName = "XMLDoc")]
-  //public class ResultsList : List<DFResult>
-  //{
-  //  public ResultsList()
-  //  {
-
-  //  }
-
-  //  public ResultsList(IEnumerable<DFResult> res) : base(res)
-  //  {
-
-  //  }
-  //}
-
   /// <summary>
   /// For custom serialization, we are inheriting the QuickGraph class
   /// </summary>
@@ -73,6 +57,19 @@ namespace DuplicateFinderMulti.VM
   [KnownType(typeof(DFResult[]))]
   public class OurGraph : UndirectedGraph<XMLDoc, OurEdge>, ISerializable
   {
+    private double _DiffThreshold = .1;
+    public double DiffThreshold
+    {
+      get => _DiffThreshold;
+      set
+      {
+        _DiffThreshold = value;
+
+        foreach (var Edge in this.Edges)
+          Edge.Tag.DiffThreshold = value;
+      }
+    }
+
     public OurGraph()
     {
 
@@ -81,6 +78,7 @@ namespace DuplicateFinderMulti.VM
     protected OurGraph(SerializationInfo info, StreamingContext context)
     {
       // Perform your deserialization here...
+      this.DiffThreshold = (double)info.GetValue("DiffThreshold", typeof(double));
       this.Docs = (XMLDoc[])info.GetValue("Docs", typeof(XMLDoc[]));
       this.Results = (DFResult[])info.GetValue("Results", typeof(DFResult[]));
     }
@@ -108,6 +106,7 @@ namespace DuplicateFinderMulti.VM
       if (info == null)
         return;
 
+      info.AddValue("DiffThreshold", DiffThreshold);
       info.AddValue("Docs", Docs);
       info.AddValue("Results", Results);
     }

@@ -21,21 +21,22 @@ namespace DuplicateFinderMulti.Views
     private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
     {
       var DC = (DFResultRow)(((Hyperlink)sender).DataContext);
+      var Q =  DC.Q1;
 
-      var Doc =  DC.Q1.Doc.SourcePath;
-      var Start = DC.Q1.Start;
-
-      ViewModelLocator.WordService.OpenDocument(Doc, Start);
+      ViewModelLocator.WordService.OpenDocument(Q.Doc.SourcePath, Q.Start, Q.End);
     }
 
     private void Hyperlink_RequestNavigate2(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
     {
       var DC = (DFResultRow)(((Hyperlink)sender).DataContext);
+      var Q = DC.Q2;
 
-      var Doc = DC.Q2.Doc.SourcePath;
-      var Start = DC.Q2.Start;
+      ViewModelLocator.WordService.OpenDocument(Q.Doc.SourcePath, Q.Start, Q.End);
+    }
 
-      ViewModelLocator.WordService.OpenDocument(Doc, Start);
+    private void CollectionViewSource_Filter(object sender, System.Windows.Data.FilterEventArgs e)
+    {
+
     }
   }
 }

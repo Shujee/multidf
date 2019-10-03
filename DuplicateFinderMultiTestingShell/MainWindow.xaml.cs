@@ -109,7 +109,7 @@ namespace DuplicateFinderMulti.TestingShell
       return new List<WordParagraph>();
     }
 
-    public void OpenDocument(string docPath, int? start)
+    public void OpenDocument(string docPath, int? start, int? end)
     {
       
     }

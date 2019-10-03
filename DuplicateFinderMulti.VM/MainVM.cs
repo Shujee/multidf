@@ -54,22 +54,27 @@ namespace DuplicateFinderMulti.VM
           SourcePath = @"F:\Office\Larry Gong\DuplicateFinder\Analysis\Doc that does not exist.docx",
         });
 
-        //var DFRes1 = new DFResult("Doc1", "Doc2", 31, 12);
-        //DFRes1.AddResultRow(new QA() { Doc = "Doc1", Index = 51, Question = "Some very long string" }, new QA() { Doc = "Doc2", Index = 78, Question = "Another very long string" }, 1.4);
-        //DFRes1.AddResultRow(new QA() { Doc = "Doc1", Index = 51, Question = "Some very long string" }, new QA() { Doc = "Doc2", Index = 78, Question = "Another very long string" }, 1.4);
-        //DFRes1.AddResultRow(new QA() { Doc = "Doc1", Index = 51, Question = "Some very long string" }, new QA() { Doc = "Doc2", Index = 78, Question = "Another very long string" }, 1.4);
-        //_SelectedProject.Graph.AddEdge(new QuickGraph.OurEdge<XMLDoc, DFResult>(new XMLDoc { SourcePath = "Doc1" }, new XMLDoc { SourcePath = "Doc2" }, DFRes1));
+        var Doc1 = new XMLDoc() { SourcePath = "Doc1" };
+        _SelectedProject.Graph.AddVertex(Doc1);
+        var Doc2 = new XMLDoc() { SourcePath = "Doc2" };
+        _SelectedProject.Graph.AddVertex(Doc2);
 
-        //var DFRes2 = new DFResult("Doc1", "Doc2", 200, 155);
-        //DFRes2.AddResultRow(new QA() { Doc = "Doc1", Index = 23, Question = "Some very long string" }, new QA() { Doc = "Doc2", Index = 5, Question = "Another very long string" }, 0.6434);
-        //DFRes2.AddResultRow(new QA() { Doc = "Doc1", Index = 23, Question = "Some very long string" }, new QA() { Doc = "Doc2", Index = 5, Question = "Another very long string" }, 0.6434);
-        //_SelectedProject.Graph.AddEdge(new QuickGraph.OurEdge<XMLDoc, DFResult>(new XMLDoc { SourcePath = "Doc1" }, new XMLDoc { SourcePath = "Doc2" }, DFRes2));
+        var DFRes1 = new DFResult(Doc1, Doc2, 31, 12);
+        DFRes1.Items.Add(new DFResultRow(new QA() { Doc = Doc1, Index = 51, Question = "Some very long string" }, new QA() { Doc = Doc2, Index = 78, Question = "Another very long string" }, 1.4));
+        DFRes1.Items.Add(new DFResultRow(new QA() { Doc = Doc1, Index = 51, Question = "Some very long string" }, new QA() { Doc = Doc2, Index = 78, Question = "Another very long string" }, 1.4));
+        DFRes1.Items.Add(new DFResultRow(new QA() { Doc = Doc1, Index = 51, Question = "Some very long string" }, new QA() { Doc = Doc2, Index = 78, Question = "Another very long string" }, 1.4));
+        _SelectedProject.Graph.AddEdge(new OurEdge(Doc1, Doc2, DFRes1));
 
-        //var DFRes3 = new DFResult("Doc1", "Doc2", 144, 27);
-        //DFRes3.AddResultRow(new QA() { Doc = "Doc1", Index = 36, Question = "Some very long string" }, new QA() { Doc = "Doc2", Index = 154, Question = "Another very long string" }, 0.8763);
-        //DFRes3.AddResultRow(new QA() { Doc = "Doc1", Index = 36, Question = "Some very long string" }, new QA() { Doc = "Doc2", Index = 154, Question = "Another very long string" }, 0.8763);
-        //DFRes3.AddResultRow(new QA() { Doc = "Doc1", Index = 36, Question = "Some very long string" }, new QA() { Doc = "Doc2", Index = 154, Question = "Another very long string" }, 0.8763);
-        //_SelectedProject.Graph.AddEdge(new QuickGraph.OurEdge<XMLDoc, DFResult>(new XMLDoc { SourcePath = "Doc1" }, new XMLDoc { SourcePath = "Doc2" }, DFRes3));
+        var DFRes2 = new DFResult(Doc1, Doc2, 200, 155);
+        DFRes2.Items.Add(new DFResultRow(new QA() { Doc = Doc1, Index = 23, Question = "Some very long string" }, new QA() { Doc = Doc2, Index = 5, Question = "Another very long string" }, 0.6434));
+        DFRes2.Items.Add(new DFResultRow(new QA() { Doc = Doc1, Index = 23, Question = "Some very long string" }, new QA() { Doc = Doc2, Index = 5, Question = "Another very long string" }, 0.6434));
+        _SelectedProject.Graph.AddEdge(new OurEdge(Doc1, Doc2, DFRes2));
+
+        var DFRes3 = new DFResult(Doc1, Doc2, 144, 27);
+        DFRes3.Items.Add(new DFResultRow(new QA() { Doc = Doc1, Index = 36, Question = "Some very long string" }, new QA() { Doc = Doc2, Index = 154, Question = "Another very long string" }, 0.8763));
+        DFRes3.Items.Add(new DFResultRow(new QA() { Doc = Doc1, Index = 36, Question = "Some very long string" }, new QA() { Doc = Doc2, Index = 154, Question = "Another very long string" }, 0.8763));
+        DFRes3.Items.Add(new DFResultRow(new QA() { Doc = Doc1, Index = 36, Question = "Some very long string" }, new QA() { Doc = Doc2, Index = 154, Question = "Another very long string" }, 0.8763));
+        _SelectedProject.Graph.AddEdge(new OurEdge(Doc1, Doc2, DFRes3));
       }
       else
       {

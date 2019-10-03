@@ -169,25 +169,4 @@ namespace DuplicateFinderMulti.Views
       throw new NotSupportedException();
     }
   }
-
-  /// <summary>
-  /// Takes an undirected tagged QuickGraph object and returns all the tags associated with its edges. Used to convert processing results graph
-  /// to list of DFResults for showing in Results Tree.
-  /// </summary>
-  [ValueConversion(typeof(UndirectedGraph<XMLDoc, OurEdge>), typeof(IEnumerable<DFResult>))]
-  public class GraphToEdgeTagConverter : IValueConverter
-  {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-      if (value is UndirectedGraph<XMLDoc, OurEdge> g)
-        return g.Edges.Select(e => e.Tag);
-      else
-        throw new ArgumentException("value must be of type UndirectedGraph<XMLDoc, OurEdge<XMLDoc, DFResult>>." + value.GetType());
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-      throw new NotSupportedException();
-    }
-  }
 }

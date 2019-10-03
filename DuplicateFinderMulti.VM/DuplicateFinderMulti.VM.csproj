@@ -141,6 +141,7 @@
     <Compile Include="DefaultQAExtractionStrategy.cs" />
     <Compile Include="DFResult.cs" />
     <Compile Include="DiffVM.cs" />
+    <Compile Include="FileAttributesComparison.cs" />
     <Compile Include="Interfaces\IDupFinder.cs" />
     <Compile Include="Interfaces\IDocComparer.cs" />
     <Compile Include="Interfaces\IQAComparer.cs" />

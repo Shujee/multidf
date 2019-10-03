@@ -85,6 +85,8 @@ namespace DuplicateFinderMulti.VM
       {
         if (!string.IsNullOrEmpty(SourcePath) && System.IO.File.Exists(SourcePath))
         {
+          RaisePropertyChanged(nameof(SyncErrors));
+
           System.IO.FileInfo fileInfo = new System.IO.FileInfo(SourcePath);
           return fileInfo.LastWriteTimeUtc == LastModified && fileInfo.Length == Size;
         }
@@ -93,7 +95,7 @@ namespace DuplicateFinderMulti.VM
       }
     }
 
-    public string SyncErrors
+    public FileAttributesComparison SyncErrors
     {
       get
       {
@@ -101,18 +103,18 @@ namespace DuplicateFinderMulti.VM
         {
           System.IO.FileInfo fileInfo = new System.IO.FileInfo(SourcePath);
 
-          string Errors = "";
+          var Errors = new FileAttributesComparison();
 
           if (fileInfo.LastWriteTimeUtc != LastModified)
           {
-            Errors += "Last Modified Date (local): " + LastModified.ToString();
-            Errors += Environment.NewLine + "Last Modified Date (source): " + fileInfo.LastWriteTimeUtc.ToString();
+            Errors.LastModified1 = fileInfo.LastWriteTimeUtc;
+            Errors.LastModified2 = LastModified;
           }
 
-          if (fileInfo.Length == Size)
+          if (fileInfo.Length != Size)
           {
-            Errors += Environment.NewLine + "File Size (local): " + Size.ToString();
-            Errors += Environment.NewLine + "File Size (source): " + fileInfo.Length.ToString();
+            Errors.Size1 = fileInfo.Length;
+            Errors.Size2 = Size;
           }
 
           return Errors;
@@ -143,6 +145,9 @@ namespace DuplicateFinderMulti.VM
       }
     }
 
+
+    
+
     public void UpdateQAs()
     {
       if (!string.IsNullOrEmpty(_SourcePath) && System.IO.File.Exists(_SourcePath))
@@ -150,15 +155,19 @@ namespace DuplicateFinderMulti.VM
         Task.Run(() =>
         {
           var Paragraphs = ViewModelLocator.WordService.GetDocumentParagraphs(_SourcePath, _Token, (i, Total) => ProcessingProgress = (i / (float)Total) * 100);
-          QAs = ViewModelLocator.QAExtractionStrategy.Extract(Paragraphs, _Token);
 
-          if (QAs != null)
+          if (Paragraphs != null)
           {
-            foreach (var QA in QAs)
-              QA.Doc = this;
-          }
+            QAs = ViewModelLocator.QAExtractionStrategy.Extract(Paragraphs, _Token);
 
-          RaisePropertyChanged(nameof(QAs));
+            if (QAs != null)
+            {
+              foreach (var QA in QAs)
+                QA.Doc = this;
+            }
+
+            RaisePropertyChanged(nameof(QAs));
+          }
         });
       }
     }

@@ -184,17 +184,29 @@ namespace DuplicateFinderMulti
       if(!string.IsNullOrEmpty(docPath) && System.IO.File.Exists(docPath))
       {
         List<WordParagraph> Result = new List<WordParagraph>();
+        Document Doc;
+        int ParaCount;
 
         bool AlreadyOpen = false;
-        var Doc = this.Application.Documents.Cast<Document>().FirstOrDefault(d => d.FullName == docPath);
+        Doc = this.Application.Documents.Cast<Document>().FirstOrDefault(d => d.FullName == docPath);
 
         if (Doc == null)
-          Doc = this.Application.Documents.Open(docPath, ReadOnly: true, AddToRecentFiles: false, Visible: false);
+        {
+          try
+          {
+            Doc = this.Application.Documents.Open(docPath, ReadOnly: true, AddToRecentFiles: false, Visible: false);
+          }
+          catch (Exception ee)
+          {
+            ViewModelLocator.DialogService.ShowMessage("The following error occurred while trying to open specified document: " + ee.Message, true);
+            return null;
+          }
+        }
         else
           AlreadyOpen = true;
 
         int i = 0;
-        int Total = Doc.Paragraphs.Count;
+        ParaCount = Doc.Paragraphs.Count;
         foreach (Word.Paragraph p in Doc.Paragraphs)
         {
           var PType = ParagraphType.Text;
@@ -212,7 +224,7 @@ namespace DuplicateFinderMulti
 
           Result.Add(new WordParagraph(p.Range.Text, p.Range.Start, p.Range.End, PType));
 
-          progressCallback?.Invoke(i++, Total);
+          progressCallback?.Invoke(i++, ParaCount);
 
           if (token.IsCancellationRequested)
             break;
@@ -223,7 +235,7 @@ namespace DuplicateFinderMulti
           System.Threading.Tasks.Task.Run(() => Doc.Close(SaveChanges: false));
         }
 
-        progressCallback?.Invoke(Total, Total);
+        progressCallback?.Invoke(ParaCount, ParaCount);
 
         return Result;
       }
@@ -240,7 +252,7 @@ namespace DuplicateFinderMulti
       return this.Application.ActiveDocument?.Paragraphs?.Count;
     }
 
-    public void OpenDocument(string docPath, int? start)
+    public void OpenDocument(string docPath, int? start, int? end)
     {
       var Doc = this.Application.Documents.Cast<Document>().FirstOrDefault(d => d.FullName == docPath);
 
@@ -252,6 +264,10 @@ namespace DuplicateFinderMulti
       if (start != null)
       {
         this.Application.Selection.Start = start.Value;
+
+        if (end != null)
+          this.Application.Selection.End = end.Value;
+
         this.Application.ActiveWindow.ScrollIntoView(this.Application.Selection.Range);
       }
     }
