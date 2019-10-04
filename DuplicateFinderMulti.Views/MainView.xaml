@@ -135,16 +135,22 @@
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
 
       <TextBlock Text="Difference Threshold:" Grid.Column="1" VerticalAlignment="Center" Margin="3,0" />
       <Slider Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" Width="150" Margin="3,6" 
               Minimum="0.0" Maximum="1.0" SmallChange="0.01" LargeChange="0.05" 
               Value="{Binding SelectedProject.Graph.DiffThreshold}">
+        
         <Slider.ToolTip>
-          <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=Slider}, Path=Value, StringFormat={}{0:P0}}" />
+          <ToolTip DataContext="{Binding Path=PlacementTarget, RelativeSource={x:Static RelativeSource.Self}}">
+            <TextBlock Text="{Binding Value, StringFormat={}{0:P0}}" />
+          </ToolTip>
         </Slider.ToolTip>
       </Slider>
+      
     </Grid>
 
     <TreeView Grid.Row="5" ItemsSource="{Binding SelectedProject.Graph.Results}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">

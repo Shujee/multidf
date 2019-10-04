@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DuplicateFinderMulti.VM
 {
-  public class XMLDoc : ObservableObject
+  public class XMLDoc : ObservableObject, IDisposable
   {
     //This class allows QA Update process to be cancelled at any stage. The following token objects provide task cancellation mechanism.
     private readonly CancellationTokenSource _TokenSource;
@@ -175,6 +175,22 @@ namespace DuplicateFinderMulti.VM
     public void CancelUpdateQAs()
     {
       _TokenSource.Cancel();
+    }
+
+    public void Dispose()
+    {
+      Dispose(true);
+    }
+
+    // The bulk of the clean-up code is implemented in Dispose(bool)
+    protected virtual void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        // free managed resources
+        if (_TokenSource != null)
+          _TokenSource.Dispose();
+      }
     }
   }
 }

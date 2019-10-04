@@ -101,7 +101,7 @@ namespace DuplicateFinderMulti.VM
       }
     }
 
-    public void GetObjectData(SerializationInfo info, StreamingContext context)
+    public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
     {
       if (info == null)
         return;

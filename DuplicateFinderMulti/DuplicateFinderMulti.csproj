@@ -201,6 +201,8 @@
     <Compile Include="DuplicateFinderMultiRibbon.Designer.cs">
       <DependentUpon>DuplicateFinderMultiRibbon.cs</DependentUpon>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

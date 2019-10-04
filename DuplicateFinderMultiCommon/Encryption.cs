@@ -6,7 +6,7 @@ namespace DuplicateFinderMultiCommon
 {
   public static class Encryption
   {
-    private static string KEY = "TJUE98337Sis8864AKEYJD687!@#$*77dk3jdfysdf)))))(((**@&#333"; //GetSysUUID(); 
+    private static readonly string KEY = "IH%!Q8337SisAE64AKEYJD687!@#$*77dkccdfysdf))ERIU((**@&#947"; //GetSysUUID(); 
 
     private static TripleDESCryptoServiceProvider CreateCryptoService()
     {
@@ -17,12 +17,14 @@ namespace DuplicateFinderMultiCommon
           byte[] TDESKey = HashProvider.ComputeHash(System.Text.Encoding.UTF8.GetBytes(KEY));
 
           // Step 2. Create a new TripleDESCryptoServiceProvider object
-          TripleDESCryptoServiceProvider TDESAlgorithm = new TripleDESCryptoServiceProvider();
+          TripleDESCryptoServiceProvider TDESAlgorithm = new TripleDESCryptoServiceProvider
+          {
 
-          // Step 3. Setup the encoder
-          TDESAlgorithm.Key = TDESKey;
-          TDESAlgorithm.Mode = CipherMode.ECB;
-          TDESAlgorithm.Padding = PaddingMode.PKCS7;
+            // Step 3. Setup the encoder
+            Key = TDESKey,
+            Mode = CipherMode.ECB,
+            Padding = PaddingMode.PKCS7
+          };
 
           return TDESAlgorithm;
         }

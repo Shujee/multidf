@@ -64,7 +64,7 @@
       this.btnShowHidePane.Name = "btnShowHidePane";
       this.btnShowHidePane.OfficeImageId = "PageOrientationPortrait";
       this.btnShowHidePane.ShowImage = true;
-      this.btnShowHidePane.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnShowHidePane_Click);
+      this.btnShowHidePane.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ShowHidePaneButton_Click);
       // 
       // btnRegister
       // 
@@ -73,7 +73,7 @@
       this.btnRegister.Name = "btnRegister";
       this.btnRegister.OfficeImageId = "AdpPrimaryKey";
       this.btnRegister.ShowImage = true;
-      this.btnRegister.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnRegister_Click);
+      this.btnRegister.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.RegisterButton_Click);
       // 
       // btnAbout
       // 
@@ -82,14 +82,13 @@
       this.btnAbout.Name = "btnAbout";
       this.btnAbout.OfficeImageId = "AccessTableContacts";
       this.btnAbout.ShowImage = true;
-      this.btnAbout.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnAbout_Click);
+      this.btnAbout.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.AboutButton_Click);
       // 
       // DuplicateFinderMultiRibbon
       // 
       this.Name = "DuplicateFinderMultiRibbon";
       this.RibbonType = "Microsoft.Word.Document";
       this.Tabs.Add(this.tabDuplicateFinderMulti);
-      this.Load += new Microsoft.Office.Tools.Ribbon.RibbonUIEventHandler(this.DuplicateFinderMultiRibbon_Load);
       this.tabDuplicateFinderMulti.ResumeLayout(false);
       this.tabDuplicateFinderMulti.PerformLayout();
       this.group1.ResumeLayout(false);

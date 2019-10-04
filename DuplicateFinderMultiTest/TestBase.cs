@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace DuplicateFinderMulti.Test
 {
   [TestClass]
-  public class TestBase
+  public class TestBase : IDisposable
   {
     protected readonly CancellationTokenSource _TokenSource = new CancellationTokenSource();
     protected CancellationToken token;
@@ -63,6 +63,22 @@ namespace DuplicateFinderMulti.Test
       QA.End = QA.Start + Faker.RandomNumber.Next(100, 500);
 
       return QA;
+    }
+
+    public void Dispose()
+    {
+      Dispose(true);
+    }
+
+    // The bulk of the clean-up code is implemented in Dispose(bool)
+    protected virtual void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        // free managed resources
+        if (_TokenSource != null)
+          _TokenSource.Dispose();
+      }
     }
   }
 }

@@ -182,7 +182,7 @@ namespace DuplicateFinderMulti.Test
     public void DocComparerTest()
     {
       DefaultDocComparer Comparer = new DefaultDocComparer();
-      Comparer.QACompared += (args) =>
+      Comparer.QACompared += (sender, args) =>
       {
         System.Diagnostics.Debug.WriteLine($"{args.QA1.Doc} ({args.QA1.Index}) - {args.QA2.Doc} ({args.QA2.Index}) => {args.Distance}");
       };
@@ -242,36 +242,37 @@ namespace DuplicateFinderMulti.Test
     public void QuickGraphTest()
     {
       var QAComparer = new VM.DefaultQAComparer();
-      var P = CreateRandomProject();
-
-      UndirectedGraph<XMLDoc, OurEdge> graph = new UndirectedGraph<XMLDoc, OurEdge>();
-      graph.AddVertexRange(P.AllXMLDocs);
-
-      List<Task> Tasks = new List<Task>();
-      foreach (var V1 in graph.Vertices)
+      using (var P = CreateRandomProject())
       {
-        foreach (var V2 in graph.Vertices)
-        { 
-          if(V1!= V2 && !graph.ContainsEdge(V1,V2))
+        UndirectedGraph<XMLDoc, OurEdge> graph = new UndirectedGraph<XMLDoc, OurEdge>();
+        graph.AddVertexRange(P.AllXMLDocs);
+
+        List<Task> Tasks = new List<Task>();
+        foreach (var V1 in graph.Vertices)
+        {
+          foreach (var V2 in graph.Vertices)
           {
-            var Edge = new OurEdge(V1, V2, null);
-
-            if (graph.AddEdge(Edge))
+            if (V1 != V2 && !graph.ContainsEdge(V1, V2))
             {
-              var Task = ViewModelLocator.DocComparer.Compare(V1, V2, QAComparer, true, token);
-              Task.ContinueWith(t =>
-                {
-                  Edge.Tag = t.Result;
-                  System.Diagnostics.Debug.WriteLine($"{V1.Name} ({V1.QAs.Count}) - {V2.Name} ({V2.QAs.Count}): Result = {t.Result.Items.Count}");
-                });
+              var Edge = new OurEdge(V1, V2, null);
 
-              Tasks.Add(Task);
+              if (graph.AddEdge(Edge))
+              {
+                var Task = ViewModelLocator.DocComparer.Compare(V1, V2, QAComparer, true, token);
+                Task.ContinueWith(t =>
+                  {
+                    Edge.Tag = t.Result;
+                    System.Diagnostics.Debug.WriteLine($"{V1.Name} ({V1.QAs.Count}) - {V2.Name} ({V2.QAs.Count}): Result = {t.Result.Items.Count}");
+                  });
+
+                Tasks.Add(Task);
+              }
             }
           }
         }
-      }
 
-      Task.WaitAll(Tasks.ToArray());
+        Task.WaitAll(Tasks.ToArray());
+      }
     }
 
     [TestMethod]
@@ -280,23 +281,25 @@ namespace DuplicateFinderMulti.Test
       GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.Unregister<IDialogService>();
       GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.Register<IDialogService, DialogServiceForAutomatedTesting>();
 
-      Project p = CreateRandomProject();
-      p.SavePath = null;
-      p.AddDocsCommand.Execute(null);
+      using (var p = CreateRandomProject())
+      {
+        p.SavePath = null;
+        p.AddDocsCommand.Execute(null);
 
-      while (p.AllXMLDocs.Any(d => d.QAs == null))
-        System.Threading.Thread.Sleep(300);
+        while (p.AllXMLDocs.Any(d => d.QAs == null))
+          System.Threading.Thread.Sleep(300);
 
-      p.ProcessCommand.Execute(null);
+        p.ProcessCommand.Execute(null);
 
-      while (p.IsProcessing)
-        System.Threading.Thread.Sleep(300);
+        while (p.IsProcessing)
+          System.Threading.Thread.Sleep(300);
 
-      var SavePath = ViewModelLocator.DialogService.ShowSave("XML Files (*.xml)|*.xml");
-      File.WriteAllText(SavePath , p.ToXML());
+        var SavePath = ViewModelLocator.DialogService.ShowSave("XML Files (*.xml)|*.xml");
+        File.WriteAllText(SavePath, p.ToXML());
 
-      var P2 = Project.FromXML(File.ReadAllText(SavePath));
-      Assert.IsTrue(P2 != null && P2.AllXMLDocs.Count == p.AllXMLDocs.Count && P2.Graph.EdgeCount == p.Graph.EdgeCount && P2.Graph.VertexCount == p.Graph.VertexCount);
+        var P2 = Project.FromXML(File.ReadAllText(SavePath));
+        Assert.IsTrue(P2 != null && P2.AllXMLDocs.Count == p.AllXMLDocs.Count && P2.Graph.EdgeCount == p.Graph.EdgeCount && P2.Graph.VertexCount == p.Graph.VertexCount);
+      }
     }
   }
 }

@@ -9,9 +9,11 @@ namespace DuplicateFinderMultiCommon
     {
       try
       {
-        RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry64);
-        RegistryKey sqlServerKey = localKey.OpenSubKey(@"SOFTWARE\Microsoft\Cryptography");
-        return (string)sqlServerKey.GetValue("MachineGuid");
+        using (var localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry64))
+        {
+          RegistryKey sqlServerKey = localKey.OpenSubKey(@"SOFTWARE\Microsoft\Cryptography");
+          return (string)sqlServerKey.GetValue("MachineGuid");
+        }
       }
       catch
       {

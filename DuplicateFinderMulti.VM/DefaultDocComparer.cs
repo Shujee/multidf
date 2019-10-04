@@ -9,7 +9,7 @@ namespace DuplicateFinderMulti.VM
 {
   public class DefaultDocComparer : IDocComparer
   {
-    public event Action<QAComparedArgs> QACompared;
+    public event QAComparedDelegate QACompared;
 
     public Task<DFResult> Compare(XMLDoc d1, XMLDoc d2, IQAComparer qaComparer, bool ignoreCase, CancellationToken token)
     {
@@ -35,7 +35,7 @@ namespace DuplicateFinderMulti.VM
 
               Result.Items.Add(new DFResultRow(q1, q2, Dist));
 
-              QACompared?.Invoke(new QAComparedArgs() { QA1 = q1, QA2 = q2, Distance = Dist, PercentProgress = 100 * (Result.Items.Count / TotalComparisons) });
+              QACompared?.Invoke(this, new QAComparedArgs() { QA1 = q1, QA2 = q2, Distance = Dist, PercentProgress = 100 * (Result.Items.Count / TotalComparisons) });
               //}
               //else
               //  System.Diagnostics.Debug.WriteLine($"========================================================={q1.Doc} ({q1.Index}) - {q2.Doc} ({q2.Index})=========================================================");

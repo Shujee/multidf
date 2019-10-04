@@ -10,7 +10,7 @@ namespace DuplicateFinderMulti
   /// </summary>
   partial class ThisAddIn
   {
-    public bool IsPaneVisible = false;
+    public bool IsPaneVisible { get; set; } = false;
 
     // Add a custom task pane to all open document windows
     public void AddAllTaskPanes()
@@ -41,6 +41,9 @@ namespace DuplicateFinderMulti
     {
       try
       {
+        if (this.CustomTaskPanes.Any(ctp => WordHelper.GetWindowSafe(ctp) == doc.ActiveWindow))
+          return;
+        
         // Create a new custom task pane and add it to the collection of custom task panes belonging to this add-in.
         // The first two arguments of the Add method specify a control to add to the custom task pane and the title to display on the task pane. 
         // The third argument, which is optional, specifies the parent window for the custom task pane. 
@@ -53,7 +56,7 @@ namespace DuplicateFinderMulti
         // Display the custom task pane.
         NewTaskPane.Visible = true;
       }
-      catch(System.Exception ee)
+      catch (System.Exception ee)
       {
         LogException(ee);
       }
@@ -115,11 +118,9 @@ namespace DuplicateFinderMulti
       // Loop through each custom task pane belonging to the add-in
       for (int i = this.CustomTaskPanes.Count; i > 0; i--)
       {
-        CustomTaskPane ctp = null;
-
         try
         {
-          ctp = this.CustomTaskPanes[i - 1];
+          CustomTaskPane ctp = this.CustomTaskPanes[i - 1];
           if (this.CustomTaskPanes.Contains(ctp) && WordHelper.GetWindowSafe(ctp) == null)
           {
             this.CustomTaskPanes.Remove(ctp);

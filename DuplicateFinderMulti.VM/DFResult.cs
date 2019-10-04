@@ -52,6 +52,16 @@ namespace DuplicateFinderMulti.VM
     {
       return Q1.GetHashCode() ^  Q2.GetHashCode();
     }
+
+    public static bool operator ==(DFResultRow dr1, DFResultRow dr2)
+    {
+      return dr1.Equals(dr2);
+    }
+
+    public static bool operator !=(DFResultRow dr1, DFResultRow dr2)
+    {
+      return !dr1.Equals(dr2);
+    }
   }
 
   /// <summary>
@@ -111,7 +121,7 @@ namespace DuplicateFinderMulti.VM
       Count2 = c2;
     }
 
-    public void GetObjectData(SerializationInfo info, StreamingContext context)
+    public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
     {
       if (info == null)
         return;

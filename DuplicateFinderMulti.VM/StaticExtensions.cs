@@ -45,18 +45,12 @@ namespace DuplicateFinderMulti.VM
     {
       System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-      using (StringWriter writer = new StringWriter(sb))
+      StringWriter writer = new StringWriter(sb);
+      using (XmlWriter xmlWriter = XmlWriter.Create(writer, xmlWriterSettingsForWordDocs))
       {
-        using (XmlWriter xmlWriter = XmlWriter.Create(writer, xmlWriterSettingsForWordDocs))
-        {
-          DSSerializer.WriteStartObject(xmlWriter, obj);
-          DSSerializer.WriteObjectContent(xmlWriter, obj);
-          DSSerializer.WriteEndObject(xmlWriter);
-
-          xmlWriter.Close();
-        }
-
-        writer.Close();
+        DSSerializer.WriteStartObject(xmlWriter, obj);
+        DSSerializer.WriteObjectContent(xmlWriter, obj);
+        DSSerializer.WriteEndObject(xmlWriter);
       }
 
       return sb.ToString();
@@ -97,12 +91,11 @@ namespace DuplicateFinderMulti.VM
 
     public static T Deserialize<T>(this string xml)
     {
-      using (StringReader s = new StringReader(xml))
+      StringReader s = new StringReader(xml);
+
+      using (XmlReader reader = XmlReader.Create(s, new XmlReaderSettings() { CheckCharacters = false }))
       {
-        using (XmlReader reader = XmlReader.Create(s, new XmlReaderSettings() { CheckCharacters = false }))
-        {
-          return (T)new XmlSerializer(typeof(T)).Deserialize(reader);
-        }
+        return (T)new XmlSerializer(typeof(T)).Deserialize(reader);
       }
     }
   }

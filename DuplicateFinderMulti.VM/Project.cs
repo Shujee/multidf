@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Command;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
@@ -13,7 +14,7 @@ namespace DuplicateFinderMulti.VM
   /// </summary>
   [KnownType(typeof(OurEdge))]
   [KnownType(typeof(OurGraph))]
-  public class Project : GalaSoft.MvvmLight.ObservableObject
+  public class Project : GalaSoft.MvvmLight.ObservableObject, IDisposable
   {
     //Token will be used to cancel running comparisons.
     private readonly CancellationTokenSource _TokenSource = new CancellationTokenSource();
@@ -228,7 +229,7 @@ namespace DuplicateFinderMulti.VM
           {
             IsProcessing = true;
 
-            ViewModelLocator.DocComparer.QACompared += (args) =>
+            ViewModelLocator.DocComparer.QACompared += (sender, args) =>
             {
               args.QA1.Doc.ProcessingProgress = args.PercentProgress;
               args.QA2.Doc.ProcessingProgress = args.PercentProgress;
@@ -337,6 +338,22 @@ namespace DuplicateFinderMulti.VM
     public string ToXML()
     {
       return this.SerializeDC();
+    }
+
+    public void Dispose()
+    {
+      Dispose(true);
+    }
+
+    // The bulk of the clean-up code is implemented in Dispose(bool)
+    protected virtual void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        // free managed resources
+        if (_TokenSource != null)
+          _TokenSource.Dispose();
+      }
     }
   }
 }

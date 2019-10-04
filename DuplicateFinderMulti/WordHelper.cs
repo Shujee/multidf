@@ -7,18 +7,12 @@ namespace DuplicateFinderMulti
 {
   public class WordHelper
   {
-    [DllImport("user32.dll", EntryPoint = "FindWindowExW")]
-    public static extern IntPtr FindWindowExW([In()] IntPtr hWndParent, [In()] IntPtr hWndChildAfter, [In()] [MarshalAs(UnmanagedType.LPWStr)] string lpszClass, [In()] [MarshalAs(UnmanagedType.LPWStr)] string lpszWindow);
-
-    [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-    public static extern IntPtr GetForegroundWindow();
-
     internal static bool WordHasFocus
     {
       get
       {
         IntPtr wordHandle = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
-        IntPtr focusedWindow = GetForegroundWindow();
+        IntPtr focusedWindow = NativeMethods.GetForegroundWindow();
         return wordHandle == focusedWindow;
       }
     }

@@ -29,7 +29,9 @@ namespace DuplicateFinderMulti
 
         GalaSoft.MvvmLight.Threading.DispatcherHelper.Initialize();
 
+        ((ApplicationEvents4_Event)Application).NewDocument += Application_NewDocument;
         Application.DocumentOpen += Application_DocumentOpen;
+        Application.DocumentChange += Application_DocumentChange;
 
         AddAllTaskPanes();
       }
