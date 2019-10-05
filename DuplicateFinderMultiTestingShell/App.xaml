@@ -6,7 +6,8 @@
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/DuplicateFinderMulti.Views;component/ImageButtonStyle.xaml"/>
-      </ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DuplicateFinderMulti.Views;component/FancySliderStyle.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </Application.Resources>
 </Application>

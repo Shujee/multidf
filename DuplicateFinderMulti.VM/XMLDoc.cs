@@ -85,7 +85,7 @@ namespace DuplicateFinderMulti.VM
       {
         if (!string.IsNullOrEmpty(SourcePath) && System.IO.File.Exists(SourcePath))
         {
-          RaisePropertyChanged(nameof(SyncErrors));
+          RaisePropertyChanged(nameof(SyncInfo));
 
           System.IO.FileInfo fileInfo = new System.IO.FileInfo(SourcePath);
           return fileInfo.LastWriteTimeUtc == LastModified && fileInfo.Length == Size;
@@ -95,7 +95,7 @@ namespace DuplicateFinderMulti.VM
       }
     }
 
-    public FileAttributesComparison SyncErrors
+    public FileAttributesComparison SyncInfo
     {
       get
       {
@@ -103,21 +103,15 @@ namespace DuplicateFinderMulti.VM
         {
           System.IO.FileInfo fileInfo = new System.IO.FileInfo(SourcePath);
 
-          var Errors = new FileAttributesComparison();
+          var Info = new FileAttributesComparison();
 
-          if (fileInfo.LastWriteTimeUtc != LastModified)
-          {
-            Errors.LastModified1 = fileInfo.LastWriteTimeUtc;
-            Errors.LastModified2 = LastModified;
-          }
+          Info.LastModified1 = fileInfo.LastWriteTimeUtc;
+          Info.LastModified2 = LastModified;
 
-          if (fileInfo.Length != Size)
-          {
-            Errors.Size1 = fileInfo.Length;
-            Errors.Size2 = Size;
-          }
+          Info.Size1 = fileInfo.Length;
+          Info.Size2 = Size;
 
-          return Errors;
+          return Info;
         }
         else
           return null;

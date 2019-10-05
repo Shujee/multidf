@@ -11,8 +11,8 @@ namespace DuplicateFinderMulti.Views
 {
   public class DialogPresenter : IDialogService
   {
-    private static OpenFileDialog dlgOpen = new OpenFileDialog();
-    private static SaveFileDialog dlgSave = new SaveFileDialog();
+    private readonly static OpenFileDialog dlgOpen = new OpenFileDialog();
+    private readonly static SaveFileDialog dlgSave = new SaveFileDialog();
 
     public void ShowMessage(string msg, bool isError)
     {
@@ -142,7 +142,7 @@ namespace DuplicateFinderMulti.Views
     private static void MakeChild(System.Windows.Window w)
     {
       IntPtr HWND = Process.GetCurrentProcess().MainWindowHandle;
-      var helper = new WindowInteropHelper(w) { Owner = HWND };
+      _ = new WindowInteropHelper(w) { Owner = HWND };
     }
 
     public void OpenAboutWindow()

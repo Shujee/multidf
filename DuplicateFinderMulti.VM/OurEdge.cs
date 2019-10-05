@@ -64,9 +64,6 @@ namespace DuplicateFinderMulti.VM
       set
       {
         _DiffThreshold = value;
-
-        foreach (var Edge in this.Edges)
-          Edge.Tag.DiffThreshold = value;
       }
     }
 

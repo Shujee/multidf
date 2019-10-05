@@ -37,8 +37,32 @@ namespace DuplicateFinderMulti.VM
         else
         {
           var Expiry = LicenseGen.ParseLicense(_LicenseKey, _RegEmail, MachineCode);
-          var ExpiryDate = System.DateTime.ParseExact(Expiry, "MMM-dd-yyyy", System.Globalization.CultureInfo.CurrentCulture);
-          return (ExpiryDate >= System.DateTime.Today);
+
+          if (Expiry == null)
+            return false;
+          else
+          {
+            var ExpiryDate = System.DateTime.ParseExact(Expiry, "MMM-dd-yyyy", System.Globalization.CultureInfo.CurrentCulture);
+            return (ExpiryDate >= System.DateTime.Today);
+          }
+        }
+      }
+    }
+
+    public System.DateTime? ExpiryDate
+    {
+      get
+      {
+        if (string.IsNullOrEmpty(_RegEmail.Trim()) || string.IsNullOrEmpty(_LicenseKey.Trim()))
+          return null;
+        else
+        {
+          var Expiry = LicenseGen.ParseLicense(_LicenseKey, _RegEmail, MachineCode);
+
+          if (Expiry == null)
+            return null;
+          else
+            return System.DateTime.ParseExact(Expiry, "MMM-dd-yyyy", System.Globalization.CultureInfo.CurrentCulture);
         }
       }
     }

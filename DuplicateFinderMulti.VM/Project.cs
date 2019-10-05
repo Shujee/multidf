@@ -78,6 +78,27 @@ namespace DuplicateFinderMulti.VM
       set => Set(ref graph, value);
     }
 
+
+    private RelayCommand _ApplyDiffThresholdCommand;
+    public RelayCommand ApplyDiffThresholdCommand
+    {
+      get
+      {
+        if (_ApplyDiffThresholdCommand == null)
+        {
+          _ApplyDiffThresholdCommand = new RelayCommand(() =>
+          {
+            foreach (var Edge in graph.Edges)
+              Edge.Tag.DiffThreshold = graph.DiffThreshold;
+          },
+          () => true);
+        }
+
+        return _ApplyDiffThresholdCommand;
+      }
+    }
+
+
     private RelayCommand _AddDocsCommand;
     public RelayCommand AddDocsCommand
     {

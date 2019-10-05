@@ -3666,7 +3666,7 @@
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:0.0.1"
+        "ProductVersion" = "8:0.7.0"
         "Manufacturer" = "8:DuplicateFinderMulti"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

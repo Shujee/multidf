@@ -89,6 +89,7 @@
       this.Name = "DuplicateFinderMultiRibbon";
       this.RibbonType = "Microsoft.Word.Document";
       this.Tabs.Add(this.tabDuplicateFinderMulti);
+      this.Load += new Microsoft.Office.Tools.Ribbon.RibbonUIEventHandler(this.DuplicateFinderMultiRibbon_Load);
       this.tabDuplicateFinderMulti.ResumeLayout(false);
       this.tabDuplicateFinderMulti.PerformLayout();
       this.group1.ResumeLayout(false);

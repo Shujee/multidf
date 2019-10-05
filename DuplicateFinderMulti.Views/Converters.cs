@@ -1,10 +1,6 @@
 ﻿using DiffPlex.DiffBuilder.Model;
-using DuplicateFinderMulti.VM;
-using QuickGraph;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Windows.Data;
 using System.Windows.Media;
 

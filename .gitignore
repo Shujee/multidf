@@ -9,6 +9,10 @@
 *.user
 *.userosscache
 *.sln.docstates
+**/_ConfuserEx/confuser.*.dll
+**/_ConfuserEx/confuser.*.exe
+**/_ConfuserEx/commonservicelocator.dll
+dnlib.dll
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

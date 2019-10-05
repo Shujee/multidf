@@ -39,6 +39,9 @@ namespace DuplicateFinderMulti
     // Add a custom task pane consisting of a AudioPlayer control 
     public void AddTaskPane(Word.Document doc)
     {
+      if (!VM.ViewModelLocator.Register.IsRegistered)
+        return;
+
       try
       {
         if (this.CustomTaskPanes.Any(ctp => WordHelper.GetWindowSafe(ctp) == doc.ActiveWindow))

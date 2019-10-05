@@ -15,6 +15,7 @@
       <ResourceDictionary>
         <ResourceDictionary.MergedDictionaries>
           <ResourceDictionary Source="StretchedTreeViewItemStyle.xaml" />
+          <ResourceDictionary Source="FancySliderStyle.xaml" />
         </ResourceDictionary.MergedDictionaries>
 
         <BooleanToVisibilityConverter x:Key="B2VConverter" />
@@ -62,7 +63,8 @@
       </TextBlock>
     </Border>
 
-    <ListBox Grid.Row="2" ItemsSource="{Binding SelectedProject.AllXMLDocs}" SelectedItem="{Binding SelectedProject.SelectedDoc}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+    <ListBox Grid.Row="2" ItemsSource="{Binding SelectedProject.AllXMLDocs}" SelectedItem="{Binding SelectedProject.SelectedDoc}" 
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="3">
       <ListBox.ItemContainerStyle>
         <Style TargetType="ListBoxItem">
           <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -93,9 +95,9 @@
               <Button Command="{Binding OpenSourceCommand}" fa:Awesome.Content="FolderOpen" ToolTip="Click to open source document" FontSize="14" Grid.Column="2" Foreground="Orange" 
                       Background="{x:Null}" BorderBrush="{x:Null}" Style="{DynamicResource ImageButtonStyle}" Margin="3" Grid.RowSpan="2" VerticalAlignment="Center" />
 
-              <fa:FontAwesome FontSize="14" Grid.Column="3" Margin="3" Grid.RowSpan="2" VerticalAlignment="Center">
+              <fa:FontAwesome FontSize="14" Grid.Column="3" Margin="3" Grid.RowSpan="2" VerticalAlignment="Center" ToolTipService.ShowDuration="30000">
                 <fa:FontAwesome.ToolTip>
-                  <ToolTip DataContext="{Binding Path=PlacementTarget.DataContext.SyncErrors, RelativeSource={x:Static RelativeSource.Self}}">
+                  <ToolTip DataContext="{Binding Path=PlacementTarget.DataContext.SyncInfo, RelativeSource={x:Static RelativeSource.Self}}">
                     <local:FileComparisonTooltip />
                   </ToolTip>
 
@@ -136,24 +138,19 @@
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
-        <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
 
       <TextBlock Text="Difference Threshold:" Grid.Column="1" VerticalAlignment="Center" Margin="3,0" />
       <Slider Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" Width="150" Margin="3,6" 
               Minimum="0.0" Maximum="1.0" SmallChange="0.01" LargeChange="0.05" 
-              Value="{Binding SelectedProject.Graph.DiffThreshold}">
-        
-        <Slider.ToolTip>
-          <ToolTip DataContext="{Binding Path=PlacementTarget, RelativeSource={x:Static RelativeSource.Self}}">
-            <TextBlock Text="{Binding Value, StringFormat={}{0:P0}}" />
-          </ToolTip>
-        </Slider.ToolTip>
-      </Slider>
-      
+              Value="{Binding SelectedProject.Graph.DiffThreshold}" Style="{StaticResource FancySliderStyle}" />
+
+      <Button Grid.Column="3" Content="Apply" Margin="3" Padding="6" Command="{Binding SelectedProject.ApplyDiffThresholdCommand}" />
+
+
     </Grid>
 
-    <TreeView Grid.Row="5" ItemsSource="{Binding SelectedProject.Graph.Results}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+    <TreeView Grid.Row="5" ItemsSource="{Binding SelectedProject.Graph.Results}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="3">
       <TreeView.ItemContainerStyle>
         <Style TargetType="TreeViewItem" BasedOn="{StaticResource StretchedTreeViewItemStyle}">
           <Setter Property="IsExpanded" Value="True" />

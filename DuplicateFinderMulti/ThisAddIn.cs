@@ -19,6 +19,17 @@ namespace DuplicateFinderMulti
       SimpleIoc.Default.Register<IWordService>(() => this);
       SimpleIoc.Default.Register<IDialogService, DialogPresenter>();
 
+      var ExpiryDate = ViewModelLocator.Register.ExpiryDate;
+
+      if (ExpiryDate != null)
+      {
+        var ExpiryDays = ExpiryDate.Value.Subtract(System.DateTime.Now).TotalDays;
+        if (ExpiryDays > 0 && ExpiryDays < 7)
+        {
+          ViewModelLocator.DialogService.ShowMessage($"DuplicateFinderMulti will expire in {(int)ExpiryDays} days. You should get a new license key if you want to continue using the add-in.", false);
+        }
+      }
+
       try
       {
         //These lines make sure WPF application engine has started before we make any calls into it.

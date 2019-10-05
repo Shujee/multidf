@@ -51,7 +51,7 @@
     </TextBlock>
 
     <TextBlock Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center" Margin="12,3" VerticalAlignment="Center">
-      <Run Text="{Binding LastModified1, Mode=OneWay}" />
+      <Run Text="{Binding LastModified2, Mode=OneWay}" />
     </TextBlock>
   </Grid>
 </UserControl>
