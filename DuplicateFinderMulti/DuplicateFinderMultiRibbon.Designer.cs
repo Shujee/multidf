@@ -46,7 +46,7 @@
       // tabDuplicateFinderMulti
       // 
       this.tabDuplicateFinderMulti.Groups.Add(this.group1);
-      this.tabDuplicateFinderMulti.Label = "DuplicateFinderMulti";
+      this.tabDuplicateFinderMulti.Label = "Multi-DF";
       this.tabDuplicateFinderMulti.Name = "tabDuplicateFinderMulti";
       // 
       // group1

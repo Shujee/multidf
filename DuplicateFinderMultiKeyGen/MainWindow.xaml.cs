@@ -17,9 +17,9 @@ namespace DuplicateFinderMultiKeyGen
     private void txtGenerate_Click(object sender, RoutedEventArgs e)
     {
       if (txtEmail.Text.Trim() == "" || txtCode.Text.Trim() == "")
-        MessageBox.Show("E-mail and Code must be provided.", "DuplicateFinderMultiKeyGen");
+        MessageBox.Show("E-mail and Code must be provided.", "Multi-DF KeyGen");
       else if(!ExpiryDatePicker.SelectedDate.HasValue)
-        MessageBox.Show("Expiry date must be selected.", "DuplicateFinderMultiKeyGen");
+        MessageBox.Show("Expiry date must be selected.", "Multi-DF KeyGen");
       else
       {
         try
@@ -35,7 +35,7 @@ namespace DuplicateFinderMultiKeyGen
 
     private void txtClose_Click(object sender, RoutedEventArgs e)
     {
-      if (MessageBox.Show("Are you sure you want to exit?", "DuplicateFinderMultiKeyGen", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+      if (MessageBox.Show("Are you sure you want to exit?", "Multi-DF KeyGen", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
         this.Close();
     }
 

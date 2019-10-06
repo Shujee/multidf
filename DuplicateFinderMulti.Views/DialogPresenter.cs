@@ -16,7 +16,7 @@ namespace DuplicateFinderMulti.Views
 
     public void ShowMessage(string msg, bool isError)
     {
-        MessageBox.Show(msg, "DuplicateFinderMulti Word Add-in", MessageBoxButton.OK, isError? MessageBoxImage.Error : MessageBoxImage.Information);
+        MessageBox.Show(msg, "Multi-DF Word Add-in", MessageBoxButton.OK, isError? MessageBoxImage.Error : MessageBoxImage.Information);
     }
 
     /// <summary>

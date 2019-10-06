@@ -34,11 +34,11 @@ namespace DuplicateFinderMulti
 
       btnShowHidePane.Visible = VM.ViewModelLocator.Register.IsRegistered;
 
+      Globals.ThisAddIn.AddAllTaskPanes();
+
       foreach (Document Doc in Globals.ThisAddIn.Application.Documents)
       {
-        var DupTaskPanes = Globals.ThisAddIn.CustomTaskPanes.Where(tp => tp.Title.StartsWith("DuplicateFinderMulti"));
-
-        
+        var DupTaskPanes = Globals.ThisAddIn.CustomTaskPanes.Where(tp => tp.Title.StartsWith("Multi-DF"));       
 
         foreach (var TP in DupTaskPanes)
         {

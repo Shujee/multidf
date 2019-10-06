@@ -51,7 +51,7 @@ namespace DuplicateFinderMulti
         // The first two arguments of the Add method specify a control to add to the custom task pane and the title to display on the task pane. 
         // The third argument, which is optional, specifies the parent window for the custom task pane. 
         var ucAP = new DuplicateFinderMultiPaneUC();
-        var NewTaskPane = this.CustomTaskPanes.Add(ucAP, $"DuplicateFinderMulti (ver: {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()})", doc.ActiveWindow);
+        var NewTaskPane = this.CustomTaskPanes.Add(ucAP, $"Multi-DF (ver: {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()})", doc.ActiveWindow);
 
         NewTaskPane.DockPosition = Office.MsoCTPDockPosition.msoCTPDockPositionLeft;
         NewTaskPane.Width = 500;
@@ -75,7 +75,7 @@ namespace DuplicateFinderMulti
         {
           var ctp = this.CustomTaskPanes[i - 1];
 
-          if (ctp.Title.StartsWith("DuplicateFinderMulti"))
+          if (ctp.Title.StartsWith("Multi-DF"))
             this.CustomTaskPanes.RemoveAt(i - 1); // If this is our task pane, remove it
         }
 
@@ -99,7 +99,7 @@ namespace DuplicateFinderMulti
         {
           // Get a reference to the window hosting the task pane
           var ctpWindow = (Word.Window)WordHelper.GetWindowSafe(_ctp);
-          if (_ctp.Title.StartsWith("DuplicateFinderMulti") && ctpWindow == doc.ActiveWindow)
+          if (_ctp.Title.StartsWith("Multi-DF") && ctpWindow == doc.ActiveWindow)
           {
             // If the title of this task pane is Select a date 
             // and the currently active window is hosting it, remove it

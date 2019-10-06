@@ -25,7 +25,7 @@ namespace DuplicateFinderMultiKeyGen
         if (ProductNameAttrib != null)
           _ProductName = ProductNameAttrib.ConstructorArguments[0].Value.ToString();
         else
-          _ProductName = "DuplicateFinderMultiKeyGen";
+          _ProductName = "Multi-DF KeyGen";
       }
     }
   }
