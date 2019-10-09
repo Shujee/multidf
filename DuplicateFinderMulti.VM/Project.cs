@@ -114,21 +114,7 @@ namespace DuplicateFinderMulti.VM
             {
               foreach (var Doc in Docs)
               {
-                System.IO.FileInfo FileInfo = new System.IO.FileInfo(Doc);
-
-                var NewDoc = new XMLDoc()
-                {
-                  LastModified = FileInfo.LastWriteTimeUtc,
-                  Size = FileInfo.Length,
-                  SourcePath = Doc
-                };
-
-                this._AllXMLDocs.Add(NewDoc);
-
-                graph.AddVertex(NewDoc);
-
-                //Populate QAs for the newly added document. This call is asynchronous.
-                NewDoc.UpdateQAs();
+                AddDocInternal(Doc);
               }
 
               this.IsDirty = true;
@@ -139,6 +125,25 @@ namespace DuplicateFinderMulti.VM
 
         return _AddDocsCommand;
       }
+    }
+
+    private void AddDocInternal(string Doc)
+    {
+      System.IO.FileInfo FileInfo = new System.IO.FileInfo(Doc);
+
+      var NewDoc = new XMLDoc()
+      {
+        LastModified = FileInfo.LastWriteTimeUtc,
+        Size = FileInfo.Length,
+        SourcePath = Doc
+      };
+
+      this._AllXMLDocs.Add(NewDoc);
+
+      graph.AddVertex(NewDoc);
+
+      //Populate QAs for the newly added document. This call is asynchronous.
+      NewDoc.UpdateQAs();
     }
 
     private RelayCommand _RemoveSelectedDocCommand;
@@ -210,10 +215,22 @@ namespace DuplicateFinderMulti.VM
         {
           _UpdateQAsCommand = new RelayCommand(() =>
           {
-            foreach (var Doc in this.AllXMLDocs)
-              Doc.UpdateQAs();
+            if (SelectedDoc != null)
+            {
+              var DocPath = SelectedDoc.SourcePath;
+
+              //remove this doc from the graph and add again to clear old processed results
+              graph.RemoveVertex(SelectedDoc);
+              this._AllXMLDocs.Remove(SelectedDoc);
+
+              //now add it again as a new doc
+              AddDocInternal(DocPath);
+
+              //and refresh results
+              RaisePropertyChanged(nameof(Graph));
+            }
           },
-          () => true);
+          () => !_IsProcessing);
         }
 
         return _UpdateQAsCommand;
@@ -256,12 +273,24 @@ namespace DuplicateFinderMulti.VM
               args.QA2.Doc.ProcessingProgress = args.PercentProgress;
             };
 
+            ViewModelLocator.DocComparer.DocCompareStarted += (d1, d2) =>
+            {
+              d1.ProcessingProgress = 0;
+              d2.ProcessingProgress = 0;
+            };
+
+            ViewModelLocator.DocComparer.DocCompareCompleted += (d1, d2) =>
+            {
+              d1.ProcessingProgress = 100;
+              d2.ProcessingProgress = 100;
+            };
+
             List<Task> Tasks = new List<Task>();
             foreach (var V1 in graph.Vertices)
             {
               foreach (var V2 in graph.Vertices)
               {
-                if (V1 != V2 && !graph.ContainsEdge(V1, V2) && V1.QAs != null && V2.QAs != null)
+                if (V1.QAs != null && V2.QAs != null && !graph.ContainsEdge(V1, V2))
                 {
                   var Edge = new OurEdge(V1, V2, null);
 
@@ -271,7 +300,6 @@ namespace DuplicateFinderMulti.VM
                     Task.ContinueWith((t1) =>
                     {
                       Edge.Tag = t1.Result;
-                      RaisePropertyChanged(nameof(Graph));
                     });
 
                     Tasks.Add(Task);
@@ -290,6 +318,9 @@ namespace DuplicateFinderMulti.VM
 #else
               GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() => IsProcessing = false);
 #endif
+
+              RaisePropertyChanged(nameof(Graph));
+              ApplyDiffThresholdCommand.Execute(null);
             });
           },
           () => !_IsProcessing);
@@ -326,7 +357,7 @@ namespace DuplicateFinderMulti.VM
         {
           _OpenDiffCommand = new RelayCommand<DFResultRow>((row) =>
           {
-            ViewModelLocator.DialogService.OpenDiffWindow(row.Q1.Question, row.Q2.Question);
+            ViewModelLocator.DialogService.OpenDiffWindow(row.Q1.Question, row.Q2.Question, row.Q1.Choices, row.Q2.Choices);
           },
           (row) => true);
         }
@@ -348,6 +379,7 @@ namespace DuplicateFinderMulti.VM
         AbortProcessCommand.RaiseCanExecuteChanged();
         AddDocsCommand.RaiseCanExecuteChanged();
         RemoveSelectedDocCommand.RaiseCanExecuteChanged();
+        UpdateQAsCommand.RaiseCanExecuteChanged();
       }
     }
 

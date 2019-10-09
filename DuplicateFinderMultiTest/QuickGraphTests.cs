@@ -35,6 +35,25 @@ namespace DuplicateFinderMulti.Test
       Assert.AreEqual(graph.Edges.Count(), 1);
     }
 
+    /// <summary>
+    /// Ideally, ContainsEdge(vetex1, vertex2) function of an undirected graph should return not care about the order of vertices and should return
+    /// true if there is an edge between the two vertices. This is not the case with QuickGraph.UndirectedGraph. This simple test proves the point.
+    /// </summary>
+    [TestMethod]
+    public void UndirectednessTest()
+    {
+      UndirectedGraph<string, TaggedUndirectedEdge<string, int>> graph = new UndirectedGraph<string, TaggedUndirectedEdge<string, int>>();
+
+      graph.AddVertex("A");
+      graph.AddVertex("B");
+
+      var Edge = new TaggedUndirectedEdge<string, int>("A", "B", 10);
+      graph.AddEdge(Edge);
+
+      Assert.IsTrue(graph.ContainsEdge("A", "B"));
+      Assert.IsTrue(graph.ContainsEdge("B", "A"));
+    }
+
     [TestMethod]
     public void GraphSerializeTest()
     {

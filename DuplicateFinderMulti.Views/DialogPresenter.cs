@@ -3,6 +3,7 @@ using DiffPlex.DiffBuilder;
 using DuplicateFinderMulti.VM;
 using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Interop;
@@ -126,10 +127,10 @@ namespace DuplicateFinderMulti.Views
       w.ShowDialog();
     }
 
-    public void OpenDiffWindow(string text1, string text2)
+    public void OpenDiffWindow(string q1, string q2, List<string> a1, List<string> a2)
     {
       var w = new DiffWindow();
-      ((DiffVM)w.DataContext).PerformDiffCommand.Execute((text1, text2));
+      ((DiffVM)w.DataContext).PerformDiffCommand.Execute((q1, q2, a1, a2));
 
       MakeChild(w);
       w.ShowDialog();

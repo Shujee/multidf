@@ -146,6 +146,8 @@
     <Compile Include="Interfaces\IDocComparer.cs" />
     <Compile Include="Interfaces\IQAComparer.cs" />
     <Compile Include="Interfaces\IQAExtractionStrategy.cs" />
+    <Compile Include="Levenshtein.cs" />
+    <Compile Include="MinDistanceSort.cs" />
     <Compile Include="OurEdge.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Interfaces\IWordService.cs" />

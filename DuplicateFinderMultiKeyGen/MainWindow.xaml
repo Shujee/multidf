@@ -53,9 +53,9 @@
     <TextBox Grid.Row="3" Grid.Column="1" Height="50" x:Name="txtLicenseKey" FontFamily="Courier New" VerticalContentAlignment="Top" TextWrapping="Wrap" IsReadOnly="True" />
 
     <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="3,6">
-      <Button x:Name="txtGenerate" Content="Generate" Click="txtGenerate_Click" />
-      <Button x:Name="txtCopy" Content="Copy Key" Click="txtCopy_Click" />
-      <Button x:Name="txtClose"  Content="Close" Click="txtClose_Click" />
+      <Button x:Name="txtGenerate" Content="Generate" Click="GenerateButton_Click" />
+      <Button x:Name="txtCopy" Content="Copy Key" Click="CopyButton_Click" />
+      <Button x:Name="txtClose"  Content="Close" Click="CloseButton_Click" />
     </StackPanel>
   </Grid>
 </Window>

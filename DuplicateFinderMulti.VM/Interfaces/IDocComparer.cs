@@ -12,12 +12,15 @@ namespace DuplicateFinderMulti.VM
     public double Distance { get; set; }
     public double PercentProgress { get; set; }
   }
-
+    
   public delegate void QAComparedDelegate(object sender, QAComparedArgs e);
-
+  
   public interface IDocComparer
   {
     Task<DFResult> Compare(XMLDoc d1, XMLDoc d2, IQAComparer qaComparer, bool ignoreCase, CancellationToken token);
+
+    event Action<XMLDoc, XMLDoc> DocCompareStarted;
     event QAComparedDelegate QACompared;
+    event Action<XMLDoc, XMLDoc> DocCompareCompleted;
   }
 }

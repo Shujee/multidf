@@ -103,13 +103,14 @@ namespace DuplicateFinderMulti.VM
         {
           System.IO.FileInfo fileInfo = new System.IO.FileInfo(SourcePath);
 
-          var Info = new FileAttributesComparison();
+          var Info = new FileAttributesComparison
+          {
+            LastModified1 = fileInfo.LastWriteTimeUtc,
+            LastModified2 = LastModified,
 
-          Info.LastModified1 = fileInfo.LastWriteTimeUtc;
-          Info.LastModified2 = LastModified;
-
-          Info.Size1 = fileInfo.Length;
-          Info.Size2 = Size;
+            Size1 = fileInfo.Length,
+            Size2 = Size
+          };
 
           return Info;
         }
@@ -138,9 +139,6 @@ namespace DuplicateFinderMulti.VM
         return _OpenSourceCommand;
       }
     }
-
-
-    
 
     public void UpdateQAs()
     {

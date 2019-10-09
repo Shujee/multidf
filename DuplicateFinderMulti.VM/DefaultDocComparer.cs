@@ -9,7 +9,9 @@ namespace DuplicateFinderMulti.VM
 {
   public class DefaultDocComparer : IDocComparer
   {
+    public event Action<XMLDoc, XMLDoc> DocCompareStarted;
     public event QAComparedDelegate QACompared;
+    public event Action<XMLDoc, XMLDoc> DocCompareCompleted;
 
     public Task<DFResult> Compare(XMLDoc d1, XMLDoc d2, IQAComparer qaComparer, bool ignoreCase, CancellationToken token)
     {
@@ -18,38 +20,66 @@ namespace DuplicateFinderMulti.VM
 
       float TotalComparisons = d1.QAs.Count * d2.QAs.Count;
 
+      //This list will keep record of pairs of question that have been dispatched for comparison, so that
+      //we do not send them for comparison again. e.g. if X and Y have been dispatched for comparison, we will
+      //not dispatch the inverse pair Y and X.
+      List<DFResultRow> DispatchedItems = new List<DFResultRow>();
+
+      int LoopCount = 0;
+
+      DocCompareStarted?.Invoke(d1, d2);
+
       foreach (var q1 in d1.QAs)
       {
         foreach (var q2 in d2.QAs)
         {
-          Tasks.Add(Task.Run(() =>
+          var DFR = new DFResultRow(q1, q2, 0);
+
+          if (q1 != q2)
           {
-            if (!token.IsCancellationRequested)
+            var Flag = false;
+
+            lock (DispatchedItems)
             {
-              //if (!Result.ContainsKey(new DFResultRow(q1, q2)))
-              //{
-              var Dist = qaComparer.Distance(q1, q2, ignoreCase);
-
-              if (token.IsCancellationRequested)
-                return;
-
-              Result.Items.Add(new DFResultRow(q1, q2, Dist));
-
-              QACompared?.Invoke(this, new QAComparedArgs() { QA1 = q1, QA2 = q2, Distance = Dist, PercentProgress = 100 * (Result.Items.Count / TotalComparisons) });
-              //}
-              //else
-              //  System.Diagnostics.Debug.WriteLine($"========================================================={q1.Doc} ({q1.Index}) - {q2.Doc} ({q2.Index})=========================================================");
+              if (!DispatchedItems.Any(i => i.Equals(DFR)))
+              {
+                DispatchedItems.Add(DFR);
+                Flag = true;
+              }
             }
-          }, token));
+
+            if (Flag)
+            {
+              Tasks.Add(Task.Run(() =>
+              {
+                if (!token.IsCancellationRequested)
+                {
+                  DFR.Distance = qaComparer.Distance(q1, q2, ignoreCase);
+
+                  if (token.IsCancellationRequested)
+                    return;
+
+                  Result.Items.Add(DFR);
+
+                  QACompared?.Invoke(this, new QAComparedArgs() { QA1 = q1, QA2 = q2, Distance = DFR.Distance, PercentProgress = 100 * (LoopCount / TotalComparisons) });
+                }
+              }, token));
+            }
+          }
 
           token.ThrowIfCancellationRequested();
+
+          Interlocked.Increment(ref LoopCount);
         }
       }
 
       return Task.WhenAll(Tasks).ContinueWith(t =>
       {
         if (t.Exception == null)
+        {
+          DocCompareCompleted?.Invoke(d1, d2);
           return Result;
+        }
         else
           throw t.Exception;
       });

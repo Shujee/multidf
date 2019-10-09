@@ -14,7 +14,7 @@ namespace DuplicateFinderMultiKeyGen
       InitializeComponent();
     }
 
-    private void txtGenerate_Click(object sender, RoutedEventArgs e)
+    private void GenerateButton_Click(object sender, RoutedEventArgs e)
     {
       if (txtEmail.Text.Trim() == "" || txtCode.Text.Trim() == "")
         MessageBox.Show("E-mail and Code must be provided.", "Multi-DF KeyGen");
@@ -33,13 +33,13 @@ namespace DuplicateFinderMultiKeyGen
       }
     }
 
-    private void txtClose_Click(object sender, RoutedEventArgs e)
+    private void CloseButton_Click(object sender, RoutedEventArgs e)
     {
       if (MessageBox.Show("Are you sure you want to exit?", "Multi-DF KeyGen", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
         this.Close();
     }
 
-    private void txtCopy_Click(object sender, RoutedEventArgs e)
+    private void CopyButton_Click(object sender, RoutedEventArgs e)
     {
       Clipboard.SetText(txtLicenseKey.Text);
     }

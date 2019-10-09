@@ -1,4 +1,6 @@
-﻿namespace DuplicateFinderMulti.VM
+﻿using System.Collections.Generic;
+
+namespace DuplicateFinderMulti.VM
 {
   public interface IDialogService
   {
@@ -9,7 +11,7 @@
     string ShowSave(string filter, string initDir = "", string title = "", string fileName = "");
 
     void OpenRegisterWindow();
-    void OpenDiffWindow(string text1, string text2);
+    void OpenDiffWindow(string q1, string q2, List<string> a1, List<string> a2);
     void OpenAboutWindow();
   }
 }
