@@ -13,8 +13,10 @@ namespace DuplicateFinderMulti.VM
     /// <param name="b"></param>
     public static void Sort(List<string> inputa, List<string> inputb, Func<string, string, int> DistFunc)
     {
-      List<string> A, B;
+      if (inputa == null || inputb == null || inputa.Count == 0 || inputb.Count == 0)
+        return;
 
+      List<string> A, B;
 
       if (inputb.Count > inputa.Count)
       {

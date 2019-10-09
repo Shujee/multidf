@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -228,6 +230,8 @@ namespace DuplicateFinderMulti.VM
 
               //and refresh results
               RaisePropertyChanged(nameof(Graph));
+
+              IsDirty = true;
             }
           },
           () => !_IsProcessing);
@@ -300,6 +304,7 @@ namespace DuplicateFinderMulti.VM
                     Task.ContinueWith((t1) =>
                     {
                       Edge.Tag = t1.Result;
+                      IsDirty = true;
                     });
 
                     Tasks.Add(Task);
@@ -347,7 +352,71 @@ namespace DuplicateFinderMulti.VM
         return _AbortProcessCommand;
       }
     }
-    
+
+
+    private RelayCommand _ExportCommand;
+    public RelayCommand ExportCommand
+    {
+      get
+      {
+        if (_ExportCommand == null)
+        {
+          _ExportCommand = new RelayCommand(() =>
+          {
+            if(this.AllXMLDocs.Any(d => !d.IsSyncWithSource))
+            {
+              ViewModelLocator.DialogService.ShowMessage("Some of the documents in this project are not synchronized with source files. Refresh the project before using Export command.", true);
+              return;
+            }
+
+            var ExportSavePath = ViewModelLocator.DialogService.ShowSave(MainVM.FILTER_XML_FILES);
+
+            if (ExportSavePath != null)
+            {
+              Project P = Project.FromXML(this.ToXML());
+
+              P.Name = Path.GetFileNameWithoutExtension(ExportSavePath);
+              P.SavePath = ExportSavePath;
+              P.IsDirty = false;
+
+              string DestFolder = Path.GetDirectoryName(ExportSavePath);
+              foreach (var Doc in P.AllXMLDocs)
+              {
+                var DestFile = GetAvailableFileName(Doc.SourcePath, DestFolder);
+                File.Copy(Doc.SourcePath, DestFile);
+                Doc.SourcePath = DestFile;
+              }
+
+              File.WriteAllText(ExportSavePath, P.ToXML());
+              ViewModelLocator.DialogService.ShowMessage($"Project has been exported successfully to '{ExportSavePath}'.", false);
+            }
+          },
+          () => true);
+        }
+
+        return _ExportCommand;
+      }
+    }
+
+    /// <summary>
+    /// Returns an file name that is not currently in use in the specified directory by appending an integer to the file name. 
+    /// </summary>
+    /// <returns></returns>
+    private string GetAvailableFileName(string sourcePath, string destFolder)
+    {
+      string DocFileName = Path.GetFileName(sourcePath);
+      string DocFileNameNoExt = Path.GetFileNameWithoutExtension(sourcePath);
+      string DocExt = Path.GetExtension(sourcePath);
+      var DestFile = Path.Combine(destFolder, DocFileName);
+      int i = 1;
+
+      while (File.Exists(DestFile))
+        DestFile = Path.Combine(destFolder, DocFileNameNoExt + ' ' + (i++).ToString() + DocExt);
+
+      return DestFile;
+    }
+
+
     private RelayCommand<DFResultRow> _OpenDiffCommand;
     public RelayCommand<DFResultRow> OpenDiffCommand
     {

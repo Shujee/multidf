@@ -55,6 +55,9 @@
       <Separator/>
       <Button Command="{Binding SelectedProject.ProcessCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="Flash" ToolTip="Starts finding duplicates in the current project" />
       <Button Command="{Binding SelectedProject.AbortProcessCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="Close" ToolTip="Starts finding duplicates in the current project" />
+
+      <Separator/>
+      <Button Command="{Binding SelectedProject.ExportCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="ExternalLink" ToolTip="Copies project data and source files to the specified directory. Also updates file links in project file to point to the copied files." />
     </ToolBar>
 
     <Border BorderBrush="Gray" Background="LightYellow" Grid.Row="1">

@@ -19,7 +19,7 @@ namespace DuplicateFinderMulti.Test
       System.Diagnostics.Debug.WriteLine("SHOWING ABOUT WINDOW");
     }
 
-    public void OpenDiffWindow(string text1, string text2)
+    public void OpenDiffWindow(string q1, string q2, List<string> a1, List<string> a2)
     {
       System.Diagnostics.Debug.WriteLine("SHOWING DIFF WINDOW");
     }
