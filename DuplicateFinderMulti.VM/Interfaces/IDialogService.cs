@@ -13,6 +13,7 @@ namespace DuplicateFinderMulti.VM
 
     void OpenRegisterWindow();
     void OpenDiffWindow(string q1, string q2, List<string> a1, List<string> a2);
+    void OpenResultsWindow();
     void OpenAboutWindow();
   }
 }

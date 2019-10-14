@@ -153,6 +153,14 @@ namespace DuplicateFinderMulti.Views
       w.ShowDialog();
     }
 
+    public void OpenResultsWindow()
+    {
+      var w = new ResultsWindow();
+
+      MakeChild(w);
+      w.ShowDialog();
+    }
+
     /// <summary>
     /// Sets Word window as parent of the specified window.
     /// </summary>

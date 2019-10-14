@@ -1,0 +1,159 @@
+﻿<UserControl x:Class="DuplicateFinderMulti.Views.ResultContent"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DuplicateFinderMulti.Views"
+             xmlns:vm="clr-namespace:DuplicateFinderMulti.VM;assembly=DuplicateFinderMulti.VM"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance Type=vm:MainVM, IsDesignTimeCreatable=True}"
+             DataContext="{Binding Source={x:Static vm:ViewModelLocator.Main}}">
+
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="StretchedTreeViewItemStyle.xaml" />
+        <ResourceDictionary Source="FancySliderStyle.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+
+      <local:DistanceToColorConverter x:Key="DistanceToColorConverter" />
+      <local:PathToFileNameConverter x:Key="PathToFileNameConverter" />
+    </ResourceDictionary>
+  </UserControl.Resources>
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+    <ToolBar Background="#FFEEF5FD" HorizontalAlignment="Stretch" ToolBarTray.IsLocked="True">
+      <ToolBar.Resources>
+        <Style TargetType="{x:Type DockPanel}">
+          <Setter Property="HorizontalAlignment" Value="Right" />
+        </Style>
+      </ToolBar.Resources>
+
+      <TextBlock Text="Difference Threshold:" Grid.Column="1" VerticalAlignment="Center" Margin="3,0" />
+      <Slider VerticalAlignment="Center" Width="150" Margin="0,6" 
+              Minimum="0.0" Maximum="1.0" SmallChange="0.01" LargeChange="0.05" 
+              Value="{Binding SelectedProject.Graph.DiffThreshold}" Style="{StaticResource FancySliderStyle}" />
+
+      <Button fa:Awesome.Content="Filter" FontSize="24" Command="{Binding SelectedProject.ApplyDiffThresholdCommand}" ToolTip="Filters results using difference threshold value" />
+    </ToolBar>
+
+    <TreeView Name="TV" Grid.Row="1" ItemsSource="{Binding SelectedProject.Graph.Results}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="3">
+      <TreeView.ItemContainerStyle>
+        <Style TargetType="TreeViewItem" BasedOn="{StaticResource StretchedTreeViewItemStyle}">
+          <Setter Property="IsExpanded" Value="True" />
+          <Setter Property="HorizontalAlignment" Value="Stretch" />
+          <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+          <EventSetter Event="Expanded" Handler="TreeViewItem_Expanded" />
+        </Style>
+      </TreeView.ItemContainerStyle>
+
+      <TreeView.ItemTemplate>
+        <HierarchicalDataTemplate DataType="vm:DFResult" ItemsSource="{Binding FilteredItems}">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="120" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+              <fa:FontAwesome Icon="FileWordOutline" Foreground="Blue" FontSize="14" VerticalAlignment="Center" Margin="3" />
+              <TextBlock VerticalAlignment="Center" Margin="0,3" TextTrimming="CharacterEllipsis">
+              <Run Text="{Binding Doc1.SourcePath, Converter={StaticResource PathToFileNameConverter}}" />
+              (QAs: <Run Text="{Binding Count1, Mode=OneWay}" />)
+              </TextBlock>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center">
+              <fa:FontAwesome Icon="FileWordOutline" Foreground="Blue" FontSize="14" VerticalAlignment="Center" Margin="3" Grid.Column="2" />
+              <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="0,3" TextTrimming="CharacterEllipsis">
+              <Run Text="{Binding Doc2.SourcePath, Converter={StaticResource PathToFileNameConverter}}" />
+              (QAs: <Run Text="{Binding Count2, Mode=OneWay}" />)
+              </TextBlock>
+            </StackPanel>
+
+            <Border BorderBrush="Green" BorderThickness="1" CornerRadius="5" Grid.Column="2" Margin="3"
+                            HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="Number of Questions in this document" >
+              <TextBlock Text="{Binding FilteredItems.Count, StringFormat='Total Matches: {0}'}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Green" Margin="3" />
+            </Border>
+          </Grid>
+
+          <HierarchicalDataTemplate.ItemContainerStyle>
+            <Style TargetType="TreeViewItem" BasedOn="{StaticResource StretchedTreeViewItemStyle}">
+              <Setter Property="IsExpanded" Value="True" />
+              <Setter Property="HorizontalAlignment" Value="Stretch" />
+              <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+              <Setter Property="Margin" Value="0" />
+              <Setter Property="Padding" Value="0" />
+            </Style>
+          </HierarchicalDataTemplate.ItemContainerStyle>
+
+
+          <HierarchicalDataTemplate.ItemTemplate>
+            <DataTemplate DataType="vm:DFResultRow">
+              <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" CornerRadius="3">
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="120" />
+                  </Grid.ColumnDefinitions>
+
+                  <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <fa:FontAwesome Icon="PuzzlePiece" FontSize="14" VerticalAlignment="Center" Margin="9,3" />
+                    <TextBlock VerticalAlignment="Center" Margin="0,3" Width="100">
+                    <Hyperlink NavigateUri="{Binding Q1.Doc.SourcePath}" RequestNavigate="Hyperlink_RequestNavigate">
+                      Question <Run Text="{Binding Q1.Index, Mode=OneWay}" />
+                    </Hyperlink>
+                    </TextBlock>
+                  </StackPanel>
+
+                  <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center">
+                    <fa:FontAwesome Icon="PuzzlePiece" FontSize="14" VerticalAlignment="Center" Margin="9,3" />
+                    <TextBlock VerticalAlignment="Center">
+                    <Hyperlink NavigateUri="{Binding Q2.Doc.SourcePath}" RequestNavigate="Hyperlink_RequestNavigate2">
+                      Question <Run Text="{Binding Q2.Index, Mode=OneWay}" />
+                    </Hyperlink>
+                    </TextBlock>
+                  </StackPanel>
+
+                  <Button Command="{Binding DataContext.SelectedProject.OpenDiffCommand, RelativeSource={RelativeSource AncestorType=TreeView}}" CommandParameter="{Binding}" ToolTip="Percent difference between the two QAs. Click to open diff window." FontSize="14" Grid.Column="2"  
+                          Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,3,6" Cursor="Hand">
+
+                    <Button.Style>
+                      <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                          <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                              <Border x:Name="ButtonBorder" BorderBrush="DodgerBlue" BorderThickness="1" CornerRadius="5" Grid.Column="3" VerticalAlignment="Center">
+                                <TextBlock x:Name="ButtonText" Text="{Binding Distance, StringFormat={}{0:P0}}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="DodgerBlue" Margin="3" />
+                              </Border>
+                              <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                  <Setter TargetName="ButtonBorder" Property="Background" Value="DodgerBlue"/>
+                                  <Setter TargetName="ButtonText" Property="Foreground" Value="White"/>
+                                </Trigger>
+                              </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                          </Setter.Value>
+                        </Setter>
+                      </Style>
+                    </Button.Style>
+                  </Button>
+
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </HierarchicalDataTemplate.ItemTemplate>
+        </HierarchicalDataTemplate>
+      </TreeView.ItemTemplate>
+    </TreeView>
+  </Grid>
+</UserControl>

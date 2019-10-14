@@ -106,6 +106,26 @@ namespace DuplicateFinderMulti.VM
     }
 
 
+    private RelayCommand _OpenResultsWindowCommand;
+    public RelayCommand OpenResultsWindowCommand
+    {
+      get
+      {
+        if (_OpenResultsWindowCommand == null)
+        {
+          _OpenResultsWindowCommand = new RelayCommand(() =>
+          {
+            ViewModelLocator.DialogService.OpenResultsWindow();
+          },
+          () => true);
+        }
+
+        return _OpenResultsWindowCommand;
+      }
+    }
+
+
+
     private RelayCommand _AddDocsCommand;
     public RelayCommand AddDocsCommand
     {
@@ -115,16 +135,27 @@ namespace DuplicateFinderMulti.VM
         {
           _AddDocsCommand = new RelayCommand(() =>
           {
-            var Docs = ViewModelLocator.DialogService.ShowOpenMulti("Word documents (*.doc, *.docx, *.docm)|*.doc;*.docx;*.docm");
+          var Docs = ViewModelLocator.DialogService.ShowOpenMulti("Word documents (*.doc, *.docx, *.docm)|*.doc;*.docx;*.docm");
 
             if (Docs != null)
             {
+              IsExtractingQA = true;
+
+              List<Task> Tasks = new List<Task>();
               foreach (var Doc in Docs)
               {
-                AddDocInternal(Doc);
+                var Task = AddDocInternal(Doc);
+                Tasks.Add(Task);
               }
 
-              this.IsDirty = true;
+              Task.WhenAll(Tasks.ToArray()).ContinueWith(t =>
+              {
+                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                {
+                  IsExtractingQA = false;
+                  this.IsDirty = true;
+                });
+              });
             }
           },
           () => !_IsProcessing);
@@ -134,7 +165,7 @@ namespace DuplicateFinderMulti.VM
       }
     }
 
-    private void AddDocInternal(string Doc)
+    private Task AddDocInternal(string Doc)
     {
       System.IO.FileInfo FileInfo = new System.IO.FileInfo(Doc);
 
@@ -150,7 +181,7 @@ namespace DuplicateFinderMulti.VM
       graph.AddVertex(NewDoc);
 
       //Populate QAs for the newly added document. This call is asynchronous.
-      NewDoc.UpdateQAs();
+      return NewDoc.UpdateQAs();
     }
 
     private RelayCommand _RemoveSelectedDocCommand;
@@ -167,7 +198,7 @@ namespace DuplicateFinderMulti.VM
 
             this.IsDirty = true;
           },
-          () => _SelectedDoc != null && !_IsProcessing);
+          () => _SelectedDoc != null && !_IsProcessing && !_IsExtractingQA);
         }
 
         return _RemoveSelectedDocCommand;
@@ -206,7 +237,7 @@ namespace DuplicateFinderMulti.VM
               RaisePropertyChanged(nameof(Name));
             }
           },
-          () => this.IsDirty && !_IsProcessing);
+          () => this.IsDirty && !_IsProcessing && !_IsExtractingQA);
         }
 
         return _SaveCommand;
@@ -240,7 +271,7 @@ namespace DuplicateFinderMulti.VM
               IsDirty = true;
             }
           },
-          () => !_IsProcessing);
+          () => !_IsProcessing && !_IsExtractingQA);
         }
 
         return _UpdateQAsCommand;
@@ -259,7 +290,7 @@ namespace DuplicateFinderMulti.VM
             foreach (var Doc in this.AllXMLDocs)
               Doc.RaisePropertyChanged(nameof(XMLDoc.IsSyncWithSource));
           },
-          () => true);
+          () => !IsExtractingQA);
         }
 
         return _CheckSyncWithSourceCommand;
@@ -279,8 +310,11 @@ namespace DuplicateFinderMulti.VM
 
             ViewModelLocator.DocComparer.QACompared += (sender, args) =>
             {
-              args.QA1.Doc.ProcessingProgress = args.PercentProgress;
-              args.QA2.Doc.ProcessingProgress = args.PercentProgress;
+              GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+              {
+                args.QA1.Doc.ProcessingProgress = args.PercentProgress;
+                args.QA2.Doc.ProcessingProgress = args.PercentProgress;
+              });
             };
 
             ViewModelLocator.DocComparer.DocCompareStarted += (d1, d2) =>
@@ -334,7 +368,7 @@ namespace DuplicateFinderMulti.VM
               ApplyDiffThresholdCommand.Execute(null);
             });
           },
-          () => !_IsProcessing);
+          () => !_IsProcessing && !_IsExtractingQA);
         }
 
         return _ProcessCommand;
@@ -397,7 +431,7 @@ namespace DuplicateFinderMulti.VM
               ViewModelLocator.DialogService.ShowMessage($"Project has been exported successfully to '{ExportSavePath}'.", false);
             }
           },
-          () => !_IsProcessing);
+          () => !_IsProcessing && !_IsExtractingQA);
         }
 
         return _ExportCommand;
@@ -460,6 +494,27 @@ namespace DuplicateFinderMulti.VM
         ExportCommand.RaiseCanExecuteChanged();
       }
     }
+
+    private bool _IsExtractingQA = false;
+
+    [XmlIgnore]
+    public bool IsExtractingQA
+    {
+      get { return _IsExtractingQA; }
+      private set
+      {
+        Set(ref _IsExtractingQA, value);
+
+        CheckSyncWithSourceCommand.RaiseCanExecuteChanged();
+        SaveCommand.RaiseCanExecuteChanged();
+        ProcessCommand.RaiseCanExecuteChanged();
+        AbortProcessCommand.RaiseCanExecuteChanged();
+        RemoveSelectedDocCommand.RaiseCanExecuteChanged();
+        UpdateQAsCommand.RaiseCanExecuteChanged();
+        ExportCommand.RaiseCanExecuteChanged();
+      }
+    }
+
 
     public static Project FromXML(string xml)
     {

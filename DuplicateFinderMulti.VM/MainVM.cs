@@ -105,10 +105,13 @@ namespace DuplicateFinderMulti.VM
 
     private void SelectedProject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-      if(e.PropertyName == nameof(Project.IsProcessing))
+      if(e.PropertyName == nameof(Project.IsProcessing) || e.PropertyName == nameof(Project.IsExtractingQA))
       {
-        NewCommand.RaiseCanExecuteChanged();
-        OpenCommand.RaiseCanExecuteChanged();
+        GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+        {
+          NewCommand.RaiseCanExecuteChanged();
+          OpenCommand.RaiseCanExecuteChanged();
+        });
       }
     }
 
@@ -133,7 +136,7 @@ namespace DuplicateFinderMulti.VM
             SelectedProject = new Project() { Name = "New Project" };
             _SelectedProject.SavePath = null;
           },
-          () => SelectedProject == null || !SelectedProject.IsProcessing);
+          () => SelectedProject == null || (!SelectedProject.IsProcessing && !SelectedProject.IsExtractingQA));
         }
 
         return _NewCommand;
@@ -167,7 +170,7 @@ namespace DuplicateFinderMulti.VM
               _SelectedProject.SavePath = ProjectPath;
             }
           },
-          () => SelectedProject == null || !SelectedProject.IsProcessing);
+          () => SelectedProject == null || (!SelectedProject.IsProcessing && !SelectedProject.IsExtractingQA));
         }
 
         return _OpenCommand;

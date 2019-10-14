@@ -140,11 +140,11 @@ namespace DuplicateFinderMulti.VM
       }
     }
 
-    public void UpdateQAs()
+    public Task UpdateQAs()
     {
       if (!string.IsNullOrEmpty(_SourcePath) && System.IO.File.Exists(_SourcePath))
       {
-        Task.Run(() =>
+        return Task.Run(() =>
         {
           var Paragraphs = ViewModelLocator.WordService.GetDocumentParagraphs(_SourcePath, _Token, (i, Total) => ProcessingProgress = (i / (float)Total) * 100);
 
@@ -162,6 +162,8 @@ namespace DuplicateFinderMulti.VM
           }
         });
       }
+      else
+        return null;
     }
 
     public void CancelUpdateQAs()

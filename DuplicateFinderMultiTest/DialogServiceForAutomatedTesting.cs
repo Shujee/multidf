@@ -14,6 +14,11 @@ namespace DuplicateFinderMulti.Test
       throw new NotImplementedException();
     }
 
+    public bool? AskTernaryQuestion(string msg)
+    {
+      throw new NotImplementedException();
+    }
+
     public void OpenAboutWindow()
     {
       System.Diagnostics.Debug.WriteLine("SHOWING ABOUT WINDOW");
@@ -27,6 +32,11 @@ namespace DuplicateFinderMulti.Test
     public void OpenRegisterWindow()
     {
       System.Diagnostics.Debug.WriteLine("SHOWING REGISTER WINDOW");
+    }
+
+    public void OpenResultsWindow()
+    {
+      throw new NotImplementedException();
     }
 
     public void ShowMessage(string msg, bool isError)
