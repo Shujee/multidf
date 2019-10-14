@@ -6,6 +6,7 @@ namespace DuplicateFinderMulti.VM
   {
     void ShowMessage(string msg, bool isError);
     string AskStringQuestion(string msg, string default_value);
+    bool? AskTernaryQuestion(string msg);
     string ShowOpen(string filter, string initDir = "", string title = "");
     string[] ShowOpenMulti(string filter, string initDir = "", string title = "");
     string ShowSave(string filter, string initDir = "", string title = "", string fileName = "");

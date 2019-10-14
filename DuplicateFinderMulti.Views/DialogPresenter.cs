@@ -38,6 +38,23 @@ namespace DuplicateFinderMulti.Views
     }
 
     /// <summary>
+    /// Shows message prompt with Yes, No and Cancel options. Used in situations like "Do you want to save before closing?".
+    /// </summary>
+    /// <param name="msg"></param>
+    /// <returns></returns>
+    public bool? AskTernaryQuestion(string msg)
+    {
+      var Res = MessageBox.Show(msg, "Multi-DF", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
+
+      if (Res == MessageBoxResult.Yes)
+        return true;
+      else if (Res == MessageBoxResult.No)
+        return false;
+      else
+        return null;
+    }
+
+    /// <summary>
     /// Displays Open dialog. User can specify file filter, initial directory and dialog title. Returns full path of the selected file if
     /// user clicks Open button. Returns null if user clicks Cancel button.
     /// </summary>

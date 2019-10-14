@@ -18,10 +18,10 @@ namespace DuplicateFinderMulti.VM
 
       List<string> A, B;
 
-      if (inputb.Count > inputa.Count)
+      if (inputa.Count < inputb.Count)
       {
-        A = inputb.ToList();
-        B = inputa.ToList();
+        A = inputa.ToList();
+        B = inputb.ToList();
       }
       else
       {

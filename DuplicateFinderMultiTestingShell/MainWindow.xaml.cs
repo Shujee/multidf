@@ -26,7 +26,7 @@ namespace DuplicateFinderMulti.TestingShell
 
     private void AboutButton_Click(object sender, RoutedEventArgs e)
     {
-      ViewModelLocator.DialogService.OpenDiffWindow("The\nquick\nbrown\nfox\nover", "The\nfox\njumps\nover");
+      ViewModelLocator.DialogService.OpenDiffWindow("The\nquick\nbrown\nfox\nover", "The\nfox\njumps\nover", new List<string>() { "A", "B", "C" }, new List<string>() { "C", "A", "B" });
 
       //ViewModelLocator.DialogService.OpenAboutWindow();
     }

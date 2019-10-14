@@ -99,13 +99,13 @@ namespace DuplicateFinderMulti.VM
 
         //bind new project's event listener
         if (_SelectedProject != null)
-          _SelectedProject.PropertyChanged -= SelectedProject_PropertyChanged;
+          _SelectedProject.PropertyChanged += SelectedProject_PropertyChanged;
       }
     }
 
     private void SelectedProject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-      if (e.PropertyName == nameof(Project.IsDirty))
+      if(e.PropertyName == nameof(Project.IsProcessing))
       {
         NewCommand.RaiseCanExecuteChanged();
         OpenCommand.RaiseCanExecuteChanged();
@@ -121,10 +121,19 @@ namespace DuplicateFinderMulti.VM
         {
           _NewCommand = new RelayCommand(() =>
           {
+            if(SelectedProject!=null && SelectedProject.IsDirty)
+            {
+              var Res = ViewModelLocator.DialogService.AskTernaryQuestion("Active project contains unsaved changes. Do you want to save these changes before proceeding?");
+              if (Res == null)
+                return;
+              else if (Res.Value)
+                SelectedProject.SaveCommand.Execute(null);
+            }
+
             SelectedProject = new Project() { Name = "New Project" };
             _SelectedProject.SavePath = null;
           },
-          () => (_SelectedProject?.IsDirty??false) == false);
+          () => SelectedProject == null || !SelectedProject.IsProcessing);
         }
 
         return _NewCommand;
@@ -140,6 +149,15 @@ namespace DuplicateFinderMulti.VM
         {
           _OpenCommand = new RelayCommand(() =>
           {
+            if (SelectedProject!=null && SelectedProject.IsDirty)
+            {
+              var Res = ViewModelLocator.DialogService.AskTernaryQuestion("Active project contains unsaved changes. Do you want to save these changes before proceeding?");
+              if (Res == null)
+                return;
+              else if (Res.Value)
+                SelectedProject.SaveCommand.Execute(null);
+            }
+
             var ProjectPath = ViewModelLocator.DialogService.ShowOpen(FILTER_XML_FILES);
 
             if (ProjectPath != null)
@@ -149,7 +167,7 @@ namespace DuplicateFinderMulti.VM
               _SelectedProject.SavePath = ProjectPath;
             }
           },
-          () => ((_SelectedProject?.IsDirty)??false) == false);
+          () => SelectedProject == null || !SelectedProject.IsProcessing);
         }
 
         return _OpenCommand;

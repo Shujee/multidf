@@ -17,7 +17,10 @@ namespace DuplicateFinderMulti
         btnRegister.Visible = true;
       }
       else
-        btnRegister.Visible = (ExpiryDate.Value.Subtract(System.DateTime.Now).TotalDays < 7);
+      {
+        var IsExpired = (ExpiryDate.Value.Subtract(System.DateTime.Now).TotalDays < 7);
+        btnShowHidePane.Visible = !IsExpired;
+      }
     }
 
     private void ShowHidePaneButton_Click(object sender, RibbonControlEventArgs e)

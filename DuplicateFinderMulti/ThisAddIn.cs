@@ -26,7 +26,7 @@ namespace DuplicateFinderMulti
         var ExpiryDays = ExpiryDate.Value.Subtract(System.DateTime.Now).TotalDays;
         if (ExpiryDays > 0 && ExpiryDays < 7)
         {
-          ViewModelLocator.DialogService.ShowMessage($"DuplicateFinderMulti will expire in {(int)ExpiryDays} days. You should get a new license key if you want to continue using the add-in.", false);
+          ViewModelLocator.DialogService.ShowMessage($"DuplicateFinderMulti will expire in {(int)Math.Ceiling(ExpiryDays)} day(s). You should get a new license key if you want to continue using the add-in.", false);
         }
       }
 
@@ -226,10 +226,17 @@ namespace DuplicateFinderMulti
 
           if (p.Range.Tables.Count > 0)
           {
-            if (p.Range.Tables[1].ApplyStyleHeadingRows && p.Range.Rows.First.Index == 1)
-              PType = ParagraphType.TableHeader;
-            else
+            try
+            {
+              if (p.Range.Tables[1].ApplyStyleHeadingRows && p.Range.Rows.First.Index == 1)
+                PType = ParagraphType.TableHeader;
+              else
+                PType = ParagraphType.TableRow;
+            }
+            catch //tables with vertically merged rows can throw exception when trying to access p.Range.Rows.First.Index 
+            {
               PType = ParagraphType.TableRow;
+            }
           }
           else if (p.Range.ListFormat.ListType == WdListType.wdListSimpleNumbering)
             PType = ParagraphType.NumberedList;

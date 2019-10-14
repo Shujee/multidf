@@ -41,14 +41,19 @@ namespace DuplicateFinderMulti.VM
       set => Set(ref _Name, value);
     }
 
-    private bool _IsDirty;
+    private bool _IsDirty = false;
+
     public bool IsDirty
     {
       get => _IsDirty;
       set
       {
         Set(ref _IsDirty, value);
-        SaveCommand.RaiseCanExecuteChanged();
+
+        GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+        {
+          SaveCommand.RaiseCanExecuteChanged();
+        });
       }
     }
 
@@ -191,16 +196,17 @@ namespace DuplicateFinderMulti.VM
             {
               this.Name = System.IO.Path.GetFileNameWithoutExtension(_SavePath);
 
-              string ProjectXML = this.ToXML();
-              System.IO.File.WriteAllText(TempSavePath, ProjectXML);
-              this._SavePath = TempSavePath;
               this.IsDirty = false;
+              this._SavePath = TempSavePath;
+              string ProjectXML = this.ToXML();
+              File.WriteAllText(TempSavePath, ProjectXML);
+             
               SaveCommand.RaiseCanExecuteChanged();
 
               RaisePropertyChanged(nameof(Name));
             }
           },
-          () => this.IsDirty);
+          () => this.IsDirty && !_IsProcessing);
         }
 
         return _SaveCommand;
@@ -377,7 +383,6 @@ namespace DuplicateFinderMulti.VM
 
               P.Name = Path.GetFileNameWithoutExtension(ExportSavePath);
               P.SavePath = ExportSavePath;
-              P.IsDirty = false;
 
               string DestFolder = Path.GetDirectoryName(ExportSavePath);
               foreach (var Doc in P.AllXMLDocs)
@@ -387,11 +392,12 @@ namespace DuplicateFinderMulti.VM
                 Doc.SourcePath = DestFile;
               }
 
+              P.IsDirty = false;
               File.WriteAllText(ExportSavePath, P.ToXML());
               ViewModelLocator.DialogService.ShowMessage($"Project has been exported successfully to '{ExportSavePath}'.", false);
             }
           },
-          () => true);
+          () => !_IsProcessing);
         }
 
         return _ExportCommand;
@@ -444,11 +450,14 @@ namespace DuplicateFinderMulti.VM
       private set
       {
         Set(ref _IsProcessing, value);
+
+        SaveCommand.RaiseCanExecuteChanged();
         ProcessCommand.RaiseCanExecuteChanged();
         AbortProcessCommand.RaiseCanExecuteChanged();
         AddDocsCommand.RaiseCanExecuteChanged();
         RemoveSelectedDocCommand.RaiseCanExecuteChanged();
         UpdateQAsCommand.RaiseCanExecuteChanged();
+        ExportCommand.RaiseCanExecuteChanged();
       }
     }
 
