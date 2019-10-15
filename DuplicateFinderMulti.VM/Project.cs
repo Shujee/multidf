@@ -171,7 +171,7 @@ namespace DuplicateFinderMulti.VM
 
       var NewDoc = new XMLDoc()
       {
-        LastModified = FileInfo.LastWriteTimeUtc,
+        LastModified = FileInfo.LastWriteTime,
         Size = FileInfo.Length,
         SourcePath = Doc
       };
@@ -223,18 +223,29 @@ namespace DuplicateFinderMulti.VM
             else
               TempSavePath = _SavePath;
 
+            ViewModelLocator.DialogService.ShowMessage($"TempSavePath = {TempSavePath}", false);
+
             if (TempSavePath != null)
             {
-              this.Name = System.IO.Path.GetFileNameWithoutExtension(_SavePath);
+              try
+              {
+                this.Name = System.IO.Path.GetFileNameWithoutExtension(_SavePath);
 
-              this.IsDirty = false;
-              this._SavePath = TempSavePath;
-              string ProjectXML = this.ToXML();
-              File.WriteAllText(TempSavePath, ProjectXML);
-             
-              SaveCommand.RaiseCanExecuteChanged();
+                this.IsDirty = false;
+                this._SavePath = TempSavePath;
+                string ProjectXML = this.ToXML();
+                File.WriteAllText(TempSavePath, ProjectXML);
 
-              RaisePropertyChanged(nameof(Name));
+                ViewModelLocator.DialogService.ShowMessage($"Save to '{TempSavePath}'", false);
+
+                SaveCommand.RaiseCanExecuteChanged();
+
+                RaisePropertyChanged(nameof(Name));
+              }
+              catch (Exception ee)
+              {
+                ViewModelLocator.DialogService.ShowMessage(ee.Message, true);
+              }
             }
           },
           () => this.IsDirty && !_IsProcessing && !_IsExtractingQA);

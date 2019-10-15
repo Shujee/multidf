@@ -20,6 +20,63 @@
 
       <local:DistanceToColorConverter x:Key="DistanceToColorConverter" />
       <local:PathToFileNameConverter x:Key="PathToFileNameConverter" />
+
+      <DataTemplate x:Key="DifferentDocsTemplate">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="120" />
+          </Grid.ColumnDefinitions>
+
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <fa:FontAwesome Icon="FileWordOutline" Foreground="Blue" FontSize="14" VerticalAlignment="Center" Margin="3" />
+            <TextBlock VerticalAlignment="Center" Margin="0,3" TextTrimming="CharacterEllipsis">
+              <Run Text="{Binding Doc1.SourcePath, Converter={StaticResource PathToFileNameConverter}}" />
+              (QAs: <Run Text="{Binding Count1, Mode=OneWay}" />)
+            </TextBlock>
+          </StackPanel>
+
+          <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center">
+            <fa:FontAwesome Icon="FileWordOutline" Foreground="Blue" FontSize="14" VerticalAlignment="Center" Margin="3" Grid.Column="2" />
+            <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="0,3" TextTrimming="CharacterEllipsis">
+              <Run Text="{Binding Doc2.SourcePath, Converter={StaticResource PathToFileNameConverter}}" />
+              (QAs: <Run Text="{Binding Count2, Mode=OneWay}" />)
+            </TextBlock>
+          </StackPanel>
+
+          <Border BorderBrush="Green" BorderThickness="1" CornerRadius="5" Grid.Column="2" Margin="3"
+                            HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="Number of Questions in this document" >
+            <TextBlock Text="{Binding FilteredItems.Count, StringFormat='Total Matches: {0}'}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Green" Margin="3" />
+          </Border>
+        </Grid>
+      </DataTemplate>
+
+      <DataTemplate x:Key="SameDocTemplate">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="120" />
+          </Grid.ColumnDefinitions>
+
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <fa:FontAwesome Icon="FileWordOutline" Foreground="Blue" FontSize="14" VerticalAlignment="Center" Margin="3" />
+            <TextBlock VerticalAlignment="Center" Margin="0,3" TextTrimming="CharacterEllipsis">
+              <Run Text="{Binding Doc1.SourcePath, Converter={StaticResource PathToFileNameConverter}}" />
+              (QAs: <Run Text="{Binding Count1, Mode=OneWay}" />)
+            </TextBlock>
+          </StackPanel>
+
+          <Border BorderBrush="Green" BorderThickness="1" CornerRadius="5" Grid.Column="1" Margin="3"
+                            HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="Number of Questions in this document" >
+            <TextBlock Text="{Binding FilteredItems.Count, StringFormat='Total Matches: {0}'}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Green" Margin="3" />
+          </Border>
+        </Grid>
+      </DataTemplate>
+
+      <local:MyTreeViewItemTemplateSelector x:Key="MyTreeViewItemTemplateSelector" 
+                                              SameDocTemplate="{StaticResource SameDocTemplate}" 
+                                              DifferentDocsTemplate="{StaticResource DifferentDocsTemplate}" />
     </ResourceDictionary>
   </UserControl.Resources>
 
@@ -45,6 +102,7 @@
     </ToolBar>
 
     <TreeView Name="TV" Grid.Row="1" ItemsSource="{Binding SelectedProject.Graph.Results}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="3">
+     
       <TreeView.ItemContainerStyle>
         <Style TargetType="TreeViewItem" BasedOn="{StaticResource StretchedTreeViewItemStyle}">
           <Setter Property="IsExpanded" Value="True" />
@@ -56,34 +114,10 @@
 
       <TreeView.ItemTemplate>
         <HierarchicalDataTemplate DataType="vm:DFResult" ItemsSource="{Binding FilteredItems}">
-          <Grid>
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="*" />
-              <ColumnDefinition Width="*" />
-              <ColumnDefinition Width="120" />
-            </Grid.ColumnDefinitions>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-              <fa:FontAwesome Icon="FileWordOutline" Foreground="Blue" FontSize="14" VerticalAlignment="Center" Margin="3" />
-              <TextBlock VerticalAlignment="Center" Margin="0,3" TextTrimming="CharacterEllipsis">
-              <Run Text="{Binding Doc1.SourcePath, Converter={StaticResource PathToFileNameConverter}}" />
-              (QAs: <Run Text="{Binding Count1, Mode=OneWay}" />)
-              </TextBlock>
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center">
-              <fa:FontAwesome Icon="FileWordOutline" Foreground="Blue" FontSize="14" VerticalAlignment="Center" Margin="3" Grid.Column="2" />
-              <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="0,3" TextTrimming="CharacterEllipsis">
-              <Run Text="{Binding Doc2.SourcePath, Converter={StaticResource PathToFileNameConverter}}" />
-              (QAs: <Run Text="{Binding Count2, Mode=OneWay}" />)
-              </TextBlock>
-            </StackPanel>
-
-            <Border BorderBrush="Green" BorderThickness="1" CornerRadius="5" Grid.Column="2" Margin="3"
-                            HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="Number of Questions in this document" >
-              <TextBlock Text="{Binding FilteredItems.Count, StringFormat='Total Matches: {0}'}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Green" Margin="3" />
-            </Border>
-          </Grid>
+          <ContentControl Content="{Binding}" ContentTemplateSelector="{StaticResource MyTreeViewItemTemplateSelector}" >
+            
+          </ContentControl>
 
           <HierarchicalDataTemplate.ItemContainerStyle>
             <Style TargetType="TreeViewItem" BasedOn="{StaticResource StretchedTreeViewItemStyle}">

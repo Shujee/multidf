@@ -88,7 +88,7 @@ namespace DuplicateFinderMulti.VM
           RaisePropertyChanged(nameof(SyncInfo));
 
           System.IO.FileInfo fileInfo = new System.IO.FileInfo(SourcePath);
-          return fileInfo.LastWriteTimeUtc == LastModified && fileInfo.Length == Size;
+          return fileInfo.LastWriteTime == LastModified && fileInfo.Length == Size;
         }
         else
           return false;
@@ -105,7 +105,7 @@ namespace DuplicateFinderMulti.VM
 
           var Info = new FileAttributesComparison
           {
-            LastModified1 = fileInfo.LastWriteTimeUtc,
+            LastModified1 = fileInfo.LastWriteTime,
             LastModified2 = LastModified,
 
             Size1 = fileInfo.Length,
