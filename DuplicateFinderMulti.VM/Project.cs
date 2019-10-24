@@ -22,9 +22,39 @@ namespace DuplicateFinderMulti.VM
     private readonly CancellationTokenSource _TokenSource = new CancellationTokenSource();
     private CancellationToken token;
 
+    //these variables keep track of progress during ProcessCommand
+    double TotalComparisons;
+    int CompletedComparisons = 0;
+    double Factor; //avoid computing constant factor over and over in the loop. just a small micro-optimization that I couldn't resist :)
+
+
     public Project()
     {
       token = _TokenSource.Token;
+
+      ViewModelLocator.DocComparer.QACompared += DocComparer_QACompared;
+      ViewModelLocator.DocComparer.QASkipped += DocComparer_QASkipped;
+      ViewModelLocator.DocComparer.DocCompareCompleted += DocComparer_DocCompareCompleted;
+    }
+
+    private void DocComparer_QACompared(object sender, QAComparedArgs e)
+    {
+      Interlocked.Increment(ref CompletedComparisons);
+      e.QA1.Doc.ProcessingProgress = e.PercentProgress;
+      e.QA2.Doc.ProcessingProgress = e.PercentProgress;
+
+      ViewModelLocator.Main.ProgressValue = Factor * CompletedComparisons;
+    }
+
+    private void DocComparer_QASkipped()
+    {
+      Interlocked.Increment(ref CompletedComparisons);
+    }
+
+    private void DocComparer_DocCompareCompleted(XMLDoc doc1, XMLDoc doc2)
+    {
+      doc1.ProcessingProgress = 100;
+      doc2.ProcessingProgress = 100;
     }
 
     private string _SavePath;
@@ -72,6 +102,7 @@ namespace DuplicateFinderMulti.VM
       {
         Set(ref _SelectedDoc, value);
         RemoveSelectedDocCommand.RaiseCanExecuteChanged();
+        UpdateQAsCommand.RaiseCanExecuteChanged();
       }
     }
 
@@ -125,6 +156,43 @@ namespace DuplicateFinderMulti.VM
     }
 
 
+    private RelayCommand _ExportResultsCommand;
+    public RelayCommand ExportResultsCommand
+    {
+      get
+      {
+        if (_ExportResultsCommand == null)
+        {
+          _ExportResultsCommand = new RelayCommand(() =>
+          {
+            var ExportFilePath = ViewModelLocator.DialogService.ShowSave("HTML Files (*.html)|*.html", "", "Export Results to HTML", this.Name + ".html");
+
+            if (ExportFilePath != null)
+            {
+              string TablesHtml = "";
+
+              foreach (var Res in graph.Results)
+              {
+                TablesHtml += Res.ToHtml();
+              }
+
+              var ExportHtml = VM.Properties.Resources.ResultsExportTemplate.Replace("{TABLES}", TablesHtml);
+
+              File.WriteAllText(ExportFilePath, ExportHtml);
+
+              ViewModelLocator.DialogService.ShowMessage($"Results exported to '{ExportFilePath}'.", false);
+            }
+
+          },
+          () => !_IsProcessing && graph.Edges.Any());
+        }
+
+        return _ExportResultsCommand;
+      }
+    }
+
+
+
 
     private RelayCommand _AddDocsCommand;
     public RelayCommand AddDocsCommand
@@ -135,18 +203,30 @@ namespace DuplicateFinderMulti.VM
         {
           _AddDocsCommand = new RelayCommand(() =>
           {
-          var Docs = ViewModelLocator.DialogService.ShowOpenMulti("Word documents (*.doc, *.docx, *.docm)|*.doc;*.docx;*.docm");
+            var Docs = ViewModelLocator.DialogService.ShowOpenMulti("Word documents (*.doc, *.docx, *.docm)|*.doc;*.docx;*.docm");
 
             if (Docs != null)
             {
               IsExtractingQA = true;
+              bool WrongFilesFlag = false;
 
               List<Task> Tasks = new List<Task>();
               foreach (var Doc in Docs)
               {
-                var Task = AddDocInternal(Doc);
-                Tasks.Add(Task);
+                var Ext = System.IO.Path.GetExtension(Doc);
+
+                //Only .doc and .docx files are allowed to be added.
+                if (Ext == ".doc" || Ext == ".docx")
+                {
+                  var Task = AddDocInternal(Doc);
+                  Tasks.Add(Task);
+                }
+                else
+                  WrongFilesFlag = true;
               }
+
+              if (WrongFilesFlag)
+                ViewModelLocator.DialogService.ShowMessage("One or more of the file(s) you selected are not Word documents (DOC or DOCX extension). These files have been skipped.", false);
 
               Task.WhenAll(Tasks.ToArray()).ContinueWith(t =>
               {
@@ -165,7 +245,7 @@ namespace DuplicateFinderMulti.VM
       }
     }
 
-    private Task AddDocInternal(string Doc)
+    private Task AddDocInternal(string Doc, int? insertAt = null)
     {
       System.IO.FileInfo FileInfo = new System.IO.FileInfo(Doc);
 
@@ -176,7 +256,10 @@ namespace DuplicateFinderMulti.VM
         SourcePath = Doc
       };
 
-      this._AllXMLDocs.Add(NewDoc);
+      if (insertAt != null)
+        this._AllXMLDocs.Insert(insertAt.Value, NewDoc);
+      else
+        this._AllXMLDocs.Add(NewDoc);
 
       graph.AddVertex(NewDoc);
 
@@ -223,8 +306,6 @@ namespace DuplicateFinderMulti.VM
             else
               TempSavePath = _SavePath;
 
-            ViewModelLocator.DialogService.ShowMessage($"TempSavePath = {TempSavePath}", false);
-
             if (TempSavePath != null)
             {
               try
@@ -236,15 +317,17 @@ namespace DuplicateFinderMulti.VM
                 string ProjectXML = this.ToXML();
                 File.WriteAllText(TempSavePath, ProjectXML);
 
-                ViewModelLocator.DialogService.ShowMessage($"Save to '{TempSavePath}'", false);
+                ViewModelLocator.Main.UpdateMRU(TempSavePath);
 
                 SaveCommand.RaiseCanExecuteChanged();
+
+                ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.MRU));
 
                 RaisePropertyChanged(nameof(Name));
               }
               catch (Exception ee)
               {
-                ViewModelLocator.DialogService.ShowMessage(ee.Message, true);
+                ViewModelLocator.DialogService.ShowMessage("The following error occurred while trying to save project: " + ee.Message, true);
               }
             }
           },
@@ -269,12 +352,19 @@ namespace DuplicateFinderMulti.VM
             {
               var DocPath = SelectedDoc.SourcePath;
 
+              if (!File.Exists(DocPath))
+              {
+                ViewModelLocator.DialogService.ShowMessage($"Source document '{DocPath}' does not exist. Cannot update QAs.", true);
+                return;
+              }
+
               //remove this doc from the graph and add again to clear old processed results
               graph.RemoveVertex(SelectedDoc);
+              var MyIndex = this._AllXMLDocs.IndexOf(SelectedDoc);
               this._AllXMLDocs.Remove(SelectedDoc);
 
               //now add it again as a new doc
-              AddDocInternal(DocPath);
+              AddDocInternal(DocPath, MyIndex);
 
               //and refresh results
               RaisePropertyChanged(nameof(Graph));
@@ -282,7 +372,7 @@ namespace DuplicateFinderMulti.VM
               IsDirty = true;
             }
           },
-          () => !_IsProcessing && !_IsExtractingQA);
+          () => !_IsProcessing && !_IsExtractingQA && _SelectedDoc != null);
         }
 
         return _UpdateQAsCommand;
@@ -319,26 +409,12 @@ namespace DuplicateFinderMulti.VM
           {
             IsProcessing = true;
 
-            ViewModelLocator.DocComparer.QACompared += (sender, args) =>
-            {
-              GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
-              {
-                args.QA1.Doc.ProcessingProgress = args.PercentProgress;
-                args.QA2.Doc.ProcessingProgress = args.PercentProgress;
-              });
-            };
+            //progress increment
+            TotalComparisons = graph.Vertices.Sum(v1 => graph.Vertices.Sum(v2 => v2.QAs.Count) * v1.QAs.Count);
+            CompletedComparisons = 0;
+            Factor = 100 / TotalComparisons; //avoid computing constant factor over and over in the loop. just a small micro-optimization that I couldn't resist :)
 
-            ViewModelLocator.DocComparer.DocCompareStarted += (d1, d2) =>
-            {
-              d1.ProcessingProgress = 0;
-              d2.ProcessingProgress = 0;
-            };
-
-            ViewModelLocator.DocComparer.DocCompareCompleted += (d1, d2) =>
-            {
-              d1.ProcessingProgress = 100;
-              d2.ProcessingProgress = 100;
-            };
+            ViewModelLocator.Main.UpdateProgress("Comparing QAs", 0);
 
             List<Task> Tasks = new List<Task>();
             foreach (var V1 in graph.Vertices)
@@ -374,6 +450,8 @@ namespace DuplicateFinderMulti.VM
 #else
               GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() => IsProcessing = false);
 #endif
+
+              ViewModelLocator.Main.UpdateProgress("Analysis completed", 100);
 
               RaisePropertyChanged(nameof(Graph));
               ApplyDiffThresholdCommand.Execute(null);
@@ -414,7 +492,7 @@ namespace DuplicateFinderMulti.VM
         {
           _ExportCommand = new RelayCommand(() =>
           {
-            if(this.AllXMLDocs.Any(d => !d.IsSyncWithSource))
+            if (this.AllXMLDocs.Any(d => !d.IsSyncWithSource))
             {
               ViewModelLocator.DialogService.ShowMessage("Some of the documents in this project are not synchronized with source files. Refresh the project before using Export command.", true);
               return;
@@ -485,7 +563,7 @@ namespace DuplicateFinderMulti.VM
         return _OpenDiffCommand;
       }
     }
-    
+
     private bool _IsProcessing = false;
 
     [XmlIgnore]
@@ -503,6 +581,7 @@ namespace DuplicateFinderMulti.VM
         RemoveSelectedDocCommand.RaiseCanExecuteChanged();
         UpdateQAsCommand.RaiseCanExecuteChanged();
         ExportCommand.RaiseCanExecuteChanged();
+        ExportResultsCommand.RaiseCanExecuteChanged();
       }
     }
 
@@ -550,6 +629,10 @@ namespace DuplicateFinderMulti.VM
         // free managed resources
         if (_TokenSource != null)
           _TokenSource.Dispose();
+
+        ViewModelLocator.DocComparer.QACompared -= DocComparer_QACompared;
+        ViewModelLocator.DocComparer.QASkipped -= DocComparer_QASkipped;
+        ViewModelLocator.DocComparer.DocCompareCompleted -= DocComparer_DocCompareCompleted;
       }
     }
   }

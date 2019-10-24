@@ -15,11 +15,11 @@ namespace DuplicateFinderMulti.VM
     }
 
     //This RegEx will find Question Number paragraphs
-    private readonly Regex RE_QNumberWithHardReturn = new Regex(@"^(((?<Index>\d+)\s*\.)|([Q]\s*(?<Index>\d+)\s*\.?))\s*[\r\n\x0B]", RegexOptions.ExplicitCapture);
-    private readonly char[] TrimChars = new char[] { '\r', '\n', '\a',  ' ', '\t' };
+    private readonly Regex RE_QNumberWithHardReturn = new Regex(@"^(?<ExtraSpaceAtStart>\s+)?(((?<Index>\d+)\s*(?<FinalDot>\.)?)|((?<HasQ>[Q])\s*(?<Index>\d+)\s*(?<FinalDot>\.?)))\s*[\r\n\x0B]", RegexOptions.ExplicitCapture);
+    private readonly char[] TrimChars = new char[] { '\r', '\n', '\a', ' ', '\t' };
 
 
-  public List<QA> Extract(List<WordParagraph> paragraphs, CancellationToken token)
+    public List<QA> Extract(List<WordParagraph> paragraphs, CancellationToken token)
     {
       if (paragraphs == null || paragraphs.Count == 0)
         return null;
@@ -34,17 +34,20 @@ namespace DuplicateFinderMulti.VM
       //mark the end of previous QA. The process continues till the end of list.
 
       int i = 0;
+      int ExpectedIndex = 1; //to detect delimiter typos / input mistakes
       List<QA> Result = new List<QA>();
 
       while (i < paragraphs.Count - 1)
       {
-        var QA = ExtractQA(paragraphs, ref i);
+        var QA = ExtractQA(paragraphs, ref i, ExpectedIndex);
 
-        if(QA != null)
+        if (QA != null)
           Result.Add(QA);
 
+        ExpectedIndex++;
+
         if (token.IsCancellationRequested)
-          break;
+          return null;
       }
 
       return Result;
@@ -56,7 +59,7 @@ namespace DuplicateFinderMulti.VM
     /// <param name="paragraphs"></param>
     /// <param name="i"></param>
     /// <returns></returns>
-    private QA ExtractQA(List<WordParagraph> paragraphs, ref int i)
+    private QA ExtractQA(List<WordParagraph> paragraphs, ref int i, int expectedIndex)
     {
       QA QA = new QA();
 
@@ -68,20 +71,51 @@ namespace DuplicateFinderMulti.VM
 
       if (i < paragraphs.Count)
       {
-        state = QAExtractionState.Question;
+        state = QAExtractionState.Start;
         QA.Start = paragraphs[i].Start;
 
         //if we get here, we know that we have found a question delimiter, so we'll extract question number from it.
         var Match = RE_QNumberWithHardReturn.Match(paragraphs[i].Text);
+
         QA.Index = int.Parse(Match.Groups["Index"].Value);
+
+        if (state == QAExtractionState.Start)
+        {
+          if (!Match.Groups["HasQ"].Success && !Match.Groups["FinalDot"].Success)
+          {
+            var Ex = new System.Exception($"Incorrect delimiter format found at Question {QA.Index}. Question number does not end with a period.");
+            Ex.Data.Add("Paragraph", paragraphs[i].Start);
+            Ex.Data.Add("QuestionIndex", QA.Index);
+            throw Ex;
+          }
+          else if (Match.Groups["ExtraSpaceAtStart"].Success)
+          {
+            var Ex = new System.Exception($"Incorrect delimiter format found at Question {QA.Index}. Question number is preceded by unnecessary space(s).");
+            Ex.Data.Add("Paragraph", paragraphs[i].Start);
+            Ex.Data.Add("QuestionIndex", QA.Index);
+            throw Ex;
+          }
+        }
+
         i++;
 
         //skip any empty lines after the question delimiter and before the question body
         while (i < paragraphs.Count && string.IsNullOrWhiteSpace(paragraphs[i].Text.Trim(TrimChars)))
           i++;
 
-        //subsequent paragraphs constitute question body till we find the next paragraph that uses list style
-        while (i < paragraphs.Count && !RE_QNumberWithHardReturn.IsMatch(paragraphs[i].Text))
+        state = QAExtractionState.Question;
+
+                //subsequent paragraphs constitute question body, choices section and answer till we find the next paragraph that is a delimiter
+                //note: sometimes choices section or question body may contain paragraphs that match the delimiter regex. To handle that situation, we distinguish genuine delimiters 
+                //by looking at their Type property, which must NOT be NumberedListTableheader, Tableheader or TableRow for delimiters.
+                while (i < paragraphs.Count && 
+                    (
+                    paragraphs[i].Type == ParagraphType.NumberedList || 
+                    paragraphs[i].Type == ParagraphType.TableHeader || 
+                    paragraphs[i].Type == ParagraphType.TableRow || 
+                    !RE_QNumberWithHardReturn.IsMatch(paragraphs[i].Text)
+                    )
+              )
         {
           string NormalizedText = paragraphs[i].Text.ToLower().Trim(TrimChars);
 
@@ -100,7 +134,7 @@ namespace DuplicateFinderMulti.VM
                 state = QAExtractionState.Choices;
                 QA.Choices.Add(paragraphs[i].Text);
               }
-              else if(NormalizedText.Contains( "answer area:"))
+              else if (NormalizedText.Contains("answer area:"))
               {
                 state = QAExtractionState.Choices;
               }
@@ -117,7 +151,7 @@ namespace DuplicateFinderMulti.VM
             case QAExtractionState.Choices:
               if (paragraphs[i].Type == ParagraphType.NumberedList || paragraphs[i].Type == ParagraphType.TableRow)
               {
-                  QA.Choices.Add(paragraphs[i].Text);
+                QA.Choices.Add(paragraphs[i].Text);
               }
               else
               {
@@ -150,6 +184,15 @@ namespace DuplicateFinderMulti.VM
       }
 
       QA.End = paragraphs[i - 1].End;
+
+      //finally make sure that the question index matches the expected index. If not, give user a chance to look into the source document manually.
+      if (QA.Question != null && QA.Index != expectedIndex)
+      {
+        var Ex = new System.Exception($"Unexpected question index found at Question {QA.Index}. Expected index was {expectedIndex}. Import process will abort now.");
+        Ex.Data.Add("Paragraph", paragraphs[i].Start);
+        Ex.Data.Add("QuestionIndex", QA.Index);
+        throw Ex;
+      }
 
       if (string.IsNullOrWhiteSpace(QA.Question)) //couldn't even find the question body? return null (this can happen if there are empty lines after the last question)
         return null;

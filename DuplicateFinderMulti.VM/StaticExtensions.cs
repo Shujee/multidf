@@ -33,7 +33,7 @@ namespace DuplicateFinderMulti.VM
       typeof(DFResult),
     };
 
-    private static readonly DataContractSerializer DSSerializer = new DataContractSerializer(typeof(Project), AllObjectTypes, 0x7fff, false, true, null);
+    private static readonly DataContractSerializer DSSerializer = new DataContractSerializer(typeof(Project), AllObjectTypes, 0x7F_FFFF, false, true, null); //max graph size is 8,388,607‬ items
 
     /// <summary>
     /// Exports the contents of this list to XML.

@@ -165,4 +165,22 @@ namespace DuplicateFinderMulti.Views
       throw new NotSupportedException();
     }
   }
+
+  /// <summary>
+  /// Returns true if value is greater than 0, else false.
+  /// </summary>
+  [ValueConversion(typeof(string), typeof(string))]
+  public class NonZeroToTrueConverter : IValueConverter
+  {
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      return ((int)value > 0);
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      throw new NotSupportedException();
+    }
+  }
+
 }

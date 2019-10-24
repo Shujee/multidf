@@ -115,9 +115,9 @@
       <TreeView.ItemTemplate>
         <HierarchicalDataTemplate DataType="vm:DFResult" ItemsSource="{Binding FilteredItems}">
 
-          <ContentControl Content="{Binding}" ContentTemplateSelector="{StaticResource MyTreeViewItemTemplateSelector}" >
-            
-          </ContentControl>
+          <Border BorderBrush="LightGray" BorderThickness="0,1,0,0" CornerRadius="3" Margin="0,6,0,0">
+            <ContentControl Content="{Binding}" ContentTemplateSelector="{StaticResource MyTreeViewItemTemplateSelector}" Margin="0,6,0,0" />
+          </Border>
 
           <HierarchicalDataTemplate.ItemContainerStyle>
             <Style TargetType="TreeViewItem" BasedOn="{StaticResource StretchedTreeViewItemStyle}">
@@ -129,61 +129,58 @@
             </Style>
           </HierarchicalDataTemplate.ItemContainerStyle>
 
-
           <HierarchicalDataTemplate.ItemTemplate>
             <DataTemplate DataType="vm:DFResultRow">
-              <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" CornerRadius="3">
-                <Grid>
-                  <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="120" />
-                  </Grid.ColumnDefinitions>
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="120" />
+                </Grid.ColumnDefinitions>
 
-                  <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <fa:FontAwesome Icon="PuzzlePiece" FontSize="14" VerticalAlignment="Center" Margin="9,3" />
-                    <TextBlock VerticalAlignment="Center" Margin="0,3" Width="100">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                  <fa:FontAwesome Icon="PuzzlePiece" FontSize="14" VerticalAlignment="Center" Margin="9,3" />
+                  <TextBlock VerticalAlignment="Center" Margin="0,3" Width="100">
                     <Hyperlink NavigateUri="{Binding Q1.Doc.SourcePath}" RequestNavigate="Hyperlink_RequestNavigate">
                       Question <Run Text="{Binding Q1.Index, Mode=OneWay}" />
                     </Hyperlink>
-                    </TextBlock>
-                  </StackPanel>
+                  </TextBlock>
+                </StackPanel>
 
-                  <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center">
-                    <fa:FontAwesome Icon="PuzzlePiece" FontSize="14" VerticalAlignment="Center" Margin="9,3" />
-                    <TextBlock VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center">
+                  <fa:FontAwesome Icon="PuzzlePiece" FontSize="14" VerticalAlignment="Center" Margin="9,3" />
+                  <TextBlock VerticalAlignment="Center">
                     <Hyperlink NavigateUri="{Binding Q2.Doc.SourcePath}" RequestNavigate="Hyperlink_RequestNavigate2">
                       Question <Run Text="{Binding Q2.Index, Mode=OneWay}" />
                     </Hyperlink>
-                    </TextBlock>
-                  </StackPanel>
+                  </TextBlock>
+                </StackPanel>
 
-                  <Button Command="{Binding DataContext.SelectedProject.OpenDiffCommand, RelativeSource={RelativeSource AncestorType=TreeView}}" CommandParameter="{Binding}" ToolTip="Percent difference between the two QAs. Click to open diff window." FontSize="14" Grid.Column="2"  
+                <Button Command="{Binding DataContext.SelectedProject.OpenDiffCommand, RelativeSource={RelativeSource AncestorType=TreeView}}" CommandParameter="{Binding}" ToolTip="Percent difference between the two QAs. Click to open diff window." FontSize="14" Grid.Column="2"  
                           Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,3,6" Cursor="Hand">
 
-                    <Button.Style>
-                      <Style TargetType="{x:Type Button}">
-                        <Setter Property="Template">
-                          <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                              <Border x:Name="ButtonBorder" BorderBrush="DodgerBlue" BorderThickness="1" CornerRadius="5" Grid.Column="3" VerticalAlignment="Center">
-                                <TextBlock x:Name="ButtonText" Text="{Binding Distance, StringFormat={}{0:P0}}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="DodgerBlue" Margin="3" />
-                              </Border>
-                              <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                  <Setter TargetName="ButtonBorder" Property="Background" Value="DodgerBlue"/>
-                                  <Setter TargetName="ButtonText" Property="Foreground" Value="White"/>
-                                </Trigger>
-                              </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                          </Setter.Value>
-                        </Setter>
-                      </Style>
-                    </Button.Style>
-                  </Button>
+                  <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                      <Setter Property="Template">
+                        <Setter.Value>
+                          <ControlTemplate TargetType="{x:Type Button}">
+                            <Border x:Name="ButtonBorder" BorderBrush="DodgerBlue" BorderThickness="1" CornerRadius="5" Grid.Column="3" VerticalAlignment="Center">
+                              <TextBlock x:Name="ButtonText" Text="{Binding Distance, StringFormat={}{0:P0}}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="DodgerBlue" Margin="3" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                              <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="DodgerBlue"/>
+                                <Setter TargetName="ButtonText" Property="Foreground" Value="White"/>
+                              </Trigger>
+                            </ControlTemplate.Triggers>
+                          </ControlTemplate>
+                        </Setter.Value>
+                      </Setter>
+                    </Style>
+                  </Button.Style>
+                </Button>
 
-                </Grid>
-              </Border>
+              </Grid>
             </DataTemplate>
           </HierarchicalDataTemplate.ItemTemplate>
         </HierarchicalDataTemplate>

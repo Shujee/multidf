@@ -9,6 +9,11 @@ namespace DuplicateFinderMulti.Test
 {
   class DialogServiceForAutomatedTesting : IDialogService
   {
+    public bool AskBooleanQuestion(string msg)
+    {
+      throw new NotImplementedException();
+    }
+
     public string AskStringQuestion(string msg, string default_value)
     {
       throw new NotImplementedException();

@@ -59,5 +59,46 @@ namespace DuplicateFinderMulti.VM.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;html&gt;
+        ///&lt;head&gt;
+        ///  &lt;title&gt;
+        ///    Multi-DF Results
+        ///  &lt;/title&gt;
+        ///  &lt;style&gt;
+        ///    thead {
+        ///      font-weight: bold;
+        ///    }
+        ///
+        ///    td {
+        ///      text-align: center;
+        ///    }
+        ///  &lt;/style&gt;
+        ///&lt;/head&gt;
+        ///&lt;body&gt;
+        ///  &lt;table&gt;
+        ///    &lt;thead&gt;
+        ///      &lt;tr&gt;
+        ///        &lt;th&gt;{DOC1}&lt;/th&gt;
+        ///        &lt;th&gt;{DOC2}&lt;/th&gt;
+        ///      &lt;/tr&gt;
+        ///    &lt;/thead&gt;
+        ///    &lt;tbody&gt;
+        ///      &lt;tr&gt;
+        ///        &lt;td&gt;{Q1}&lt;/td&gt;
+        ///        &lt;td&gt;{Q2}&lt;/td&gt;
+        ///        &lt;td&gt;{DIST}&lt;/td&gt;
+        ///      &lt;/tr&gt;
+        ///    &lt;/tbody&gt;
+        ///  &lt;/table&gt;
+        ///&lt;/body&gt;
+        ///&lt;/html&gt;.
+        /// </summary>
+        internal static string ResultsExportTemplate {
+            get {
+                return ResourceManager.GetString("ResultsExportTemplate", resourceCulture);
+            }
+        }
     }
 }

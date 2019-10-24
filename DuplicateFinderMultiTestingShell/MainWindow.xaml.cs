@@ -111,7 +111,7 @@ namespace DuplicateFinderMulti.TestingShell
 
     public void OpenDocument(string docPath, int? start, int? end)
     {
-      
+      throw new NotImplementedException();
     }
   }
 }

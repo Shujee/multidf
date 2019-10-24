@@ -150,7 +150,21 @@ namespace DuplicateFinderMulti.VM
 
           if (Paragraphs != null)
           {
-            QAs = ViewModelLocator.QAExtractionStrategy.Extract(Paragraphs, _Token);
+            try
+            {
+              QAs = ViewModelLocator.QAExtractionStrategy.Extract(Paragraphs, _Token);
+            }
+            catch (Exception ex)
+            {
+              if(ex.Data.Contains("Paragraph"))
+              {
+                var Res = ViewModelLocator.DialogService.AskBooleanQuestion(ex.Message + Environment.NewLine + Environment.NewLine + "Do you want to open source document to fix this problem?");
+                if(Res)
+                {
+                  ViewModelLocator.WordService.OpenDocument(_SourcePath, (int)ex.Data["Paragraph"], (int)ex.Data["Paragraph"]);
+                }
+              }
+            }
 
             if (QAs != null)
             {

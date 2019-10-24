@@ -16,6 +16,9 @@
         <BooleanToVisibilityConverter x:Key="B2VConverter" />
         <local:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
         <local:ConnectionStatusToStringConverter x:Key="ConnectionStatusToStringConverter" />
+        <local:PathToFileNameConverter x:Key="PathToFileNameConverter" />
+        <local:NonZeroToTrueConverter x:Key="NonZeroToTrueConverter" />
+        
 
         <Style TargetType="Button" x:Key="ToolbarButton">
           <Setter Property="Padding" Value="6" />
@@ -35,22 +38,56 @@
 
     <ToolBar>
       <Button Command="{Binding NewCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="FileOutline" ToolTip="Create a new Project" />
-      <Button Command="{Binding OpenCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="FolderOutlinepenOutline" ToolTip="Open an existing project" />
+
+      <Button x:Name="OpenButton" Command="{Binding OpenCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="FolderOutlinepenOutline" 
+              ToolTip="Open an existing project" Padding="6,6,0,6" />
+      <Button Click="OpenMRU_Click" 
+              Height="{Binding ElementName=OpenButton, Path=ActualHeight}"
+              IsEnabled="{Binding MRU.Count, Converter={StaticResource NonZeroToTrueConverter}}"> 
+        
+        <fa:ImageAwesome Icon="CaretDown" Height="4" />
+
+        <Button.ContextMenu>
+          <ContextMenu 
+            PlacementTarget="{x:Reference OpenButton}"
+            Placement="Bottom"
+            ItemsSource="{Binding MRU}">
+
+            <ContextMenu.Resources>
+              <fa:ImageAwesome x:Key="ProjectIcon" Icon="FileOutline" Width="12" x:Shared="False" />
+            </ContextMenu.Resources>
+            
+            <ContextMenu.ItemContainerStyle>
+              <Style TargetType="MenuItem">
+                <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu}, Path=PlacementTarget.DataContext.OpenCommand}" />
+                <Setter Property="CommandParameter" Value="{Binding}" />
+                <Setter Property="Icon" Value="{StaticResource ProjectIcon}" />
+                <Setter Property="Header" Value="{Binding Converter={StaticResource PathToFileNameConverter}}" />
+              </Style>
+            </ContextMenu.ItemContainerStyle>
+          </ContextMenu>
+        </Button.ContextMenu>
+      </Button>
+
       <Button Command="{Binding SelectedProject.SaveCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="Save" ToolTip="Save current project" />
       <Button Command="{Binding SelectedProject.ExportCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="ExternalLink" ToolTip="Copies project data and source files to the specified directory. Also updates file links in project file to point to the copied files." />
-      
+
       <Separator/>
-      
+
       <Button Command="{Binding SelectedProject.AddDocsCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="PlusSquareOutline" ToolTip="Add one or more documents to current project" />
       <Button Command="{Binding SelectedProject.RemoveSelectedDocCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="MinusSquareOutline" ToolTip="Remove selected document from current project" />
-      <Button Command="{Binding SelectedProject.UpdateQAsCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="Refresh" ToolTip="Updates the list of QAs of all documents in the current project" />
+      <Button Command="{Binding SelectedProject.UpdateQAsCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="Refresh" ToolTip="Updates the list of QAs for the selected document" />
       <Button Command="{Binding SelectedProject.CheckSyncWithSourceCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="Check" ToolTip="Checks if all documents in the current project are synchronized with their original source files" />
 
       <Separator/>
 
       <Button Command="{Binding SelectedProject.ProcessCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="Flash" ToolTip="Starts finding duplicates in the current project" />
       <Button Command="{Binding SelectedProject.AbortProcessCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="Close" ToolTip="Starts finding duplicates in the current project" />
+
+      <Separator/>
+
       <Button Command="{Binding SelectedProject.OpenResultsWindowCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="WindowMaximize" ToolTip="Opens results in a separate resizable window" />
+      <Button Command="{Binding SelectedProject.ExportResultsCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="Table" ToolTip="Exports current results to an HTML file" />
     </ToolBar>
 
     <Border BorderBrush="Gray" Background="LightYellow" Grid.Row="1">
@@ -119,7 +156,7 @@
                 <Label Content="{Binding QAs.Count}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
               </Border>
 
-              <ProgressBar Value="{Binding ProcessingProgress}" Margin="0,3" Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="4" Height="5" />
+              <ProgressBar Value="{Binding ProcessingProgress, Mode=OneWay}" Margin="0,3" Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="4" Height="5" />
             </Grid>
           </Border>
         </DataTemplate>
@@ -156,7 +193,7 @@
           <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0" HorizontalAlignment="Stretch">
             <TextBlock Margin="3">
               <Run>Count = </Run>
-              <!--<Run Text="{Binding Content.Count, Mode=OneWay, FallbackValue=0}" />-->
+              <Run Text="{Binding SelectedProject.Graph.Results.Length, Mode=OneWay, FallbackValue=0}" />
             </TextBlock>
           </Border>
         </Border>

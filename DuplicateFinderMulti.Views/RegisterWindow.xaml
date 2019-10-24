@@ -48,7 +48,7 @@
 
     <TextBox Text="{Binding RegEmail}" IsReadOnly="{Binding IsRegistered}" Grid.Row="0" Grid.Column="1" x:Name="txtEmail" />
     <TextBox Text="{Binding MachineCode, Mode=OneWay}" Grid.Row="1" Grid.Column="1" IsReadOnly="True" IsTabStop="False" Height="50" FontFamily="Courier New" VerticalContentAlignment="Top" TextWrapping="Wrap" />
-    <TextBox Text="{Binding LicenseKey}" Grid.Row="2" Grid.Column="1" Height="50" FontFamily="Courier New" VerticalContentAlignment="Top" TextWrapping="Wrap" />
+    <TextBox Text="{Binding LicenseKey}" Grid.Row="2" Grid.Column="1" Height="50" FontFamily="Courier New" VerticalContentAlignment="Top" TextWrapping="Wrap" IsReadOnly="{Binding IsRegistered}" />
 
     <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="3,6">
       <Button Content="Register" Command="{Binding RegisterCommand}" />

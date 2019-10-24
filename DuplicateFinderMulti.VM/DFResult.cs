@@ -134,5 +134,42 @@ namespace DuplicateFinderMulti.VM
       
       info.AddValue("Items", Items);
     }
+
+    public string ToHtml()
+    {
+      StringBuilder sb = new StringBuilder();
+
+      sb.AppendLine("<table class=\"table table-bordered table-striped\">");
+
+      if (this.Doc1 == this.Doc2)
+      {
+        var SI = this.Doc1.SyncInfo;
+        sb.AppendLine($"<thead><tr><th colspan=\"2\">{this.Doc1.Name} (QAs: {this.Count1})<br />" +
+                      $"Source: {SI.Size1KB} / {SI.LastModified1}<br />" +
+                      $"Local: {SI.Size2KB} / {SI.LastModified2}" +
+                      $"</th><th>Diff</th></tr></thead>");
+      }
+      else
+      {
+        var SI1 = this.Doc1.SyncInfo;
+        var SI2 = this.Doc2.SyncInfo;
+        sb.AppendLine($"<thead><tr><th>{this.Doc1.Name} (QAs: {this.Count1})<br />" +
+                      $"Source: {SI1.Size1KB} / {SI1.LastModified1}<br />" +
+                      $"Local: {SI1.Size2KB} / {SI1.LastModified2}" +
+                      $"</th><th>{this.Doc2.Name} (QAs: {this.Count2})<br />" +
+                      $"Source: {SI2.Size1KB} / {SI2.LastModified1}<br />" +
+                      $"Local: {SI2.Size2KB} / {SI2.LastModified2}" +
+                      $"</th><th>Diff</th></tr></thead>");
+      }
+
+      sb.AppendLine("<tbody>");
+      foreach (var item in FilteredItems)
+      {
+        sb.AppendLine($"<tr><td>Question {item.Q1.Index}</td><td>Question {item.Q2.Index}</td><td>{item.Distance.ToString("P0")}</td></tr>");
+      }
+      sb.AppendLine("</tbody></table>");
+
+      return sb.ToString();
+    }
   }
 }

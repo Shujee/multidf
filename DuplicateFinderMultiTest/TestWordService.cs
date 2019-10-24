@@ -67,9 +67,14 @@ namespace DuplicateFinderMulti.Test
         return null;
     }
 
+    public void GoToParagraph(int para)
+    {
+      throw new NotImplementedException();
+    }
+
     public void OpenDocument(string docPath, int? start, int? end)
     {
-      
+      throw new NotImplementedException();
     }
   }
 }

@@ -69,6 +69,12 @@ namespace DuplicateFinderMulti
 
     private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
     {
+      if (ViewModelLocator.Main.SelectedProject.IsDirty)
+      {
+        if (ViewModelLocator.DialogService.AskBooleanQuestion("Save changes to active Multi-DF project?"))
+          ViewModelLocator.Main.SelectedProject.SaveCommand.Execute(null);
+      }
+
       RemoveAllTaskPanes();
 
       Application.DocumentOpen -= Application_DocumentOpen;
@@ -238,7 +244,7 @@ namespace DuplicateFinderMulti
               PType = ParagraphType.TableRow;
             }
           }
-          else if (p.Range.ListFormat.ListType == WdListType.wdListSimpleNumbering)
+          else if (p.Range.ListFormat.ListType == WdListType.wdListSimpleNumbering || p.Range.ListFormat.ListType == WdListType.wdListOutlineNumbering)
             PType = ParagraphType.NumberedList;
           
 

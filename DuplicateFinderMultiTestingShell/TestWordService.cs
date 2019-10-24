@@ -68,6 +68,12 @@ namespace DuplicateFinderMulti.TestingShell
         return null;
     }
 
+    public void GoToParagraph(int para)
+    {
+      if (App.ActiveDocument != null)
+        App.Selection.Start = App.ActiveDocument.Paragraphs[para].Range.Start;
+    }
+
     public void OpenDocument(string docPath, int? start, int? end)
     {
       var Doc = App.Documents.Cast<Document>().FirstOrDefault(d => d.FullName == docPath);

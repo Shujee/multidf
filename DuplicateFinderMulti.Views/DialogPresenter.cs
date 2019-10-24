@@ -54,6 +54,12 @@ namespace DuplicateFinderMulti.Views
         return null;
     }
 
+    public bool AskBooleanQuestion(string msg)
+    {
+      var Res = MessageBox.Show(msg, "Multi-DF", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+      return Res == MessageBoxResult.Yes;
+    }
+
     /// <summary>
     /// Displays Open dialog. User can specify file filter, initial directory and dialog title. Returns full path of the selected file if
     /// user clicks Open button. Returns null if user clicks Cancel button.

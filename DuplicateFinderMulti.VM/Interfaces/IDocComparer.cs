@@ -21,6 +21,7 @@ namespace DuplicateFinderMulti.VM
 
     event Action<XMLDoc, XMLDoc> DocCompareStarted;
     event QAComparedDelegate QACompared;
+    event Action QASkipped;
     event Action<XMLDoc, XMLDoc> DocCompareCompleted;
   }
 }
