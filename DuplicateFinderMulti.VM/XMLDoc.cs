@@ -146,7 +146,9 @@ namespace DuplicateFinderMulti.VM
       {
         return Task.Run(() =>
         {
-          var Paragraphs = ViewModelLocator.WordService.GetDocumentParagraphs(_SourcePath, _Token, (i, Total) => ProcessingProgress = (i / (float)Total) * 100);
+          ViewModelLocator.Main.UpdateProgress(true, "Importing...", 0);
+
+          var Paragraphs = ViewModelLocator.WordService.GetDocumentParagraphs(_SourcePath, _Token, UpdateQAsProgressHandler);
 
           if (Paragraphs != null)
           {
@@ -156,10 +158,10 @@ namespace DuplicateFinderMulti.VM
             }
             catch (Exception ex)
             {
-              if(ex.Data.Contains("Paragraph"))
+              if (ex.Data.Contains("Paragraph"))
               {
                 var Res = ViewModelLocator.DialogService.AskBooleanQuestion(ex.Message + Environment.NewLine + Environment.NewLine + "Do you want to open source document to fix this problem?");
-                if(Res)
+                if (Res)
                 {
                   ViewModelLocator.WordService.OpenDocument(_SourcePath, (int)ex.Data["Paragraph"], (int)ex.Data["Paragraph"]);
                 }
@@ -178,6 +180,13 @@ namespace DuplicateFinderMulti.VM
       }
       else
         return null;
+    }
+
+    private void UpdateQAsProgressHandler(int i, int Total)
+    {
+        ProcessingProgress = (i / (float)Total) * 100;
+        ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.ElapsedTime));
+        ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.EstimatedRemainingTime));
     }
 
     public void CancelUpdateQAs()

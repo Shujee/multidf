@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using Word = Microsoft.Office.Interop.Word;
 
@@ -200,8 +201,10 @@ namespace DuplicateFinderMulti
     /// <returns></returns>
     public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token, Action<int, int> progressCallback)
     {
-      if(!string.IsNullOrEmpty(docPath) && System.IO.File.Exists(docPath))
-      {
+      if (string.IsNullOrEmpty(docPath) || !System.IO.File.Exists(docPath))
+        return null;
+      else
+      { 
         List<WordParagraph> Result = new List<WordParagraph>();
         Document Doc;
         int ParaCount;
@@ -228,29 +231,36 @@ namespace DuplicateFinderMulti
         ParaCount = Doc.Paragraphs.Count;
         foreach (Word.Paragraph p in Doc.Paragraphs)
         {
+          var R = p.Range;
+
           var PType = ParagraphType.Text;
 
-          if (p.Range.Tables.Count > 0)
+          if (R.Tables.Count > 0)
           {
             try
             {
-              if (p.Range.Tables[1].ApplyStyleHeadingRows && p.Range.Rows.First.Index == 1)
+              if (R.Tables[1].ApplyStyleHeadingRows && R.Rows.First.Index == 1)
                 PType = ParagraphType.TableHeader;
               else
                 PType = ParagraphType.TableRow;
             }
-            catch //tables with vertically merged rows can throw exception when trying to access p.Range.Rows.First.Index 
+            catch //tables with vertically merged rows can throw exception when trying to access R.Rows.First.Index 
             {
               PType = ParagraphType.TableRow;
             }
           }
-          else if (p.Range.ListFormat.ListType == WdListType.wdListSimpleNumbering || p.Range.ListFormat.ListType == WdListType.wdListOutlineNumbering)
+          else if (R.ListFormat.ListType == WdListType.wdListSimpleNumbering || R.ListFormat.ListType == WdListType.wdListOutlineNumbering)
             PType = ParagraphType.NumberedList;
-          
 
-          Result.Add(new WordParagraph(p.Range.Text, p.Range.Start, p.Range.End, PType));
 
-          progressCallback?.Invoke(i++, ParaCount);
+          Result.Add(new WordParagraph(R.Text, R.Start, R.End, PType));
+
+          ViewModelLocator.Main.UpdateProgress(false, "Importing...", i / (float)ParaCount);
+
+          //call progress callback every once in a while
+          if ((i++) % 10 == 0)
+            progressCallback?.Invoke(i, ParaCount);
+
 
           if (token.IsCancellationRequested)
             break;
@@ -265,8 +275,6 @@ namespace DuplicateFinderMulti
 
         return Result;
       }
-      else
-        return null;
     }
 
     /// <summary>

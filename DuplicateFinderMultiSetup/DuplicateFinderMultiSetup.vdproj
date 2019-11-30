@@ -1266,7 +1266,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:DuplicateFinderMulti.VM, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:DuplicateFinderMulti.VM, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_008AC71AA5F2AE7B8DEF8E5759D6E438"
@@ -1441,7 +1441,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:DuplicateFinderMulti.Views, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:DuplicateFinderMulti.Views, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_14719B8F6EF9D01EA43BEA9C6B38D45D"
@@ -3693,7 +3693,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:DuplicateFinderMultiCommon, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:DuplicateFinderMultiCommon, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_FE7255054C023C5547C6E9BD8C286D03"
@@ -3839,15 +3839,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:DuplicateFinderMulti"
-        "ProductCode" = "8:{89EBA946-02FB-4560-848A-9DE37BB43FAD}"
-        "PackageCode" = "8:{24004CEB-B0CE-4034-A27B-DD41CD4DB3F3}"
+        "ProductCode" = "8:{CF20D299-316F-4BAD-99A4-E11613FC1ED0}"
+        "PackageCode" = "8:{4910B15F-C8EF-4CD3-B3D4-12D3B18EAEE7}"
         "UpgradeCode" = "8:{5A925BAF-47E5-4BF5-93C2-B0C3C245B96F}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.4"
+        "ProductVersion" = "8:1.0.7"
         "Manufacturer" = "8:DuplicateFinderMulti"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

@@ -13,6 +13,8 @@ namespace DuplicateFinderMulti.VM
 
     public MainVM()
     {
+      _ProgressStartTime = DateTime.Now;
+
       if (IsInDesignModeStatic)
       {
         _SelectedProject = new Project()
@@ -97,7 +99,7 @@ namespace DuplicateFinderMulti.VM
       set
       {
         //unbind old project's event listener
-        if(_SelectedProject!=null)
+        if (_SelectedProject != null)
           _SelectedProject.PropertyChanged -= SelectedProject_PropertyChanged;
 
         Set(ref _SelectedProject, value);
@@ -113,7 +115,7 @@ namespace DuplicateFinderMulti.VM
 
     private void SelectedProject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-      if(e.PropertyName == nameof(Project.IsProcessing) || e.PropertyName == nameof(Project.IsExtractingQA))
+      if (e.PropertyName == nameof(Project.IsProcessing) || e.PropertyName == nameof(Project.IsExtractingQA))
       {
         GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
         {
@@ -132,7 +134,7 @@ namespace DuplicateFinderMulti.VM
         {
           _NewCommand = new RelayCommand(() =>
           {
-            if(SelectedProject!=null && SelectedProject.IsDirty)
+            if (SelectedProject != null && SelectedProject.IsDirty)
             {
               var Res = ViewModelLocator.DialogService.AskTernaryQuestion("Active project contains unsaved changes. Do you want to save these changes before proceeding?");
               if (Res == null)
@@ -160,7 +162,7 @@ namespace DuplicateFinderMulti.VM
         {
           _OpenCommand = new RelayCommand<string>((file) =>
           {
-            if (SelectedProject!=null && SelectedProject.IsDirty)
+            if (SelectedProject != null && SelectedProject.IsDirty)
             {
               var Res = ViewModelLocator.DialogService.AskTernaryQuestion("Active project contains unsaved changes. Do you want to save these changes before proceeding?");
               if (Res == null)
@@ -199,8 +201,8 @@ namespace DuplicateFinderMulti.VM
     internal void UpdateMRU(string newFile)
     {
       //if the newly added file was already available in MRU, remove the old instance.
-      while(VM.Properties.Settings.Default.MRU.Contains(newFile))
-          VM.Properties.Settings.Default.MRU.Remove(newFile);
+      while (VM.Properties.Settings.Default.MRU.Contains(newFile))
+        VM.Properties.Settings.Default.MRU.Remove(newFile);
 
       //now add new entry at the top
       VM.Properties.Settings.Default.MRU.Insert(0, newFile);
@@ -217,23 +219,25 @@ namespace DuplicateFinderMulti.VM
     public string ProgressMessage
     {
       get { return _ProgressMessage; }
-      set { Set(ref _ProgressMessage, value); }
     }
 
     private double _ProgressValue;
     public double ProgressValue
     {
       get { return _ProgressValue; }
-      set { Set(ref _ProgressValue, value); }
     }
 
-    internal void UpdateProgress(string msg, int value)
+    private DateTime _ProgressStartTime =DateTime.Now;
+    public TimeSpan ElapsedTime => DateTime.Now.Subtract(_ProgressStartTime);
+    public TimeSpan EstimatedRemainingTime => _ProgressValue == 0? TimeSpan.Zero : TimeSpan.FromSeconds((ElapsedTime.TotalSeconds / _ProgressValue) * (1 - _ProgressValue));
+
+    public void UpdateProgress(bool isStarting, string msg, double value)
     {
-      GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
-      {
-        ViewModelLocator.Main.ProgressMessage = msg;
-        ViewModelLocator.Main.ProgressValue = value;
-      });
+      if (isStarting)
+        _ProgressStartTime = DateTime.Now;
+
+      _ProgressMessage = msg;
+      _ProgressValue = value;
     }
     #endregion
   }

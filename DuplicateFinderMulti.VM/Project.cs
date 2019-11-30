@@ -43,7 +43,7 @@ namespace DuplicateFinderMulti.VM
       e.QA1.Doc.ProcessingProgress = e.PercentProgress;
       e.QA2.Doc.ProcessingProgress = e.PercentProgress;
 
-      ViewModelLocator.Main.ProgressValue = Factor * CompletedComparisons;
+      ViewModelLocator.Main.UpdateProgress(false, "QA compared", Factor * CompletedComparisons);
     }
 
     private void DocComparer_QASkipped()
@@ -414,7 +414,7 @@ namespace DuplicateFinderMulti.VM
             CompletedComparisons = 0;
             Factor = 100 / TotalComparisons; //avoid computing constant factor over and over in the loop. just a small micro-optimization that I couldn't resist :)
 
-            ViewModelLocator.Main.UpdateProgress("Comparing QAs", 0);
+            ViewModelLocator.Main.UpdateProgress(true, "Comparing QAs", 0);
 
             List<Task> Tasks = new List<Task>();
             foreach (var V1 in graph.Vertices)
@@ -451,7 +451,7 @@ namespace DuplicateFinderMulti.VM
               GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() => IsProcessing = false);
 #endif
 
-              ViewModelLocator.Main.UpdateProgress("Analysis completed", 100);
+              ViewModelLocator.Main.UpdateProgress(false, "Analysis completed", 100);
 
               RaisePropertyChanged(nameof(Graph));
               ApplyDiffThresholdCommand.Execute(null);

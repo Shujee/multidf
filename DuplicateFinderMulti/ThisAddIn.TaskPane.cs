@@ -70,14 +70,19 @@ namespace DuplicateFinderMulti
       // First check if there are any open documents.
       if (Application.Documents.Count > 0)
       {
-        // Loop through each custom task pane belonging to the add-in
-        for (int i = this.CustomTaskPanes.Count; i > 0; i--)
+        try
         {
-          var ctp = this.CustomTaskPanes[i - 1];
+          // Loop through each custom task pane belonging to the add-in
+          for (int i = this.CustomTaskPanes.Count; i > 0; i--)
+          {
+            var ctp = this.CustomTaskPanes[i - 1];
 
-          if (ctp.Title.StartsWith("Multi-DF"))
-            this.CustomTaskPanes.RemoveAt(i - 1); // If this is our task pane, remove it
+            if (ctp.Title.StartsWith("Multi-DF"))
+              this.CustomTaskPanes.RemoveAt(i - 1); // If this is our task pane, remove it
+          }
+
         }
+        catch { }
 
         IsPaneVisible = false;
       }

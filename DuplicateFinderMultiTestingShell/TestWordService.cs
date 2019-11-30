@@ -20,52 +20,76 @@ namespace DuplicateFinderMulti.TestingShell
 
     public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token, Action<int, int> progressCallback)
     {
-      if (!string.IsNullOrEmpty(docPath) && System.IO.File.Exists(docPath))
+      if (string.IsNullOrEmpty(docPath) || !System.IO.File.Exists(docPath))
+        return null;
+      else
       {
         List<WordParagraph> Result = new List<WordParagraph>();
         Document Doc;
         int ParaCount;
 
-        try
-        {
-          Doc = App.Documents.Open(docPath, ReadOnly: true, AddToRecentFiles: false, Visible: false);
-        }
-        catch (Exception ee)
-        {
-          ViewModelLocator.DialogService.ShowMessage("The following error occurred while trying to open specified document: " + ee.Message, true);
-          return null;
-        }
+        bool AlreadyOpen = false;
+        Doc = App.Documents.Cast<Document>().FirstOrDefault(d => d.FullName == docPath);
 
-        ParaCount = Doc.Paragraphs.Count;
-        for (int i = 1; i <= ParaCount; i++)
+        if (Doc == null)
         {
-          var PType = ParagraphType.Text;
-          var Para = ((Paragraph)Doc.Paragraphs[i]).Range;
-
-          if (Para.Tables.Count > 0)
+          try
           {
-            if (Para.Tables[1].ApplyStyleHeadingRows && Para.Rows.First.Index == 1)
-              PType = ParagraphType.TableHeader;
-            else
-              PType = ParagraphType.TableRow;
+            Doc = App.Documents.Open(docPath, ReadOnly: true, AddToRecentFiles: false, Visible: false);
           }
-          else if (Para.ListFormat.ListType == WdListType.wdListSimpleNumbering)
+          catch (Exception ee)
+          {
+            ViewModelLocator.DialogService.ShowMessage("The following error occurred while trying to open specified document: " + ee.Message, true);
+            return null;
+          }
+        }
+        else
+          AlreadyOpen = true;
+
+        int i = 0;
+        ParaCount = Doc.Paragraphs.Count;
+        foreach (Paragraph p in Doc.Paragraphs)
+        {
+          var R = p.Range;
+
+          var PType = ParagraphType.Text;
+
+          if (R.Tables.Count > 0)
+          {
+            try
+            {
+              if (R.Tables[1].ApplyStyleHeadingRows && R.Rows.First.Index == 1)
+                PType = ParagraphType.TableHeader;
+              else
+                PType = ParagraphType.TableRow;
+            }
+            catch //tables with vertically merged rows can throw exception when trying to access R.Rows.First.Index 
+            {
+              PType = ParagraphType.TableRow;
+            }
+          }
+          else if (R.ListFormat.ListType == WdListType.wdListSimpleNumbering || R.ListFormat.ListType == WdListType.wdListOutlineNumbering)
             PType = ParagraphType.NumberedList;
 
 
-          Result.Add(new WordParagraph(Para.Text, Para.Start, Para.End, PType));
+          Result.Add(new WordParagraph(R.Text, R.Start, R.End, PType));
 
-          if (i % 5 == 0) //keep indicating progress once in a while
-            progressCallback?.Invoke(i, ParaCount);
+          ViewModelLocator.Main.UpdateProgress(false, "Importing...", i / (float)ParaCount);
+          progressCallback?.Invoke(i++, ParaCount);
+
+          if (token.IsCancellationRequested)
+            break;
         }
 
-        Doc.Close(SaveChanges: false);
+        if (!AlreadyOpen)
+        {
+          System.Threading.Tasks.Task.Run(() => Doc.Close(SaveChanges: false));
+        }
+
         progressCallback?.Invoke(ParaCount, ParaCount);
 
         return Result;
       }
-      else
-        return null;
     }
 
     public void GoToParagraph(int para)
@@ -84,7 +108,7 @@ namespace DuplicateFinderMulti.TestingShell
       if (start != null)
         App.Selection.Start = start.Value;
 
-      if(end != null)
+      if (end != null)
         App.Selection.End = end.Value;
     }
   }

@@ -91,7 +91,7 @@ namespace DuplicateFinderMulti.VM
     
     public SynchronizedCollection<DFResultRow> Items { get; set; } = new SynchronizedCollection<DFResultRow>();
 
-    public IEnumerable<DFResultRow> FilteredItems => Items.Where(i => i.Distance <= DiffThreshold);
+    public IEnumerable<DFResultRow> FilteredItems => Items.Where(i => i.Distance <= DiffThreshold).OrderBy(i => i.Distance);
 
     /// <summary>
     /// only for serialization. do not use this constructor.

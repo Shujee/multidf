@@ -7,7 +7,7 @@
              xmlns:local="clr-namespace:DuplicateFinderMulti.Views"
              xmlns:vm="clr-namespace:DuplicateFinderMulti.VM;assembly=DuplicateFinderMulti.VM"
              mc:Ignorable="d" 
-             d:DesignHeight="800" d:DesignWidth="500"
+             d:DesignHeight="800" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type=vm:MainVM, IsDesignTimeCreatable=True}"
              DataContext="{Binding Source={x:Static vm:ViewModelLocator.Main}}">
   <Grid>
@@ -175,6 +175,8 @@
               <ColumnDefinition Width="*" />
               <ColumnDefinition Width="Auto" />
               <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
           </Grid>
         </ItemsPanelTemplate>
@@ -183,12 +185,29 @@
       <StatusBarItem Grid.Column="0" HorizontalContentAlignment="Stretch">
         <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1">
           <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0" HorizontalAlignment="Stretch">
-            <TextBlock Text="{Binding ProgressMessage, Mode=OneWay, FallbackValue=The quick brown fox}" />
+            <TextBlock Text="{Binding ProgressMessage, Mode=OneWay}" />
           </Border>
         </Border>
       </StatusBarItem>
 
-      <StatusBarItem Grid.Column="1" HorizontalContentAlignment="Stretch">
+      <StatusBarItem Grid.Column="1" HorizontalContentAlignment="Stretch" Width="70" ToolTip="Elapsed time">
+        <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1">
+          <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0" HorizontalAlignment="Stretch">
+            <TextBlock Text="{Binding ElapsedTime, Mode=OneWay, StringFormat=hh\\:mm\\:ss}" HorizontalAlignment="Right" />
+          </Border>
+        </Border>
+      </StatusBarItem>
+
+      <StatusBarItem Grid.Column="2" HorizontalContentAlignment="Stretch" Width="70" ToolTip="Estimated remaining time">
+        <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1">
+          <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0" HorizontalAlignment="Stretch">
+            <TextBlock Text="{Binding EstimatedRemainingTime, Mode=OneWay, StringFormat=hh\\:mm\\:ss}" HorizontalAlignment="Right" />
+          </Border>
+        </Border>
+      </StatusBarItem>
+      
+
+      <StatusBarItem Grid.Column="3" HorizontalContentAlignment="Stretch">
         <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1">
           <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0" HorizontalAlignment="Stretch">
             <TextBlock Margin="3">
@@ -199,7 +218,7 @@
         </Border>
       </StatusBarItem>
 
-      <StatusBarItem Grid.Column="2">
+      <StatusBarItem Grid.Column="4">
         <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1" Margin="1,0" Grid.Column="1">
           <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0">
             <ProgressBar Value="{Binding ProgressValue, Mode=OneWay}" Maximum="100" Width="100" Height="10" Margin="3" />
