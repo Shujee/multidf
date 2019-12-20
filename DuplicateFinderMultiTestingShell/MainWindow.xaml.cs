@@ -14,6 +14,8 @@ namespace DuplicateFinderMulti.TestingShell
   /// </summary>
   public partial class MainWindow : Window, IWordService
   {
+    public string ActiveDocumentPath => throw new NotImplementedException();
+
     public MainWindow()
     {
       InitializeComponent();
@@ -62,7 +64,7 @@ namespace DuplicateFinderMulti.TestingShell
       int Start = 0;
       for (int i = 0; i < Data.Length; i++)
       {
-        Res.Add(new WordParagraph(Data[i], Start,Start + Data[i].Length, ParagraphType.Text));
+        Res.Add(new WordParagraph(Data[i], Start,Start + Data[i].Length, ParagraphType.Text, 0, 0, 0 , 0));
         Start += Data[i].Length;
       }
 
@@ -110,6 +112,11 @@ namespace DuplicateFinderMulti.TestingShell
     }
 
     public void OpenDocument(string docPath, int? start, int? end)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void ExportDocumentToXPS(string docPath, string xpsPath)
     {
       throw new NotImplementedException();
     }

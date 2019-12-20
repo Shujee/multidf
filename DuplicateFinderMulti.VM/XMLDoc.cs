@@ -46,10 +46,8 @@ namespace DuplicateFinderMulti.VM
       }
     }
 
-
     private double _ProcessingProgress;
 
-    //[IgnoreDataMember]
     public double ProcessingProgress
     {
       get => _ProcessingProgress;
@@ -129,7 +127,7 @@ namespace DuplicateFinderMulti.VM
           _OpenSourceCommand = new RelayCommand(() =>
           {
             if (!string.IsNullOrEmpty(_SourcePath) && System.IO.File.Exists(_SourcePath))
-              ViewModelLocator.WordService.OpenDocument(_SourcePath);
+              ViewModelLocator.WordService.OpenDocument(_SourcePath, null, null);
             else
               ViewModelLocator.DialogService.ShowMessage("Source document does not exist.", true);
           },

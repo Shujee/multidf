@@ -109,6 +109,9 @@
     <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibsStd10.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.6.8\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="QuickGraph, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
     </Reference>
@@ -122,10 +125,14 @@
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibsStd10.5.4.1.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -137,11 +144,13 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AboutVM.cs" />
+    <Compile Include="AuthVM.cs" />
     <Compile Include="DefaultDocComparer.cs" />
     <Compile Include="DefaultQAExtractionStrategy.cs" />
     <Compile Include="DFResult.cs" />
     <Compile Include="DiffVM.cs" />
     <Compile Include="FileAttributesComparison.cs" />
+    <Compile Include="HFQVM.cs" />
     <Compile Include="Interfaces\IDupFinder.cs" />
     <Compile Include="Interfaces\IDocComparer.cs" />
     <Compile Include="Interfaces\IQAComparer.cs" />
@@ -195,6 +204,10 @@
     <ProjectReference Include="..\DuplicateFinderMultiCommon\DuplicateFinderMultiCommon.csproj">
       <Project>{73855FCF-BA21-4447-AB46-303506516534}</Project>
       <Name>DuplicateFinderMultiCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HFQOModel\HFQOModel.csproj">
+      <Project>{F0EC84C1-2903-4152-BF36-744C51622EE8}</Project>
+      <Name>HFQOModel</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

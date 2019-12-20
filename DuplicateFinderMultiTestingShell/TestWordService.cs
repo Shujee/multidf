@@ -18,6 +18,13 @@ namespace DuplicateFinderMulti.TestingShell
       App = new Application();
     }
 
+    public string ActiveDocumentPath => (App.Documents.Count > 0 ? App.ActiveDocument.FullName : null);
+
+    public void ExportDocumentToXPS(string docPath, string xpsPath)
+    {
+      throw new NotImplementedException();
+    }
+
     public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token, Action<int, int> progressCallback)
     {
       if (string.IsNullOrEmpty(docPath) || !System.IO.File.Exists(docPath))
@@ -72,7 +79,7 @@ namespace DuplicateFinderMulti.TestingShell
             PType = ParagraphType.NumberedList;
 
 
-          Result.Add(new WordParagraph(R.Text, R.Start, R.End, PType));
+          Result.Add(new WordParagraph(R.Text, R.Start, R.End, PType, 0, 0, 0, 0));
 
           ViewModelLocator.Main.UpdateProgress(false, "Importing...", i / (float)ParaCount);
           progressCallback?.Invoke(i++, ParaCount);

@@ -6,8 +6,16 @@
         mc:Ignorable="d"
         Title="Multi-DF" 
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False"
-        SizeToContent="WidthAndHeight" MaxWidth="400" MaxHeight="400"
+        Width="500" SizeToContent="Height"
         FocusManager.FocusedElement="{Binding ElementName=txtValue}">
+  <Window.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Styles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Window.Resources>
+  
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
@@ -19,10 +27,10 @@
       <ColumnDefinition Width="*" />
     </Grid.ColumnDefinitions>
 
-    <TextBlock x:Name="lblDescription" Text="Enter value:" Margin="6" Grid.ColumnSpan="2" TextWrapping="Wrap" />
-    <TextBox x:Name="txtValue" Grid.Row="1" MinWidth="200" Margin="6" Padding="6,3" FontSize="12" Grid.ColumnSpan="2" />
+    <TextBlock x:Name="lblDescription" Text="Please provide a name for this master file:" Margin="12,12,12,6" Grid.ColumnSpan="2" TextWrapping="Wrap" />
+    <TextBox x:Name="txtValue" Grid.Row="1" MinWidth="200" Margin="12,12,12,0" Grid.ColumnSpan="2" />
 
-    <Button Content="OK" Grid.Row="2" Grid.Column="0" Width="70" Margin="6" HorizontalAlignment="Right" Click="OK_Click" IsDefault="True" />
-    <Button Content="Cancel" Grid.Row="2" Grid.Column="1" Width="70" Margin="6" HorizontalAlignment="Left" Click="Cancel_Click" IsCancel="True" />
+    <Button Content="OK" Grid.Row="2" Grid.Column="0" Margin="6,24,6,12" HorizontalAlignment="Right" Click="OK_Click" IsDefault="True" />
+    <Button Content="Cancel" Grid.Row="2" Grid.Column="1" Margin="6,24,6,12" HorizontalAlignment="Left" Click="Cancel_Click" IsCancel="True" />
   </Grid>
 </Window>

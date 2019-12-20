@@ -98,5 +98,23 @@ namespace DuplicateFinderMulti.VM
         return (T)new XmlSerializer(typeof(T)).Deserialize(reader);
       }
     }
+
+    /// <summary>
+    /// Returns an available temporary file path with the specified extension
+    /// </summary>
+    /// <param name="extension"></param>
+    /// <returns></returns>
+    public static string GetTempFileName(string extension)
+    {
+      var TempFile = Path.GetTempFileName();
+      var Orig = TempFile;
+      TempFile = Path.ChangeExtension(TempFile, extension);
+
+      while (File.Exists(TempFile))
+        TempFile = Path.ChangeExtension(Path.GetTempFileName(), extension);
+
+      File.Delete(Orig);
+      return TempFile;
+    }
   }
 }

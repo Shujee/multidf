@@ -73,6 +73,8 @@ namespace DuplicateFinderMulti.VM
       {
         state = QAExtractionState.Start;
         QA.Start = paragraphs[i].Start;
+        QA.StartPage = paragraphs[i].StartPage;
+        QA.StartY = paragraphs[i].StartY;
 
         //if we get here, we know that we have found a question delimiter, so we'll extract question number from it.
         var Match = RE_QNumberWithHardReturn.Match(paragraphs[i].Text);
@@ -184,6 +186,8 @@ namespace DuplicateFinderMulti.VM
       }
 
       QA.End = paragraphs[i - 1].End;
+      QA.EndPage = paragraphs[i - 1].EndPage;
+      QA.EndY = paragraphs[i - 1].EndY;
 
       //finally make sure that the question index matches the expected index. If not, give user a chance to look into the source document manually.
       if (QA.Question != null && QA.Index != expectedIndex)

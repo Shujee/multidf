@@ -1,4 +1,5 @@
-﻿using Microsoft.Office.Interop.Word;
+﻿using DuplicateFinderMulti.VM;
+using Microsoft.Office.Interop.Word;
 using Microsoft.Office.Tools.Ribbon;
 using System.Linq;
 
@@ -9,6 +10,8 @@ namespace DuplicateFinderMulti
   {
     private void DuplicateFinderMultiRibbon_Load(object sender, RibbonUIEventArgs e)
     {
+      ViewModelLocator.Auth.PropertyChanged += Main_PropertyChanged;
+
       var ExpiryDate = VM.ViewModelLocator.Register.ExpiryDate;
 
       if (ExpiryDate == null)
@@ -20,6 +23,19 @@ namespace DuplicateFinderMulti
       {
         var IsExpired = (ExpiryDate.Value.Subtract(System.DateTime.Now).TotalDays < 7);
         btnShowHidePane.Visible = !IsExpired;
+      }
+    }
+
+    private void Main_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+      if (e.PropertyName == nameof(ViewModelLocator.Auth.IsLoggedIn) || e.PropertyName == nameof(ViewModelLocator.Auth.IsCommunicating))
+      {
+        btnLogin.Enabled = !(ViewModelLocator.Auth.IsLoggedIn || ViewModelLocator.Auth.IsCommunicating);
+        btnLogout.Enabled = ViewModelLocator.Auth.IsLoggedIn;
+
+        btnUploadExam.Enabled = ViewModelLocator.Auth.IsLoggedIn;
+        btnUploadActive.Enabled = ViewModelLocator.Auth.IsLoggedIn;
+        btnUploadActive.Enabled = ViewModelLocator.Auth.IsLoggedIn;
       }
     }
 
@@ -41,7 +57,7 @@ namespace DuplicateFinderMulti
 
       foreach (Document Doc in Globals.ThisAddIn.Application.Documents)
       {
-        var DupTaskPanes = Globals.ThisAddIn.CustomTaskPanes.Where(tp => tp.Title.StartsWith("Multi-DF"));       
+        var DupTaskPanes = Globals.ThisAddIn.CustomTaskPanes.Where(tp => tp.Title.StartsWith("Multi-DF"));
 
         foreach (var TP in DupTaskPanes)
         {
@@ -59,6 +75,26 @@ namespace DuplicateFinderMulti
     private void AboutButton_Click(object sender, RibbonControlEventArgs e)
     {
       VM.ViewModelLocator.DialogService.OpenAboutWindow();
+    }
+
+    private void btnLogin_Click(object sender, RibbonControlEventArgs e)
+    {
+      ViewModelLocator.Auth.LoginCommand.Execute(null);
+    }
+
+    private void btnLogout_Click(object sender, RibbonControlEventArgs e)
+    {
+      ViewModelLocator.Auth.LogoutCommand.Execute(null);
+    }
+
+    private void btnUploadExam_Click(object sender, RibbonControlEventArgs e)
+    {
+      ViewModelLocator.Main.UploadExamCommand.Execute(null);
+    }
+
+    private void btnUploadActive_Click(object sender, RibbonControlEventArgs e)
+    {
+      ViewModelLocator.Main.UploadActiveExamCommand.Execute(null);
     }
   }
 }

@@ -1,4 +1,4 @@
-<Project ToolsVersion="16.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project ToolsVersion="16.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <!--
     This section defines project-level properties.
@@ -192,6 +192,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ThisAddIn.TaskPane.cs" />
+    <Compile Include="ThisAddin.WordService.cs" />
     <Compile Include="WordHelper.cs" />
     <EmbeddedResource Include="DuplicateFinderMultiPaneUC.resx">
       <DependentUpon>DuplicateFinderMultiPaneUC.cs</DependentUpon>

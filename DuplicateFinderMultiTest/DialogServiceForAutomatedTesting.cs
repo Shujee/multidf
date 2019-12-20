@@ -44,6 +44,16 @@ namespace DuplicateFinderMulti.Test
       throw new NotImplementedException();
     }
 
+    public bool ShowExamsListDialog()
+    {
+      throw new NotImplementedException();
+    }
+
+    public bool ShowLogin()
+    {
+      throw new NotImplementedException();
+    }
+
     public void ShowMessage(string msg, bool isError)
     {
       System.Diagnostics.Debug.WriteLine((isError? "ERROR" : "MSG") + ": " + msg);

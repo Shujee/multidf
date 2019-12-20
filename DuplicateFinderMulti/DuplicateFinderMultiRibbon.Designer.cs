@@ -39,13 +39,23 @@
       this.btnShowHidePane = this.Factory.CreateRibbonButton();
       this.btnRegister = this.Factory.CreateRibbonButton();
       this.btnAbout = this.Factory.CreateRibbonButton();
+      this.grpPanes = this.Factory.CreateRibbonGroup();
+      this.btnUploadExam = this.Factory.CreateRibbonButton();
+      this.btnUploadActive = this.Factory.CreateRibbonButton();
+      this.grpUser = this.Factory.CreateRibbonGroup();
+      this.btnLogin = this.Factory.CreateRibbonButton();
+      this.btnLogout = this.Factory.CreateRibbonButton();
       this.tabDuplicateFinderMulti.SuspendLayout();
       this.group1.SuspendLayout();
+      this.grpPanes.SuspendLayout();
+      this.grpUser.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabDuplicateFinderMulti
       // 
       this.tabDuplicateFinderMulti.Groups.Add(this.group1);
+      this.tabDuplicateFinderMulti.Groups.Add(this.grpPanes);
+      this.tabDuplicateFinderMulti.Groups.Add(this.grpUser);
       this.tabDuplicateFinderMulti.Label = "Multi-DF";
       this.tabDuplicateFinderMulti.Name = "tabDuplicateFinderMulti";
       // 
@@ -84,6 +94,56 @@
       this.btnAbout.ShowImage = true;
       this.btnAbout.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.AboutButton_Click);
       // 
+      // grpPanes
+      // 
+      this.grpPanes.Items.Add(this.btnUploadExam);
+      this.grpPanes.Items.Add(this.btnUploadActive);
+      this.grpPanes.Label = "Panes";
+      this.grpPanes.Name = "grpPanes";
+      // 
+      // btnUploadExam
+      // 
+      this.btnUploadExam.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+      this.btnUploadExam.Label = "Upload Master File";
+      this.btnUploadExam.Name = "btnUploadExam";
+      this.btnUploadExam.OfficeImageId = "SharingOpenNotesFolder";
+      this.btnUploadExam.ShowImage = true;
+      this.btnUploadExam.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnUploadExam_Click);
+      // 
+      // btnUploadActive
+      // 
+      this.btnUploadActive.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+      this.btnUploadActive.Label = "Upload Active Doc";
+      this.btnUploadActive.Name = "btnUploadActive";
+      this.btnUploadActive.OfficeImageId = "SharingOpenNotesFolder";
+      this.btnUploadActive.ShowImage = true;
+      this.btnUploadActive.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnUploadActive_Click);
+      // 
+      // grpUser
+      // 
+      this.grpUser.Items.Add(this.btnLogin);
+      this.grpUser.Items.Add(this.btnLogout);
+      this.grpUser.Label = "User";
+      this.grpUser.Name = "grpUser";
+      // 
+      // btnLogin
+      // 
+      this.btnLogin.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+      this.btnLogin.Label = "Login";
+      this.btnLogin.Name = "btnLogin";
+      this.btnLogin.OfficeImageId = "CheckNames";
+      this.btnLogin.ShowImage = true;
+      this.btnLogin.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnLogin_Click);
+      // 
+      // btnLogout
+      // 
+      this.btnLogout.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+      this.btnLogout.Label = "Logout";
+      this.btnLogout.Name = "btnLogout";
+      this.btnLogout.OfficeImageId = "Lock";
+      this.btnLogout.ShowImage = true;
+      this.btnLogout.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnLogout_Click);
+      // 
       // DuplicateFinderMultiRibbon
       // 
       this.Name = "DuplicateFinderMultiRibbon";
@@ -94,6 +154,10 @@
       this.tabDuplicateFinderMulti.PerformLayout();
       this.group1.ResumeLayout(false);
       this.group1.PerformLayout();
+      this.grpPanes.ResumeLayout(false);
+      this.grpPanes.PerformLayout();
+      this.grpUser.ResumeLayout(false);
+      this.grpUser.PerformLayout();
       this.ResumeLayout(false);
 
         }
@@ -105,9 +169,15 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnShowHidePane;
     internal Microsoft.Office.Tools.Ribbon.RibbonButton btnRegister;
     internal Microsoft.Office.Tools.Ribbon.RibbonButton btnAbout;
-  }
+        internal Microsoft.Office.Tools.Ribbon.RibbonGroup grpPanes;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnUploadExam;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnUploadActive;
+        internal Microsoft.Office.Tools.Ribbon.RibbonGroup grpUser;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnLogin;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnLogout;
+    }
 
-  partial class ThisRibbonCollection
+    partial class ThisRibbonCollection
     {
         internal DuplicateFinderMultiRibbon DuplicateFinderMultiRibbon
         {

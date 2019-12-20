@@ -1,8 +1,12 @@
 ﻿using DiffPlex.DiffBuilder.Model;
 using System;
 using System.Globalization;
+using System.IO;
+using System.IO.Packaging;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Xps.Packaging;
 
 namespace DuplicateFinderMulti.Views
 {
@@ -15,13 +19,9 @@ namespace DuplicateFinderMulti.Views
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
       if ((bool)value)
-      {
         return Colors.Green;
-      }
       else
-      {
         return Colors.Red;
-      }
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -39,13 +39,9 @@ namespace DuplicateFinderMulti.Views
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
       if ((bool)value)
-      {
-        return "Status: Connected";
-      }
+        return "Connection Status: Connected";
       else
-      {
-        return "Status: Not connected";
-      }
+        return "Connection Status: Not connected";
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -183,4 +179,67 @@ namespace DuplicateFinderMulti.Views
     }
   }
 
+  public class ByteArrayToXPSDocumentConverter : IValueConverter
+  {
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      if (value == null)
+        return null;
+
+      MemoryStream xpsStream = new MemoryStream((byte[])value);
+
+      using (Package package = Package.Open(xpsStream))
+      {
+        //Create URI for Xps Package
+        //Any Uri will actually be fine here. It acts as a place holder for the
+        //Uri of the package inside of the PackageStore
+
+        string inMemoryPackageName = "memorystream://myXps.xps";
+
+        Uri packageUri = new Uri(inMemoryPackageName);
+
+        //Add package to PackageStore
+        PackageStore.AddPackage(packageUri, package);
+
+        XpsDocument xpsDoc = new XpsDocument(package, CompressionOption.Maximum, inMemoryPackageName);
+
+        FixedDocumentSequence fixedDocumentSequence = xpsDoc.GetFixedDocumentSequence();
+
+        // Do operations on xpsDoc here
+        //Note: Please note that you must keep the Package object in PackageStore until you
+        //are completely done with it since certain operations on XpsDocument can trigger
+        //delayed resource loading from the package.
+
+        //PackageStore.RemovePackage(packageUri);
+        //xpsDoc.Close();
+
+        return fixedDocumentSequence;
+      }
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      throw new NotSupportedException();
+    }
+  }
+
+  [ValueConversion(typeof(string), typeof(System.Windows.Documents.FixedDocumentSequence))]
+  public class PathToFixedDocumentConverter : IValueConverter
+  {
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      if (value == null)
+        return null;
+      else
+      {
+        XpsDocument doc = new XpsDocument((string)value, FileAccess.Read);
+        return doc.GetFixedDocumentSequence();
+      }
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      throw new NotSupportedException();
+    }
+  }
 }

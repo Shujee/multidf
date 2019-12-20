@@ -17,6 +17,26 @@ namespace DuplicateFinderMulti.VM
     public int End { get; set; }
     public XMLDoc Doc { get; set; }
 
+    /// <summary>
+    /// Vertical offset of the first character of this QA relative to page
+    /// </summary>
+    public float StartY { get; set; }
+
+    /// <summary>
+    /// Vertical offset of the last character of this QA relative to page
+    /// </summary>
+    public float EndY { get; set; }
+
+    /// <summary>
+    /// Page Number at which this QA starts
+    /// </summary>
+    public int StartPage { get; set; }
+
+    /// <summary>
+    /// Page Number at which this QA ends
+    /// </summary>
+    public int EndPage { get; set; }
+
     public override bool Equals(object obj)
     {
       if (obj == null || GetType() != obj.GetType())

@@ -18,6 +18,13 @@ namespace DuplicateFinderMulti.Test
       App = new Application();
     }
 
+    public string ActiveDocumentPath => (App.Documents.Count > 0 ? App.ActiveDocument.FullName : null);
+
+    public void ExportDocumentToXPS(string docPath, string xpsPath)
+    {
+      throw new NotImplementedException();
+    }
+
     public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token, Action<int, int> progressCallback)
     {
       if (!string.IsNullOrEmpty(docPath) && System.IO.File.Exists(docPath))
@@ -55,7 +62,7 @@ namespace DuplicateFinderMulti.Test
             PType = ParagraphType.NumberedList;
 
 
-          Result.Add(new WordParagraph(p.Range.Text, p.Range.Start, p.Range.End, PType));
+          Result.Add(new WordParagraph(p.Range.Text, p.Range.Start, p.Range.End, PType, 0, 0, 0, 0));
           progressCallback?.Invoke(i, Doc.Paragraphs.Count);
         }
 

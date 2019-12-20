@@ -168,6 +168,26 @@ namespace DuplicateFinderMulti.Views
     }
 
     /// <summary>
+    /// Shows HFQO Login dialog.
+    /// </summary>
+    /// <returns>true if User clicks OK button, otherwise false.</returns>
+    public bool ShowLogin()
+    {
+      var w = new LoginWindow();
+      MakeChild(w); //Show this dialog as child of Microsoft Word window.
+      var Result = w.ShowDialog().Value;
+      return Result;
+    }
+
+    public bool ShowExamsListDialog()
+    {
+      var w = new ExamsListDialog();
+      MakeChild(w); //Show this dialog as child of Microsoft Word window.
+      var Result = w.ShowDialog().Value;
+      return Result;
+    }
+
+    /// <summary>
     /// Sets Word window as parent of the specified window.
     /// </summary>
     /// <param name="w"></param>
