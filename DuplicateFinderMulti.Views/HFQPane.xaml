@@ -105,7 +105,7 @@
         </Border>
       </StatusBarItem>
 
-      <StatusBarItem Grid.Column="2" DataContext="{Binding Source={x:Static vm:ViewModelLocator.Main}}">
+      <StatusBarItem Grid.Column="2" DataContext="{Binding Source={x:Static vm:ViewModelLocator.Auth}}">
         <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1" Margin="1,0" Grid.Column="2">
           <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0">
 
@@ -132,7 +132,7 @@
                       </DataTrigger.ExitActions>
                     </DataTrigger>
 
-                    <DataTrigger Binding="{Binding Source={x:Static vm:ViewModelLocator.DataService}, Path=IsCommunicating, Mode=OneWay}" Value="False">
+                    <DataTrigger Binding="{Binding IsCommunicating}" Value="False">
                       <Setter Property="ToolTip" Value="{Binding IsLoggedIn, Converter={StaticResource ConnectionStatusToStringConverter}}" />
                     </DataTrigger>
                   </Style.Triggers>

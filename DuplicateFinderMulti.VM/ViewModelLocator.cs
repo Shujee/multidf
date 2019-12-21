@@ -24,6 +24,11 @@ namespace DuplicateFinderMulti.VM
         Properties.Settings.Default.Save();
       }
 
+      if (!GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
+      {
+        InitLogger();
+      }
+
       GalaSoft.MvvmLight.Threading.DispatcherHelper.Initialize();
 
       SimpleIoc.Default.Unregister<IDataService>();

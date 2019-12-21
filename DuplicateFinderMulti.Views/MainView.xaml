@@ -177,6 +177,7 @@
               <ColumnDefinition Width="Auto" />
               <ColumnDefinition Width="Auto" />
               <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
           </Grid>
         </ItemsPanelTemplate>
@@ -222,6 +223,47 @@
         <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1" Margin="1,0" Grid.Column="1">
           <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0">
             <ProgressBar Value="{Binding ProgressValue, Mode=OneWay}" Maximum="100" Width="100" Height="10" Margin="3" />
+          </Border>
+        </Border>
+      </StatusBarItem>
+
+      <StatusBarItem Grid.Column="5" DataContext="{Binding Source={x:Static vm:ViewModelLocator.Auth}}">
+        <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1" Margin="1,0" Grid.Column="2">
+          <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0">
+
+            <Ellipse Width="12" Height="12" Stroke="Gray" HorizontalAlignment="Right" Margin="3">
+              <Ellipse.Fill>
+                <SolidColorBrush Color="{Binding IsLoggedIn, Converter={StaticResource ConnectionStatusConverter}, FallbackValue=Red}" />
+              </Ellipse.Fill>
+              <Ellipse.Style>
+                <Style TargetType="Ellipse">
+                  <Style.Resources>
+                    <Storyboard x:Key="ConnectingStoryBoard" RepeatBehavior="Forever">
+                      <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:1" />
+                      <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:1" BeginTime="0:0:1" />
+                    </Storyboard>
+                  </Style.Resources>
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsCommunicating}" Value="True">
+                      <Setter Property="ToolTip" Value="Connection Status: Communicating" />
+                      <DataTrigger.EnterActions>
+                        <BeginStoryboard Name="ConnectingStoryBoardBegin" Storyboard="{StaticResource ConnectingStoryBoard}" />
+                      </DataTrigger.EnterActions>
+                      <DataTrigger.ExitActions>
+                        <StopStoryboard BeginStoryboardName="ConnectingStoryBoardBegin" />
+                      </DataTrigger.ExitActions>
+                    </DataTrigger>
+
+                    <DataTrigger Binding="{Binding IsLoggedIn}" Value="False">
+                      <Setter Property="ToolTip" Value="{Binding IsLoggedIn, Converter={StaticResource ConnectionStatusToStringConverter}}" />
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </Ellipse.Style>
+              <Ellipse.Effect>
+                <DropShadowEffect Color="{Binding IsLoggedIn, Converter={StaticResource ConnectionStatusConverter}, FallbackValue=Red}" BlurRadius="7" Direction="90" ShadowDepth="0" />
+              </Ellipse.Effect>
+            </Ellipse>
           </Border>
         </Border>
       </StatusBarItem>

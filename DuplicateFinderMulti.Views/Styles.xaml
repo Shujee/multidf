@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:HFQOView">
+                    xmlns:local="clr-namespace:DuplicateFinderMulti.Views">
 
   <Style TargetType="TextBox">
     <Setter Property="Padding" Value="3" />

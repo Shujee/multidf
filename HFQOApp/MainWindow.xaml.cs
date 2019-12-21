@@ -1,5 +1,4 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
-using HFQOView;
 using DuplicateFinderMulti.VM;
 using DuplicateFinderMulti.Views;
 using System.Linq;
