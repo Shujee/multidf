@@ -21,6 +21,11 @@
   public class MasterFile
   {
     /// <summary>
+    /// ID of this master file
+    /// </summary>
+    public int exam_id { get; set; }
+
+    /// <summary>
     /// Master XPS File in Base64 encoding.
     /// </summary>
     public string xps { get; set; }
@@ -29,5 +34,16 @@
     /// Master XML File in Base64 encoding.
     /// </summary>
     public string xml { get; set; }
+  }
+
+  /// <summary>
+  /// Represents a single result row that stores question number and index of up to 3 matching entries in the master file.
+  /// </summary>
+  public class HFQResultRow
+  {
+    public int q { get; set; }
+    public int? a1 { get; set; }
+    public int? a2 { get; set; }
+    public int? a3 { get; set; }
   }
 }

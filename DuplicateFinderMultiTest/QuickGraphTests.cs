@@ -87,10 +87,7 @@ namespace DuplicateFinderMulti.Test
         }
       }
 
-      Task.WhenAll(Tasks.ToArray()).ContinueWith(t =>
-      {
-        var Res = t.SerializeDC();
-      });
+      Task.WhenAll(Tasks.ToArray()).Wait();
     }
   }
 }

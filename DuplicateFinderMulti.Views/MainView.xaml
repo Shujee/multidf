@@ -9,16 +9,21 @@
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type=vm:MainVM, IsDesignTimeCreatable=True}"
-             DataContext="{Binding Source={x:Static vm:ViewModelLocator.Main}}">
+             DataContext="{Binding Source={x:Static vm:ViewModelLocator.Main}}"
+             FontFamily="Calibri">
   <Grid>
     <Grid.Resources>
       <ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries>
+          <ResourceDictionary Source="ImageButtonStyle.xaml" />
+        </ResourceDictionary.MergedDictionaries>
+        
         <BooleanToVisibilityConverter x:Key="B2VConverter" />
         <local:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
         <local:ConnectionStatusToStringConverter x:Key="ConnectionStatusToStringConverter" />
         <local:PathToFileNameConverter x:Key="PathToFileNameConverter" />
         <local:NonZeroToTrueConverter x:Key="NonZeroToTrueConverter" />
-        
+
 
         <Style TargetType="Button" x:Key="ToolbarButton">
           <Setter Property="Padding" Value="6" />
@@ -36,68 +41,14 @@
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
-    <ToolBar>
-      <Button Command="{Binding NewCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="FileOutline" ToolTip="Create a new Project" />
-
-      <Button x:Name="OpenButton" Command="{Binding OpenCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="FolderOutlinepenOutline" 
-              ToolTip="Open an existing project" Padding="6,6,0,6" />
-      <Button Click="OpenMRU_Click" 
-              Height="{Binding ElementName=OpenButton, Path=ActualHeight}"
-              IsEnabled="{Binding MRU.Count, Converter={StaticResource NonZeroToTrueConverter}}"> 
-        
-        <fa:ImageAwesome Icon="CaretDown" Height="4" />
-
-        <Button.ContextMenu>
-          <ContextMenu 
-            PlacementTarget="{x:Reference OpenButton}"
-            Placement="Bottom"
-            ItemsSource="{Binding MRU}">
-
-            <ContextMenu.Resources>
-              <fa:ImageAwesome x:Key="ProjectIcon" Icon="FileOutline" Width="12" x:Shared="False" />
-            </ContextMenu.Resources>
-            
-            <ContextMenu.ItemContainerStyle>
-              <Style TargetType="MenuItem">
-                <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu}, Path=PlacementTarget.DataContext.OpenCommand}" />
-                <Setter Property="CommandParameter" Value="{Binding}" />
-                <Setter Property="Icon" Value="{StaticResource ProjectIcon}" />
-                <Setter Property="Header" Value="{Binding Converter={StaticResource PathToFileNameConverter}}" />
-              </Style>
-            </ContextMenu.ItemContainerStyle>
-          </ContextMenu>
-        </Button.ContextMenu>
-      </Button>
-
-      <Button Command="{Binding SelectedProject.SaveCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="Save" ToolTip="Save current project" />
-      <Button Command="{Binding SelectedProject.ExportCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="ExternalLink" ToolTip="Copies project data and source files to the specified directory. Also updates file links in project file to point to the copied files." />
-
-      <Separator/>
-
-      <Button Command="{Binding SelectedProject.AddDocsCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="PlusSquareOutline" ToolTip="Add one or more documents to current project" />
-      <Button Command="{Binding SelectedProject.RemoveSelectedDocCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="MinusSquareOutline" ToolTip="Remove selected document from current project" />
-      <Button Command="{Binding SelectedProject.UpdateQAsCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="Refresh" ToolTip="Updates the list of QAs for the selected document" />
-      <Button Command="{Binding SelectedProject.CheckSyncWithSourceCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="Check" ToolTip="Checks if all documents in the current project are synchronized with their original source files" />
-
-      <Separator/>
-
-      <Button Command="{Binding SelectedProject.ProcessCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="Flash" ToolTip="Starts finding duplicates in the current project" />
-      <Button Command="{Binding SelectedProject.AbortProcessCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="Close" ToolTip="Starts finding duplicates in the current project" />
-
-      <Separator/>
-
-      <Button Command="{Binding SelectedProject.OpenResultsWindowCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="WindowMaximize" ToolTip="Opens results in a separate resizable window" />
-      <Button Command="{Binding SelectedProject.ExportResultsCommand}" Style="{StaticResource ToolbarButton}" fa:Awesome.Content="Table" ToolTip="Exports current results to an HTML file" />
-    </ToolBar>
-
-    <Border BorderBrush="Gray" Background="LightYellow" Grid.Row="1">
-      <TextBlock Margin="12,6" FontSize="18" TextTrimming="CharacterEllipsis" HorizontalAlignment="Center">
-        <Run Text="{Binding SelectedProject.Name}" FontWeight="Bold" />
+    <Border BorderBrush="Gray" Background="#FF04A4A4" Grid.Row="1" Margin="3,0">
+      <TextBlock Margin="18,12" FontFamily="Calibri" FontSize="18" TextTrimming="CharacterEllipsis" Foreground="White">
+        <Run Text="{Binding SelectedProject.Name}" />
       </TextBlock>
     </Border>
 
     <ListBox Grid.Row="2" ItemsSource="{Binding SelectedProject.AllXMLDocs}" SelectedItem="{Binding SelectedProject.SelectedDoc}" 
-             ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="3">
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="3" BorderBrush="LightGray">
       <ListBox.ItemContainerStyle>
         <Style TargetType="ListBoxItem">
           <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -105,42 +56,51 @@
       </ListBox.ItemContainerStyle>
       <ListBox.ItemTemplate>
         <DataTemplate>
-          <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" CornerRadius="3" Padding="3">
+          <Border BorderBrush="LightGray" Background="Transparent"  BorderThickness="0" CornerRadius="3" Padding="3">
             <Grid>
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
               </Grid.ColumnDefinitions>
               <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
               </Grid.RowDefinitions>
 
-              <fa:FontAwesome Icon="FileWordOutline" Foreground="Blue" FontSize="20" VerticalAlignment="Center" Margin="12,6" />
-              <TextBlock Text="{Binding Name}" Grid.Column="1" FontWeight="Bold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-              <TextBlock Text="{Binding LastModified}" Grid.Row="1" Grid.Column="1" TextTrimming="CharacterEllipsis" />
+              <fa:FontAwesome Icon="FileWordOutline" Foreground="#FF04A4A4" FontSize="20" VerticalAlignment="Center" Margin="12,7" />
 
-              <Button Command="{Binding OpenSourceCommand}" fa:Awesome.Content="FolderOpen" ToolTip="Click to open source document" FontSize="14" Grid.Column="2" Foreground="Orange" 
-                      Background="{x:Null}" BorderBrush="{x:Null}" Style="{DynamicResource ImageButtonStyle}" Margin="3" Grid.RowSpan="2" VerticalAlignment="Center" />
+              <StackPanel Orientation="Horizontal" Grid.Column="1">
+                <TextBlock Text="{Binding Name}" FontSize="16" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="0,10,0,9" />
+                <Button x:Name="OpenSourceButton" Command="{Binding OpenSourceCommand}" fa:Awesome.Content="FolderOpen" ToolTip="Click to open source document" FontSize="14" Foreground="#FF04A4A4" 
+                      Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="6,3" Focusable="False">
+                  <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource ImageButtonStyle}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Border}, Path=IsMouseOver}" Value="False">
+                          <Setter Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                  </Button.Style>
+                </Button>
+              </StackPanel>
 
-              <fa:FontAwesome FontSize="14" Grid.Column="3" Margin="3" Grid.RowSpan="2" VerticalAlignment="Center" ToolTipService.ShowDuration="30000">
+              <TextBlock Text="{Binding LastModified}" Grid.Row="1" FontSize="14" Foreground="LightGray" Grid.Column="1" TextTrimming="CharacterEllipsis" />
+
+              <!--<fa:FontAwesome FontSize="14" Grid.Column="4" VerticalAlignment="Center" ToolTipService.ShowDuration="30000" Margin="3">
                 <fa:FontAwesome.ToolTip>
                   <ToolTip DataContext="{Binding Path=PlacementTarget.DataContext.SyncInfo, RelativeSource={x:Static RelativeSource.Self}}">
                     <local:FileComparisonTooltip />
                   </ToolTip>
-
                 </fa:FontAwesome.ToolTip>
                 <fa:FontAwesome.Style>
                   <Style TargetType="fa:FontAwesome">
                     <Style.Triggers>
                       <DataTrigger Binding="{Binding IsSyncWithSource}" Value="True">
                         <Setter Property="Icon" Value="Check" />
-                        <Setter Property="Foreground" Value="Green" />
+                        <Setter Property="Foreground" Value="#FF04A4A4" />
                       </DataTrigger>
                       <DataTrigger Binding="{Binding IsSyncWithSource}" Value="False">
                         <Setter Property="Icon" Value="ExclamationCircle" />
@@ -149,21 +109,54 @@
                     </Style.Triggers>
                   </Style>
                 </fa:FontAwesome.Style>
-              </fa:FontAwesome>
+              </fa:FontAwesome>-->
 
-              <Border BorderBrush="WhiteSmoke" BorderThickness="1" CornerRadius="25" Padding="3,2" Margin="3" Grid.Column="4" Grid.RowSpan="2" MinWidth="30" MinHeight="30" 
-                      HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Number of Questions in this document" Background="DodgerBlue">
-                <Label Content="{Binding QAs.Count}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
+              <Border BorderThickness="1" CornerRadius="25" Grid.Column="2" MinWidth="30" MinHeight="30" Margin="3" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Border.Style>
+                  <Style TargetType="Border">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding IsSyncWithSource}" Value="False">
+                        <Setter Property="BorderBrush" Value="Red" />
+                        <Setter Property="ToolTip">
+                          <Setter.Value>
+                            <ToolTip DataContext="{Binding Path=PlacementTarget.DataContext.SyncInfo, RelativeSource={x:Static RelativeSource.Self}}">
+                              <local:FileComparisonTooltip />
+                            </ToolTip>
+                          </Setter.Value>
+                        </Setter>
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding IsSyncWithSource}" Value="True">
+                        <Setter Property="BorderBrush" Value="#FF04A4A4" />
+                        <Setter Property="ToolTip" Value="Number of Questions in this document" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </Border.Style>
+
+                <Label Content="{Binding QAs.Count}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center">
+                  <Label.Style>
+                    <Style TargetType="Label">
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSyncWithSource}" Value="True">
+                          <Setter Property="Foreground" Value="#FF04A4A4" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsSyncWithSource}" Value="False">
+                          <Setter Property="Foreground" Value="Red" />
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </Label.Style>
+                </Label>
               </Border>
 
-              <ProgressBar Value="{Binding ProcessingProgress, Mode=OneWay}" Margin="0,3" Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="4" Height="5" />
+              <ProgressBar Value="{Binding ProcessingProgress, Mode=OneWay}" Margin="0,3" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Height="5" Background="White" BorderBrush="White" Foreground="#FF04A4A4" />
             </Grid>
           </Border>
         </DataTemplate>
       </ListBox.ItemTemplate>
     </ListBox>
 
-    <GridSplitter Grid.Row="3" Height="5"  ResizeBehavior="PreviousAndNext" Background="DarkGray" HorizontalAlignment="Stretch" />
+    <GridSplitter Grid.Row="3" Height="5"  ResizeBehavior="PreviousAndNext" Background="#FF04A4A4" HorizontalAlignment="Stretch" Margin="3" />
 
     <local:ResultContent Grid.Row="4" AllowOneExpansionOnly="True" />
 
@@ -206,7 +199,7 @@
           </Border>
         </Border>
       </StatusBarItem>
-      
+
 
       <StatusBarItem Grid.Column="3" HorizontalContentAlignment="Stretch">
         <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1">

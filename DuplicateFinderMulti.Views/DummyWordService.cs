@@ -9,12 +9,22 @@ namespace DuplicateFinderMulti.Views
   {
     public string ActiveDocumentPath => throw new NotImplementedException();
 
-    public void ExportDocumentToXPS(string docPath, string xpsPath)
+    public void CreateMergedDocument(string[] docs, string outputPath, bool closeAfterCreate)
     {
       throw new NotImplementedException();
     }
 
-    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token, Action<int, int> progressCallback)
+    public void ExportDocumentToFixedFormat(ExportFixedFormat format, string docPath, string outputPath, bool closeAfterDone)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void FixQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
+    {
+      throw new NotImplementedException();
+    }
+
+    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token, Action<int, int> progressCallback, bool closeAfterDone = true)
     {
       List<WordParagraph> Result = new List<WordParagraph>();
 

@@ -9,8 +9,8 @@
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False"
         Width="500" SizeToContent="Height"
         FocusManager.FocusedElement="{Binding ElementName=txtValue}"
-        DataContext="{x:Static vm:ViewModelLocator.Main}"
-        d:DataContext="{d:DesignInstance Type=vm:MainVM, IsDesignTimeCreatable=True}">
+        DataContext="{x:Static vm:ViewModelLocator.HFQ}"
+        d:DataContext="{d:DesignInstance Type=vm:HFQVM, IsDesignTimeCreatable=True}">
 
   <Window.Resources>
     <ResourceDictionary>

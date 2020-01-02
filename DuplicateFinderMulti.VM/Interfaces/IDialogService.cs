@@ -19,5 +19,6 @@ namespace DuplicateFinderMulti.VM
 
     bool ShowLogin();
     bool ShowExamsListDialog();
+    bool ShowUploadExamDialog();
   }
 }

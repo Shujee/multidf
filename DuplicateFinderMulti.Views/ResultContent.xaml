@@ -81,27 +81,31 @@
   </UserControl.Resources>
 
   <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
-    </Grid.RowDefinitions>
+    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Panel.ZIndex="10" VerticalAlignment="Top" Height="48">
+      <StackPanel.Resources>
+        <ResourceDictionary>
+          <ResourceDictionary.MergedDictionaries>
+            <ResourceDictionary Source="ImageButtonStyle.xaml" />
+          </ResourceDictionary.MergedDictionaries>
 
-    <ToolBar Background="#FFEEF5FD" HorizontalAlignment="Stretch" ToolBarTray.IsLocked="True">
-      <ToolBar.Resources>
-        <Style TargetType="{x:Type DockPanel}">
-          <Setter Property="HorizontalAlignment" Value="Right" />
-        </Style>
-      </ToolBar.Resources>
+          <Style TargetType="{x:Type DockPanel}">
+            <Setter Property="HorizontalAlignment" Value="Right" />
+          </Style>
+        </ResourceDictionary>
+      </StackPanel.Resources>
 
       <TextBlock Text="Difference Threshold:" Grid.Column="1" VerticalAlignment="Center" Margin="3,0" />
       <Slider VerticalAlignment="Center" Width="150" Margin="0,6" 
-              Minimum="0.0" Maximum="1.0" SmallChange="0.01" LargeChange="0.05" 
-              Value="{Binding SelectedProject.Graph.DiffThreshold}" Style="{StaticResource FancySliderStyle}" />
+              Minimum="0.0" Maximum="1.0" SmallChange="0.1" LargeChange="0.1" TickFrequency="0.1" IsSnapToTickEnabled="True"
+              Value="{Binding SelectedProject.Graph.DiffThreshold}" Style="{StaticResource FancySliderStyle}" Focusable="False" />
 
-      <Button fa:Awesome.Content="Filter" FontSize="24" Command="{Binding SelectedProject.ApplyDiffThresholdCommand}" ToolTip="Filters results using difference threshold value" />
-    </ToolBar>
+      <Button fa:Awesome.Content="Filter" FontSize="24" Style="{StaticResource ImageButtonStyle}" Focusable="False" Background="{x:Null}" BorderBrush="{x:Null}"
+              Foreground="#FF04A4A4" Command="{Binding SelectedProject.ApplyDiffThresholdCommand}" 
+              ToolTip="Filters results using difference threshold value" />
+    </StackPanel>
 
-    <TreeView Name="TV" Grid.Row="1" ItemsSource="{Binding SelectedProject.Graph.Results}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="3">
+    <TreeView Name="TV" Grid.Row="0" ItemsSource="{Binding SelectedProject.Graph.Results}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="3"
+              BorderThickness="1" BorderBrush="LightGray" Padding="0,48,0,0">
      
       <TreeView.ItemContainerStyle>
         <Style TargetType="TreeViewItem" BasedOn="{StaticResource StretchedTreeViewItemStyle}">

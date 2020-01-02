@@ -2,9 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:DuplicateFinderMulti.Views">
   <SolidColorBrush x:Key="SliderThumb.Static.Foreground" Color="#FFE5E5E5"/>
-  <SolidColorBrush x:Key="SliderThumb.MouseOver.Background" Color="Crimson"/>
+  <SolidColorBrush x:Key="SliderThumb.MouseOver.Background" Color="#FF038484"/>
   <SolidColorBrush x:Key="SliderThumb.MouseOver.Border" Color="#FF7Eb4EA"/>
-  <SolidColorBrush x:Key="SliderThumb.Pressed.Background" Color="Red"/>
+  <SolidColorBrush x:Key="SliderThumb.Pressed.Background" Color="#FF025454"/>
   <SolidColorBrush x:Key="SliderThumb.Pressed.Border" Color="#FF569DE5"/>
   <SolidColorBrush x:Key="SliderThumb.Disabled.Background" Color="#FFF0F0F0"/>
   <SolidColorBrush x:Key="SliderThumb.Disabled.Border" Color="#FFD9D9D9"/>
@@ -65,7 +65,7 @@
   </Style>
   <ControlTemplate x:Key="SliderThumbHorizontalDefault" TargetType="{x:Type Thumb}">
     <Grid HorizontalAlignment="Center" UseLayoutRounding="True" VerticalAlignment="Center">
-      <Ellipse x:Name="grip" Fill="Black" Stretch="Fill" SnapsToDevicePixels="True" Stroke="{StaticResource SliderThumb.Static.Border}" StrokeThickness="1" 
+      <Ellipse x:Name="grip" Fill="#FF04A4A4" Stretch="Fill" SnapsToDevicePixels="True" Stroke="{StaticResource SliderThumb.Static.Border}" StrokeThickness="1" 
                      UseLayoutRounding="True" VerticalAlignment="Center" Width="32" Height="32">
         <Ellipse.Effect>
           <DropShadowEffect ShadowDepth="1" />

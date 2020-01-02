@@ -153,6 +153,9 @@
     <Compile Include="FileComparisonTooltip.xaml.cs">
       <DependentUpon>FileComparisonTooltip.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UploadExamDialog.xaml.cs">
+      <DependentUpon>UploadExamDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="InputBox.xaml.cs">
       <DependentUpon>InputBox.xaml</DependentUpon>
     </Compile>
@@ -197,6 +200,10 @@
     <Page Include="ImageButtonStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UploadExamDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="InputBox.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -274,6 +281,11 @@
   <ItemGroup>
     <None Include="Resources\SampleText.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\Close-WF.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Search-WF.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

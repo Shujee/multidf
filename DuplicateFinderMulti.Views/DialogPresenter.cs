@@ -187,6 +187,14 @@ namespace DuplicateFinderMulti.Views
       return Result;
     }
 
+    public bool ShowUploadExamDialog()
+    {
+      var w = new UploadExamDialog();
+      MakeChild(w); //Show this dialog as child of Microsoft Word window.
+      var Result = w.ShowDialog().Value;
+      return Result;
+    }
+
     /// <summary>
     /// Sets Word window as parent of the specified window.
     /// </summary>

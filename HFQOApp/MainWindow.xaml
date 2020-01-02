@@ -9,8 +9,8 @@
         mc:Ignorable="d"
         Title="HFQO Client" Height="450" Width="800"
         WindowStartupLocation="CenterScreen" WindowState="Maximized"
-        DataContext="{x:Static vm:ViewModelLocator.Main}"
-        d:DataContext="{d:DesignInstance Type=vm:MainVM, IsDesignTimeCreatable=True}">
+        DataContext="{x:Static vm:ViewModelLocator.HFQ}"
+        d:DataContext="{d:DesignInstance Type=vm:HFQVM, IsDesignTimeCreatable=True}">
 
   <Window.Resources>
     <view:PathToFixedDocumentConverter x:Key="PathToFixedDocumentConverter" />
@@ -43,7 +43,7 @@
     </Grid.ColumnDefinitions>
 
     <ToolBar Grid.Row="0" Grid.ColumnSpan="2" ToolBarTray.IsLocked="True">
-      <Button Style="{StaticResource ToolbarButton}" Command="{Binding LoginCommand}">
+      <Button Style="{StaticResource ToolbarButton}" Command="{Binding Source={x:Static vm:ViewModelLocator.Auth}, Path=LoginCommand}">
         <StackPanel>
           <fa:FontAwesome Icon="Unlock" FontSize="24">
             <fa:FontAwesome.Style>
@@ -59,7 +59,7 @@
           <TextBlock Text="Login" HorizontalAlignment="Center" Margin="0,6,0,0" />
         </StackPanel>
       </Button>
-      <Button Command="{Binding LogoutCommand}" Style="{StaticResource ToolbarButton}">
+      <Button Command="{Binding Source={x:Static vm:ViewModelLocator.Auth}, Path=LogoutCommand}" Style="{StaticResource ToolbarButton}">
         <StackPanel>
           <fa:FontAwesome Icon="Lock" FontSize="24">
             <fa:FontAwesome.Style>
@@ -94,7 +94,7 @@
         </StackPanel>
       </Button>
 
-      <Button Command="{Binding UploadExamCommand}" Style="{StaticResource ToolbarButton}">
+      <Button Command="{Binding UploadResultCommand}" Style="{StaticResource ToolbarButton}">
         <StackPanel>
           <fa:FontAwesome Icon="Upload" FontSize="24">
             <fa:FontAwesome.Style>

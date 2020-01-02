@@ -9,7 +9,7 @@ using Microsoft.Office.Interop.Word;
 
 namespace DuplicateFinderMulti.Test
 {
-  class TestWordService : VM.IWordService
+  class TestWordService : IWordService
   {
     private readonly Application App;
 
@@ -20,7 +20,22 @@ namespace DuplicateFinderMulti.Test
 
     public string ActiveDocumentPath => (App.Documents.Count > 0 ? App.ActiveDocument.FullName : null);
 
-    public void ExportDocumentToXPS(string docPath, string xpsPath)
+    public void CreateMergedDocument(string[] docs, string outputPath)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void CreateMergedDocument(string[] docs, string outputPath, bool closeAfterCreate)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void ExportDocumentToFixedFormat(ExportFixedFormat format, string docPath, string outputPath, bool closeAfterDone)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void FixQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
     {
       throw new NotImplementedException();
     }
@@ -72,6 +87,11 @@ namespace DuplicateFinderMulti.Test
       }
       else
         return null;
+    }
+
+    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token, Action<int, int> progressCallback, bool closeAfterDone = true)
+    {
+      throw new NotImplementedException();
     }
 
     public void GoToParagraph(int para)

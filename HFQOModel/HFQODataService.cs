@@ -68,17 +68,53 @@ namespace HFQOModel
                               null,
                               false,
                               new FileParameter[] {
-                                new FileParameter() { Name = "xps_file_name", FileName = xpsPath, ContentType="application/octet-stream" },
-                                new FileParameter() { Name = "xml_file_name", FileName = xmlPath, ContentType="application/octet-stream" },
+                                new FileParameter() { Name = "xps_content", FileName = xpsPath, ContentType="application/octet-stream" },
+                                new FileParameter() { Name = "xml_content", FileName = xmlPath, ContentType="application/octet-stream" },
                               });
 
       //Check if credentials are correct
       return Response != null;
     }
 
-    public async Task<Dictionary<string, string>> GetExams()
+    public bool UpdateExamFiles(string xpsPath, string xmlPath, int exam_id, int qa_count)
     {
-      return await Task.Run(() => REST.ExecuteRest<Dictionary<string, string>>("myexams", Method.GET,
+      var Response = REST.ExecuteRest<string>("exam/{exam}/update_files", Method.POST,
+                              new[]
+                              {
+                                  new RESTParameter(){ name = "Authorization", value = "Bearer " + _BearerToken, type = ParameterType.HttpHeader},
+                                  new RESTParameter(){ name = "Accept", value = "application/json", type = ParameterType.HttpHeader},
+                                  new RESTParameter(){ name = "exam", value = exam_id.ToString(), type = ParameterType.UrlSegment},
+                                  new RESTParameter(){ name = "qa_count", value = qa_count.ToString(), type = ParameterType.GetOrPost },
+                              },
+                              null,
+                              null,
+                              false,
+                              new FileParameter[] {
+                                new FileParameter() { Name = "xps_content", FileName = xpsPath, ContentType="application/octet-stream" },
+                                new FileParameter() { Name = "xml_content", FileName = xmlPath, ContentType="application/octet-stream" },
+                              });
+
+      //Check if credentials are correct
+      return Response != null;
+    }
+
+    public async Task<Dictionary<string, string>> GetExamsDL()
+    {
+      return await Task.Run(() => REST.ExecuteRest<Dictionary<string, string>>("user/myexams/dl", Method.GET,
+                              new[]
+                              {
+                                  new RESTParameter(){ name = "Authorization", value = "Bearer " + _BearerToken, type = ParameterType.HttpHeader},
+                                  new RESTParameter(){ name = "Accept", value = "application/json", type = ParameterType.HttpHeader},
+                              },
+                              null,
+                              null,
+                              true,
+                              null));
+    }
+
+    public async Task<Dictionary<string, string>> GetExamsUL()
+    {
+      return await Task.Run(() => REST.ExecuteRest<Dictionary<string, string>>("user/myexams/ul", Method.GET,
                               new[]
                               {
                                   new RESTParameter(){ name = "Authorization", value = "Bearer " + _BearerToken, type = ParameterType.HttpHeader},
@@ -104,6 +140,22 @@ namespace HFQOModel
                               null,
                               false,
                               null);
+    }
+
+    public async Task<bool> UploadResult(int exam_id, IEnumerable<HFQResultRow> result)
+    {
+      return await Task.Run(() => REST.ExecuteRest<string>("upload/{exam}", Method.POST,
+                              new[]
+                              {
+                                  new RESTParameter(){ name = "Authorization", value = "Bearer " + _BearerToken, type = ParameterType.HttpHeader},
+                                  new RESTParameter(){ name = "Accept", value = "application/json", type = ParameterType.HttpHeader},
+                                  new RESTParameter(){ name = "exam", value = exam_id.ToString(), type = ParameterType.UrlSegment},
+                                  new RESTParameter(){ name = "qa_count", value = SimpleJson.SerializeObject(result), type = ParameterType.GetOrPost },
+                              },
+                              null,
+                              null,
+                              false,
+                              null)).ContinueWith(t => t.IsCompleted && !t.IsFaulted);
     }
   }
 }

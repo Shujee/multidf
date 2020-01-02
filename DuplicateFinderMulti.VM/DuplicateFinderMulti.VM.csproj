@@ -150,6 +150,7 @@
     <Compile Include="DFResult.cs" />
     <Compile Include="DiffVM.cs" />
     <Compile Include="FileAttributesComparison.cs" />
+    <Compile Include="HFQResultRowVM.cs" />
     <Compile Include="HFQVM.cs" />
     <Compile Include="Interfaces\IDupFinder.cs" />
     <Compile Include="Interfaces\IDocComparer.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="Interfaces\IWordService.cs" />
     <Compile Include="QA.cs" />
     <Compile Include="QAComparer.cs" />
+    <Compile Include="UploadExamVM.cs" />
     <Compile Include="StaticExtensions.cs" />
     <Compile Include="UnitTestDetector.cs" />
     <Compile Include="XMLDoc.cs" />

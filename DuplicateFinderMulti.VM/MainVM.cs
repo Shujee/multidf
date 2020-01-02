@@ -90,6 +90,22 @@ namespace DuplicateFinderMulti.VM
 
       if (VM.Properties.Settings.Default.MRU == null)
         VM.Properties.Settings.Default.MRU = new System.Collections.Specialized.StringCollection();
+
+      ViewModelLocator.Auth.PropertyChanged += Auth_PropertyChanged;
+    }
+
+    /// <summary>
+    /// If user logs in or logs out, update the enabled state of all commands that require login.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void Auth_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+      if(e.PropertyName == nameof(AuthVM.IsLoggedIn))
+      {
+        if (this._SelectedProject != null)
+          _SelectedProject.UploadExamCommand.RaiseCanExecuteChanged();
+      }
     }
 
     public List<string> MRU => VM.Properties.Settings.Default.MRU.Cast<string>().Select(x => x).ToList();
@@ -200,129 +216,6 @@ namespace DuplicateFinderMulti.VM
       }
     }
 
-    private RelayCommand _UploadExamCommand;
-    /// <summary>
-    /// Creates a new Exam on the server using the Master File selected by the user. Can only be performed by the Admin.
-    /// </summary>
-    public RelayCommand UploadExamCommand
-    {
-      get
-      {
-        if (_UploadExamCommand == null)
-        {
-          _UploadExamCommand = new RelayCommand(() =>
-          {
-            var DocPath = ViewModelLocator.DialogService.ShowOpen("Word Documents (*.docx)|*.docx");
-            if (!string.IsNullOrEmpty(DocPath) && System.IO.File.Exists(DocPath))
-            {
-              UploadExamInternal(DocPath);
-            }
-          },
-          () => true);
-        }
-
-        return _UploadExamCommand;
-      }
-    }
-
-    private void UploadExamInternal(string DocPath)
-    {
-      string ExamName = ViewModelLocator.DialogService.AskStringQuestion("Please provide a name for this master file:", System.IO.Path.GetFileNameWithoutExtension(DocPath));
-
-      if (!string.IsNullOrEmpty(ExamName))
-      {
-        //Create the XPS file
-        var XPSFile = StaticExtensions.GetTempFileName(".xps");
-        ViewModelLocator.WordService.ExportDocumentToXPS(DocPath, XPSFile);
-
-        //Encrypt the XPS file
-        var XPSFileEncrypted = Encryption.Encrypt(System.IO.File.ReadAllBytes(XPSFile));
-        System.IO.File.WriteAllBytes(XPSFile, XPSFileEncrypted);
-
-        //Create the XML file
-        var XMLDoc = new XMLDoc() { SourcePath = DocPath };
-        XMLDoc.UpdateQAs().ContinueWith(t =>
-        {
-          if (t.IsCompleted && !t.IsFaulted)
-          {
-            if (XMLDoc.QAs != null)
-            {
-              var XMLFile = StaticExtensions.GetTempFileName(".xml");
-              System.IO.File.WriteAllText(XMLFile, XMLDoc.Serialize());
-
-              //Encrypt the XML file
-              var XMLFileEncrypted = Encryption.Encrypt(System.IO.File.ReadAllBytes(XMLFile));
-              System.IO.File.WriteAllBytes(XMLFile, XMLFileEncrypted);
-
-              try
-              {
-                ViewModelLocator.Auth.IsCommunicating = true;
-                ViewModelLocator.DataService.UploadExam(XPSFile, XMLFile, ExamName, XMLDoc.QAs.Count);
-                ViewModelLocator.DialogService.ShowMessage("Master file was uploaded successfully.", false);
-              }
-              catch (Exception ee)
-              {
-                var msg = ee.Message;
-
-                if (ee.Data.Count > 0)
-                {
-                  msg += Environment.NewLine;
-
-                  foreach (DictionaryEntry Err in ee.Data)
-                  {
-                    foreach (var Msg in (string[])Err.Value)
-                      msg += Environment.NewLine + Msg;
-                  }
-                }
-
-                ViewModelLocator.DialogService.ShowMessage(msg, true);
-              }
-              finally
-              {
-                ViewModelLocator.Auth.IsCommunicating = false;
-              }
-
-            }
-            else
-              ViewModelLocator.DialogService.ShowMessage("Could not extract QAs from the document.", true);
-          }
-          else
-            ViewModelLocator.DialogService.ShowMessage(t.Exception.Message, true);
-        }).Wait();
-      }
-    }
-
-    private RelayCommand _UploadActiveExamCommand;
-    public RelayCommand UploadActiveExamCommand
-    {
-      get
-      {
-        if (_UploadActiveExamCommand == null)
-        {
-          _UploadActiveExamCommand = new RelayCommand(() =>
-          {
-            if (ViewModelLocator.WordService.ActiveDocumentPath == null)
-              ViewModelLocator.DialogService.ShowMessage("You must open a Word Document to use this command.", true);
-            else
-            {
-              try
-              {
-                ViewModelLocator.Auth.IsCommunicating = true;
-                UploadExamInternal(ViewModelLocator.WordService.ActiveDocumentPath);
-              }
-              finally
-              {
-                ViewModelLocator.Auth.IsCommunicating = false;
-              }
-            }
-          },
-          () => ViewModelLocator.Auth.IsLoggedIn && ViewModelLocator.WordService.ActiveDocumentPath != null);
-        }
-
-        return _UploadActiveExamCommand;
-      }
-    }
-
     internal void UpdateMRU(string newFile)
     {
       //if the newly added file was already available in MRU, remove the old instance.
@@ -340,29 +233,31 @@ namespace DuplicateFinderMulti.VM
     }
 
     #region "Status"
-    private string _ProgressMessage;
-    public string ProgressMessage
-    {
-      get { return _ProgressMessage; }
-    }
-
-    private double _ProgressValue;
-    public double ProgressValue
-    {
-      get { return _ProgressValue; }
-    }
+    public string ProgressMessage { get; private set; }
+    public double ProgressValue { get; private set; }
 
     private DateTime _ProgressStartTime =DateTime.Now;
     public TimeSpan ElapsedTime => DateTime.Now.Subtract(_ProgressStartTime);
-    public TimeSpan EstimatedRemainingTime => _ProgressValue == 0? TimeSpan.Zero : TimeSpan.FromSeconds((ElapsedTime.TotalSeconds / _ProgressValue) * (1 - _ProgressValue));
+    public TimeSpan EstimatedRemainingTime => ProgressValue == 0? TimeSpan.Zero : TimeSpan.FromSeconds((ElapsedTime.TotalSeconds / ProgressValue) * (1 - ProgressValue));
 
-    public void UpdateProgress(bool isStarting, string msg, double value)
+    /// <summary>
+    /// Updates main progress bar message and value. Runs code on UI thread because UI elements is bound to these properties.
+    /// </summary>
+    /// <param name="markStartTime"></param>
+    /// <param name="msg"></param>
+    /// <param name="value"></param>
+    public void UpdateProgress(bool markStartTime, string msg, double value)
     {
-      if (isStarting)
-        _ProgressStartTime = DateTime.Now;
+      GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+      {
+        if (markStartTime)
+          _ProgressStartTime = DateTime.Now;
 
-      _ProgressMessage = msg;
-      _ProgressValue = value;
+        if (msg != null)
+          ProgressMessage = msg;
+
+        ProgressValue = value;
+      });
     }
     #endregion
   }

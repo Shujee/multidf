@@ -1,0 +1,56 @@
+﻿<Window x:Class="DuplicateFinderMulti.Views.UploadExamDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DuplicateFinderMulti.Views"
+        xmlns:vm="clr-namespace:DuplicateFinderMulti.VM;assembly=DuplicateFinderMulti.VM"
+        mc:Ignorable="d"
+        Title="Multi-DF" 
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False"
+        Width="500" SizeToContent="Height"
+        FocusManager.FocusedElement="{Binding ElementName=txtValue}"
+        DataContext="{Binding Source={x:Static vm:ViewModelLocator.UploadExam}}"
+        d:DataContext="{d:DesignInstance Type=vm:UploadExamVM}">
+  <Window.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Styles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+
+      <local:NegationConverter x:Key="NegationConverter" />
+    </ResourceDictionary>
+  </Window.Resources>
+  
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+
+    <RadioButton x:Name="CreateNewRadioButton" Content="Create new master file:" Margin="12,12,12,6" Grid.ColumnSpan="2" IsChecked="{Binding CreateNew}" />
+    <TextBox IsEnabled="{Binding ElementName=CreateNewRadioButton, Path=IsChecked}" Grid.Row="1" MinWidth="200" Margin="30,6,12,0" Grid.ColumnSpan="2" />
+
+    <RadioButton x:Name="UpdateExistingRadioButton" Grid.Row="2" Content="Update existing master file:" Margin="12,12,12,6" Grid.ColumnSpan="2" IsChecked="{Binding CreateNew, Converter={StaticResource NegationConverter}}" />
+    <ListBox ItemsSource="{Binding Exams}" SelectedItem="{Binding SelectedExam}" 
+             IsEnabled="{Binding ElementName=UpdateExistingRadioButton, Path=IsChecked}" Grid.Row="3" 
+             MinWidth="200" MaxHeight="300" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="30,6,12,0" Grid.ColumnSpan="2" MinHeight="200"
+             BorderBrush="LightGray">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <TextBlock Text="{Binding Value}" />
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <Button Content="OK" Grid.Row="4" Grid.Column="0" Margin="6,24,6,12" HorizontalAlignment="Right" Click="OK_Click" IsDefault="True" />
+    <Button Content="Cancel" Grid.Row="4" Grid.Column="1" Margin="6,24,6,12" HorizontalAlignment="Left" Click="Cancel_Click" IsCancel="True" />
+  </Grid>
+</Window>

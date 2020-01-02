@@ -8,15 +8,18 @@
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="350"
-             DataContext="{x:Static vm:ViewModelLocator.Main}"
-             d:DataContext="{d:DesignInstance Type=vm:MainVM}">
+             DataContext="{x:Static vm:ViewModelLocator.HFQ}"
+             d:DataContext="{d:DesignInstance Type=vm:HFQVM}">
 
   <UserControl.Resources>
     <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Styles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
       <local:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
       <local:ConnectionStatusToStringConverter x:Key="ConnectionStatusToStringConverter" />
       <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-      <CollectionViewSource x:Key="QACVS" Source="{Binding XML.QAs}" IsLiveFilteringRequested="True" Filter="CollectionViewSource_Filter" />
+      <CollectionViewSource x:Key="QACVS" Source="{Binding XMLDoc.QAs}" IsLiveFilteringRequested="True" Filter="CollectionViewSource_Filter" />
     </ResourceDictionary>
   </UserControl.Resources>
 
@@ -25,29 +28,26 @@
       <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
       <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
     <Grid Grid.Row="0">
-      <TextBox x:Name="SearchBox" BorderThickness="1" 
+      <TextBox x:Name="SearchBox" BorderThickness="1" Text="{Binding SearchText}"
              ToolTip="Enter search terms and press ENTER" Padding="6" Margin="3" Height="40" VerticalContentAlignment="Center"
                KeyDown="SearchBox_KeyDown">
         <local:WatermarkService.Watermark>
           <TextBlock Text="Search" />
         </local:WatermarkService.Watermark>
       </TextBox>
-      <Button Padding="3" Click="ClearButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Margin="28,6" ToolTip="Clear search text">
+      <Button Padding="3" Click="ClearButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Margin="28,6" ToolTip="Clear search text" Width="Auto">
         <Image Source="Resources/Close-WF.png" Width="12" VerticalAlignment="Center" />
       </Button>
-      <Button Padding="3" Grid.Column="1" Click="SearchButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Margin="6" ToolTip="Search">
+      <Button Padding="3" Grid.Column="1" Click="SearchButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Margin="6" ToolTip="Search" Width="Auto">
         <Image Source="Resources/Search-WF.png" Width="16" Height="16" Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Right" />
       </Button>
     </Grid>
-
-    <!--Wait Animation-->
-    <fa:ImageAwesome Icon="Refresh" Spin="True" Width="20" Panel.ZIndex="1000" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"
-                                         Visibility="{Binding Source={x:Static vm:ViewModelLocator.Main}, Path=IsCommunicating, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
-                                          SpinDuration="2" Opacity="0.7" Foreground="LightGray" />
-
 
     <ListBox ItemsSource="{Binding Source={StaticResource QACVS}}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Grid.Row="1" Padding="0" Margin="3">
       <ListBox.ItemContainerStyle>
@@ -58,25 +58,103 @@
       </ListBox.ItemContainerStyle>
       <ListBox.ItemTemplate>
         <DataTemplate DataType="vm:QA">
-          <Border Background="WhiteSmoke" CornerRadius="2" BorderThickness="1" BorderBrush="Gray" Padding="6" MaxHeight="100" Margin="3">
-          <Grid>
-            <Grid.RowDefinitions>
-              <RowDefinition Height="Auto" />
-              <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+          <Border Background="WhiteSmoke" CornerRadius="2" BorderThickness="1" BorderBrush="Gray" Padding="6" MaxHeight="130" Margin="3">
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+              </Grid.RowDefinitions>
 
               <TextBlock FontWeight="Bold">
                 Question 
                 <Run Text="{Binding Index}" />
               </TextBlock>
-            <TextBlock Grid.Row="1" Text="{Binding Question}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-          </Grid>
+              <TextBlock Grid.Row="1" Text="{Binding Question}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+
+              <Button Content="Mark" Grid.Row="2" Margin="3,6,3,3" HorizontalAlignment="Right" Command="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=DataContext.MarkCommand}"
+                      CommandParameter="{Binding}" />
+            </Grid>
           </Border>
         </DataTemplate>
       </ListBox.ItemTemplate>
     </ListBox>
 
-    <StatusBar Grid.Row="2" Height="30">
+    <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="6" HorizontalAlignment="Center">
+      <Button Content="&lt; Prev" Command="{Binding GoToPreviousCommand}" />
+      <Button Content="Next &gt;" Command="{Binding GoToNextCommand}" />
+    </StackPanel>
+
+      <Grid Background="Gray" HorizontalAlignment="Stretch" Grid.Row="3" Margin="3,3,3,0">
+      <Grid Margin="4,0">
+      <Grid.Resources>
+        <Style TargetType="TextBlock">
+          <Setter Property="HorizontalAlignment" Value="Center" />
+          <Setter Property="VerticalAlignment" Value="Center" />
+          <Setter Property="FontSize" Value="16" />
+          <Setter Property="Margin" Value="3" />
+          <Setter Property="Foreground" Value="White" />
+        </Style>
+      </Grid.Resources>
+        
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="150" />
+          <ColumnDefinition Width="50" />
+          <ColumnDefinition Width="50" />
+          <ColumnDefinition Width="50" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Text="Question" HorizontalAlignment="Left" />
+      <TextBlock Text="A1" Grid.Column="1" />
+      <TextBlock Text="A2" Grid.Column="2" />
+      <TextBlock Text="A3" Grid.Column="3" />
+      </Grid>
+    </Grid>
+
+    <ListBox ItemsSource="{Binding Result}" SelectedIndex="{Binding SelectedResultIndex}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Grid.Row="4" Padding="0" Margin="3,0,3,3">
+      <ListBox.ItemContainerStyle>
+        <Style TargetType="ListBoxItem">
+          <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+      </ListBox.ItemContainerStyle>
+      <ListBox.ItemTemplate>
+        <DataTemplate DataType="vm:HFQResultRowVM">
+          <Grid>
+            <Grid.Resources>
+              <Style TargetType="TextBlock">
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="Margin" Value="3,0" />
+              </Style>
+            </Grid.Resources>
+
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="150" />
+              <ColumnDefinition Width="50" />
+              <ColumnDefinition Width="50" />
+              <ColumnDefinition Width="50" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" HorizontalAlignment="Left">
+              Q<Run Text="{Binding Q, FallbackValue=123}" />
+            </TextBlock>
+
+            <TextBlock Grid.Column="1" Text="{Binding A1, FallbackValue=38}" />
+            <TextBlock Grid.Column="2" Text="{Binding A2, FallbackValue=156}" />
+            <TextBlock Grid.Column="3" Text="{Binding A3, FallbackValue=221}" />
+
+            <Button Padding="3" Grid.Column="4" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Margin="6,3" ToolTip="Remove answer" Width="Auto" Command="{Binding RemoveLastAnswerCommand}" SnapsToDevicePixels="True">
+              <Image Source="Resources/Close-WF.png" Width="16" Height="16" Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Right" />
+            </Button>
+          </Grid>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <StatusBar Grid.Row="5" Height="30">
       <StatusBar.ItemsPanel>
         <ItemsPanelTemplate>
           <Grid>

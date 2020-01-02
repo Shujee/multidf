@@ -1,5 +1,7 @@
-﻿using GalaSoft.MvvmLight.Command;
+﻿using DuplicateFinderMultiCommon;
+using GalaSoft.MvvmLight.Command;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -7,6 +9,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace DuplicateFinderMulti.VM
@@ -91,7 +94,21 @@ namespace DuplicateFinderMulti.VM
     public ObservableCollection<XMLDoc> AllXMLDocs
     {
       get { return _AllXMLDocs; }
-      set => Set(ref _AllXMLDocs, value);
+      set
+      {
+        if (_AllXMLDocs != null)
+          _AllXMLDocs.CollectionChanged -= _AllXMLDocs_CollectionChanged;
+
+        Set(ref _AllXMLDocs, value);
+
+        if (_AllXMLDocs != null)
+          _AllXMLDocs.CollectionChanged += _AllXMLDocs_CollectionChanged;
+      }
+    }
+
+    private void _AllXMLDocs_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+      RaisePropertyChanged(nameof(UploadExamCommand));
     }
 
     private XMLDoc _SelectedDoc;
@@ -165,6 +182,7 @@ namespace DuplicateFinderMulti.VM
         {
           _ExportResultsCommand = new RelayCommand(() =>
           {
+
             var ExportFilePath = ViewModelLocator.DialogService.ShowSave("HTML Files (*.html)|*.html", "", "Export Results to HTML", this.Name + ".html");
 
             if (ExportFilePath != null)
@@ -192,7 +210,170 @@ namespace DuplicateFinderMulti.VM
     }
 
 
+    private RelayCommand _MergeAsPDFCommand;
+    public RelayCommand MergeAsPDFCommand
+    {
+      get
+      {
+        if (_MergeAsPDFCommand == null)
+        {
+          _MergeAsPDFCommand = new RelayCommand(() =>
+          {
+            var OutputPath = ViewModelLocator.DialogService.ShowSave("PDF Files (*.pdf)|*.pdf");
 
+            if (OutputPath != null)
+            {
+              var TempDocxPath = StaticExtensions.GetTempFileName(".docx");
+              ViewModelLocator.WordService.CreateMergedDocument(this.AllXMLDocs.Select(d => d.SourcePath).ToArray(), TempDocxPath, false);
+              var WPs = ViewModelLocator.WordService.GetDocumentParagraphs(TempDocxPath, token, UpdateQAsProgressHandler, false);
+              var DelimiterParas = ViewModelLocator.QAExtractionStrategy.ExtractDelimiterParagraphs(WPs, token);
+              ViewModelLocator.WordService.FixQANumbers(TempDocxPath, DelimiterParas, false);
+              ViewModelLocator.WordService.ExportDocumentToFixedFormat(ExportFixedFormat.PDF, TempDocxPath, OutputPath, true);
+
+              if (ViewModelLocator.DialogService.AskBooleanQuestion($"Successfully merged all documents into '{OutputPath}'. Do you want to open it now?"))
+              {
+                System.Diagnostics.Process.Start(OutputPath);
+              }
+            }
+          },
+          () => this.AllXMLDocs.Count > 0);
+        }
+
+        this.AllXMLDocs.CollectionChanged += (sender, e) => _MergeAsPDFCommand.RaiseCanExecuteChanged();
+
+        return _MergeAsPDFCommand;
+      }
+    }
+
+    private RelayCommand _UploadExamCommand;
+    /// <summary>
+    /// Creates a new Exam on the server using the Master File selected by the user. Can only be performed by the Admin.
+    /// </summary>
+    public RelayCommand UploadExamCommand
+    {
+      get
+      {
+        if (_UploadExamCommand == null)
+        {
+          _UploadExamCommand = new RelayCommand(() =>
+          {
+            var Res = ViewModelLocator.DialogService.ShowUploadExamDialog();
+            var VM = ViewModelLocator.UploadExam;
+
+            if (Res && ((VM.CreateNew && !string.IsNullOrEmpty(VM.NewExamName)) || (!VM.CreateNew && VM.SelectedExam.Key != null)))
+            {
+              Task.Run(() =>
+              {
+                //Merge all XMLDocs into a single temporary Word document
+                var TempDocxPath = StaticExtensions.GetTempFileName(".docx");
+                ViewModelLocator.WordService.CreateMergedDocument(this.AllXMLDocs.Select(d => d.SourcePath).ToArray(), TempDocxPath, false);
+
+                ViewModelLocator.Main.UpdateProgress(false, "Extracting paragraphs from merged document", 0);
+                var WPs = ViewModelLocator.WordService.GetDocumentParagraphs(TempDocxPath, token, UpdateQAsProgressHandler, false);
+
+                ViewModelLocator.Main.UpdateProgress(false, "Marking delimiters", 0);
+                var DelimiterParas = ViewModelLocator.QAExtractionStrategy.ExtractDelimiterParagraphs(WPs, token);
+                ViewModelLocator.Main.UpdateProgress(false, null, 100);
+
+                ViewModelLocator.Main.UpdateProgress(false, "Re-numbering merged QAs", 0);
+                ViewModelLocator.WordService.FixQANumbers(TempDocxPath, DelimiterParas, false);
+                ViewModelLocator.Main.UpdateProgress(false, null, 100);
+
+                return TempDocxPath;
+
+              }).ContinueWith(t =>
+              {
+                if (t.IsCompleted && !t.IsFaulted)
+                {
+                  var TempDocxPath = t.Result;
+
+                  //Create the XPS file
+                  ViewModelLocator.Main.UpdateProgress(false, "Creating XPS", 0);
+                  var XPSFile = StaticExtensions.GetTempFileName(".xps");
+                  ViewModelLocator.WordService.ExportDocumentToFixedFormat(ExportFixedFormat.XPS, TempDocxPath, XPSFile, true);
+                  ViewModelLocator.Main.UpdateProgress(false, null, 100);
+
+                  //Encrypt the XPS file
+                  ViewModelLocator.Main.UpdateProgress(false, "Creating XML", 0);
+                  var XPSFileEncrypted = Encryption.Encrypt(System.IO.File.ReadAllBytes(XPSFile));
+                  File.WriteAllBytes(XPSFile, XPSFileEncrypted);
+                  ViewModelLocator.Main.UpdateProgress(false, null, 100);
+
+                  //Create the XML file
+                  var XMLDoc = new XMLDoc() { SourcePath = TempDocxPath };
+                  XMLDoc.UpdateQAs().ContinueWith(t2 =>
+                  {
+                    if (t2.IsCompleted && !t2.IsFaulted)
+                    {
+                      if (XMLDoc.QAs != null)
+                      {
+                        var XMLFile = StaticExtensions.GetTempFileName(".xml");
+                        File.WriteAllText(XMLFile, XMLDoc.ToXML());
+
+                        //Encrypt the XML file
+                        var XMLFileEncrypted = Encryption.Encrypt(File.ReadAllBytes(XMLFile));
+                        File.WriteAllBytes(XMLFile, XMLFileEncrypted);
+
+                        try
+                        {
+                          ViewModelLocator.Auth.IsCommunicating = true;
+
+                          if (VM.CreateNew)
+                          {
+                            ViewModelLocator.DataService.UploadExam(XPSFile, XMLFile, VM.NewExamName, XMLDoc.QAs.Count);
+                            ViewModelLocator.DialogService.ShowMessage("Master file was uploaded successfully.", false);
+                          }
+                          else
+                          {
+                            ViewModelLocator.DataService.UpdateExamFiles(XPSFile, XMLFile, int.Parse(VM.SelectedExam.Key), XMLDoc.QAs.Count);
+                            ViewModelLocator.DialogService.ShowMessage("Master file was updated successfully.", false);
+                          }
+                        }
+                        catch (Exception ee)
+                        {
+                          var msg = ee.Message;
+
+                          if (ee.Data.Count > 0)
+                          {
+                            msg += Environment.NewLine;
+
+                            foreach (DictionaryEntry Err in ee.Data)
+                            {
+                              foreach (var Msg in (string[])Err.Value)
+                                msg += Environment.NewLine + Msg;
+                            }
+                          }
+
+                          ViewModelLocator.DialogService.ShowMessage(msg, true);
+                        }
+                        finally
+                        {
+                          ViewModelLocator.Auth.IsCommunicating = false;
+                        }
+                      }
+                      else
+                        ViewModelLocator.DialogService.ShowMessage("Could not extract QAs from the document.", true);
+                    }
+                    else
+                      ViewModelLocator.DialogService.ShowMessage(t2.Exception.Message, true);
+                  });
+                }
+              });
+            }
+          },
+          () => ViewModelLocator.Auth.IsLoggedIn && this.AllXMLDocs.Count > 0);
+        }
+
+        return _UploadExamCommand;
+      }
+    }
+
+    private void UpdateQAsProgressHandler(int i, int Total)
+    {
+      ViewModelLocator.Main.UpdateProgress(true, null, ((float)i / Total) * 100);
+      ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.ElapsedTime));
+      ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.EstimatedRemainingTime));
+    }
 
     private RelayCommand _AddDocsCommand;
     public RelayCommand AddDocsCommand
@@ -605,16 +786,60 @@ namespace DuplicateFinderMulti.VM
       }
     }
 
+    #region "Serialize/De-serialize"
+    private static readonly Type[] AllObjectTypes = {
+      typeof(QA),
+      typeof(XMLDoc),
+      typeof(DFResultRow),
+      typeof(DFResult),
+    };
+
+    private static readonly DataContractSerializer DSSerializer = new DataContractSerializer(typeof(Project), AllObjectTypes, 0x7F_FFFF, false, true, null); //max graph size is 8,388,607‬ items
+
+    /// <summary>
+    /// This setting is required to prevent exceptions that are thrown by the serialization when it encounters control characters used by
+    /// Microsoft Word to denote newlines and non-breaking newlines.
+    /// </summary>
+    private static readonly XmlWriterSettings xmlWriterSettingsForWordDocs = new XmlWriterSettings()
+    {
+      NewLineChars = "\a\r\n",
+      CheckCharacters = false,
+      Encoding = System.Text.Encoding.UTF8,
+      NewLineHandling = NewLineHandling.Entitize,
+    };
 
     public static Project FromXML(string xml)
     {
-      return xml.DeserializeDC<Project>();
+      try
+      {
+        StringReader s = new StringReader(xml);
+
+        using (var reader = XmlReader.Create(s, new XmlReaderSettings() { CheckCharacters = false }))
+        {
+          return (Project)DSSerializer.ReadObject(reader, true);
+        }
+      }
+      catch
+      {
+        return null;
+      }
     }
 
     public string ToXML()
     {
-      return this.SerializeDC();
+      System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+      StringWriter writer = new StringWriter(sb);
+      using (XmlWriter xmlWriter = XmlWriter.Create(writer, xmlWriterSettingsForWordDocs))
+      {
+        DSSerializer.WriteStartObject(xmlWriter, this);
+        DSSerializer.WriteObjectContent(xmlWriter, this);
+        DSSerializer.WriteEndObject(xmlWriter);
+      }
+
+      return sb.ToString();
     }
+    #endregion
 
     public void Dispose()
     {

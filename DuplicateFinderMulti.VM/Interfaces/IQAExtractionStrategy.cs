@@ -8,6 +8,8 @@ namespace DuplicateFinderMulti.VM
   /// </summary>
   public interface IQAExtractionStrategy
   {
-    List<QA> Extract(List<WordParagraph> paragraphs, CancellationToken tok);
+    List<QA> ExtractQAs(List<WordParagraph> paragraphs, CancellationToken tok);
+    List<WordParagraph> ExtractDelimiterParagraphs(List<WordParagraph> paragraphs, CancellationToken tok);
+    int? ParseQuestionNumber(string paragraphText);
   }
 }

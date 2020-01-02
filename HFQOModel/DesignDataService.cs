@@ -12,7 +12,12 @@ namespace HFQOModel
       throw new System.NotImplementedException();
     }
 
-    public Task<Dictionary<string, string>> GetExams()
+    public Task<Dictionary<string, string>> GetExamsDL()
+    {
+      throw new System.NotImplementedException();
+    }
+
+    public Task<Dictionary<string, string>> GetExamsUL()
     {
       throw new System.NotImplementedException();
     }
@@ -27,7 +32,17 @@ namespace HFQOModel
       throw new System.NotImplementedException();
     }
 
+    public bool UpdateExamFiles(string xpsPath, string xmlPath, int exam_id, int qa_count)
+    {
+      throw new System.NotImplementedException();
+    }
+
     public bool UploadExam(string xpsPath, string xmlPath, string exam_name, int qa_count)
+    {
+      throw new System.NotImplementedException();
+    }
+
+    public Task<bool> UploadResult(int exam_id, IEnumerable<HFQResultRow> result)
     {
       throw new System.NotImplementedException();
     }

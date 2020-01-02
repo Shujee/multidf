@@ -28,7 +28,7 @@ namespace HFQOModel
     MasterFile DownloadExam(int access_id, string machine_name);
 
     /// <summary>
-    /// Creates a new exam on the server. Can only be done by the admin.
+    /// Creates a new exam on the server. Can only be done by "uploader"-type users.
     /// </summary>
     /// <param name="xpsPath"></param>
     /// <param name="xmlPath"></param>
@@ -36,9 +36,27 @@ namespace HFQOModel
     bool UploadExam(string xpsPath, string xmlPath, string exam_name, int qa_count);
 
     /// <summary>
+    /// Updates the XPS and XML files of an existing exam. Can only be done by the uploader user who originally uploaded he exam.
+    /// </summary>
+    /// <param name="xpsPath"></param>
+    /// <param name="xmlPath"></param>
+    /// <param name="exam_id"></param>
+    /// <param name="qa_count"></param>
+    /// <returns></returns>
+    bool UpdateExamFiles(string xpsPath, string xmlPath, int exam_id, int qa_count);
+
+    /// <summary>
     /// Returns the list of Master Files that are accessible to currently logged in user.
     /// </summary>
     /// <returns></returns>
-    Task<Dictionary<string, string>> GetExams();
+    Task<Dictionary<string, string>> GetExamsDL();
+    
+    /// <summary>
+    /// Returns the list of Master Files that were uploaded by the currently logged in user.
+    /// </summary>
+    /// <returns></returns>
+    Task<Dictionary<string, string>> GetExamsUL();
+
+    Task<bool> UploadResult(int exam_id, IEnumerable<HFQResultRow> result);
   }
 }

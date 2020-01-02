@@ -25,10 +25,10 @@
     <TextBlock Text="Source" Grid.Column="1" HorizontalAlignment="Center" FontWeight="Bold" />
     <TextBlock Text="Local" Grid.Column="2" HorizontalAlignment="Center" FontWeight="Bold" />
 
-    <fa:ImageAwesome Grid.Row="1" Grid.Column="1" Icon="FileWordOutline" Width="36" Foreground="DodgerBlue" Margin="36,12" />
+    <fa:ImageAwesome Grid.Row="1" Grid.Column="1" Icon="FileWordOutline" Width="36" Foreground="#FF04A4A4" Margin="36,12" />
     <Line X1="0" X2="0" Y1="0" Y2="1" Grid.Column="1" Grid.RowSpan="4" Stretch="Fill" HorizontalAlignment="Right" VerticalAlignment="Stretch" Stroke="LightGray" StrokeThickness="1" />
     <Line X1="0" X2="0" Y1="0" Y2="1" Grid.Column="0" Grid.RowSpan="4" Stretch="Fill" HorizontalAlignment="Right" VerticalAlignment="Stretch" Stroke="LightGray" StrokeThickness="1" />
-    <fa:ImageAwesome Grid.Row="1" Grid.Column="2" Icon="FileWordOutline" Width="36" Foreground="DodgerBlue" Margin="36,12" />
+    <fa:ImageAwesome Grid.Row="1" Grid.Column="2" Icon="FileWordOutline" Width="36" Foreground="#FF04A4A4" Margin="36,12" />
 
     <Line X1="0" X2="1" Y1="0" Y2="0" Grid.Row="1" Grid.ColumnSpan="3" Stretch="Fill" VerticalAlignment="Bottom" Stroke="LightGray" StrokeThickness="1" />
     <Line X1="0" X2="1" Y1="0" Y2="0" Grid.Row="2" Grid.ColumnSpan="3" Stretch="Fill" VerticalAlignment="Bottom" Stroke="LightGray" StrokeThickness="1" />

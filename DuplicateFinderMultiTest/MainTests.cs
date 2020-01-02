@@ -17,7 +17,7 @@ namespace DuplicateFinderMulti.Test
       var DirName = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
       var FileName = System.IO.Path.Combine(DirName, "File 1 for DF.docx");
       var Paras = ViewModelLocator.WordService.GetDocumentParagraphs(FileName, token, null);
-      var QAs = ViewModelLocator.QAExtractionStrategy.Extract(Paras, new System.Threading.CancellationToken());
+      var QAs = ViewModelLocator.QAExtractionStrategy.ExtractQAs(Paras, new System.Threading.CancellationToken());
       Assert.IsTrue(QAs.Count == 18);
       Assert.IsTrue(QAs[8].Choices.Count == 4);
       Assert.IsTrue(QAs[8].Answer == "C");
@@ -29,7 +29,7 @@ namespace DuplicateFinderMulti.Test
       var DirName = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
       var FileName = System.IO.Path.Combine(DirName, "File 2 for DF.docx");
       var Paras = ViewModelLocator.WordService.GetDocumentParagraphs(FileName, token, null);
-      var QAs = ViewModelLocator.QAExtractionStrategy.Extract(Paras, new System.Threading.CancellationToken());
+      var QAs = ViewModelLocator.QAExtractionStrategy.ExtractQAs(Paras, new System.Threading.CancellationToken());
 
       Assert.IsTrue(QAs.Count == 10);
       Assert.IsTrue(QAs[4].Choices.Count == 4);
@@ -43,7 +43,7 @@ namespace DuplicateFinderMulti.Test
       var DirName = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
       var FileName = System.IO.Path.Combine(DirName, "File 3 for DF.docx");
       var Paras = ViewModelLocator.WordService.GetDocumentParagraphs(FileName, token, null);
-      var QAs = ViewModelLocator.QAExtractionStrategy.Extract(Paras, new System.Threading.CancellationToken());
+      var QAs = ViewModelLocator.QAExtractionStrategy.ExtractQAs(Paras, new System.Threading.CancellationToken());
 
       Assert.IsTrue(QAs.Count == 10);
       Assert.IsTrue(QAs[5].Choices.Count == 3);
@@ -143,8 +143,8 @@ namespace DuplicateFinderMulti.Test
               Enumerable.Range(1, Faker.RandomNumber.Next(10, 60)).Select(i => CreateRandomXMLDoc()))
       };
 
-      var MyXML = P.SerializeDC();
-      var P2 = MyXML.DeserializeDC<Project>();
+      var MyXML = P.ToXML();
+      var P2 = Project.FromXML(MyXML);
 
       Assert.AreEqual(P.Name, P2.Name);
       Assert.AreEqual(P.AllXMLDocs.Count, P2.AllXMLDocs.Count);

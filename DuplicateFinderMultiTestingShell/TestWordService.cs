@@ -12,6 +12,7 @@ namespace DuplicateFinderMulti.TestingShell
   class TestWordService : VM.IWordService
   {
     private readonly Application App;
+    private Selection Sel => App.Selection;
 
     public TestWordService()
     {
@@ -20,12 +21,71 @@ namespace DuplicateFinderMulti.TestingShell
 
     public string ActiveDocumentPath => (App.Documents.Count > 0 ? App.ActiveDocument.FullName : null);
 
-    public void ExportDocumentToXPS(string docPath, string xpsPath)
+    /// <summary>
+    /// Creates a single Word document by merge content of all the specified documents. This function also updates QA numbering to make it continuous.
+    /// </summary>
+    /// <param name="docs"></param>
+    /// <returns></returns>
+    public void CreateMergedDocument(string[] docs, string outputPath, bool closeAfterCreate)
     {
-      throw new NotImplementedException();
+      var MergeDoc = App.Documents.Add(Visible: false);
+      Range R = MergeDoc.Range();
+
+      for (int i = 0; i < docs.Length; i++)
+      {
+        R.InsertFile(docs[i]);
+
+        //Add a paragraph mark after each file except for the last file.
+        if (i < docs.Length - 1)
+          R.InsertParagraphAfter();
+
+        R = R.Paragraphs.Last.Range;
+      }
+
+      MergeDoc.SaveAs(outputPath);
+
+      if (closeAfterCreate)
+        MergeDoc.Close();
     }
 
-    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token, Action<int, int> progressCallback)
+    public void ExportDocumentToFixedFormat(ExportFixedFormat format, string docPath, string outputPath, bool closeAfterDone)
+    {
+      var OpenResult = GetOrOpenDocument(docPath, false);
+
+      if (OpenResult.doc != null)
+      {
+        OpenResult.doc.ExportAsFixedFormat(
+                                OutputFileName: outputPath,
+                                ExportFormat: (format == ExportFixedFormat.XPS ? WdExportFormat.wdExportFormatXPS : WdExportFormat.wdExportFormatPDF), 
+                                OptimizeFor: WdExportOptimizeFor.wdExportOptimizeForOnScreen);
+
+        if (!OpenResult.alreadyOpen)
+          OpenResult.doc.Close();
+      }
+    }
+
+    private (Document doc, bool alreadyOpen) GetOrOpenDocument(string docPath, bool visible)
+    {
+      var Doc = App.Documents.Cast<Document>().FirstOrDefault(d => d.FullName == docPath);
+
+      if (Doc == null)
+      {
+        try
+        {
+          Doc = App.Documents.Open(docPath, ReadOnly: true, AddToRecentFiles: false, Visible: visible);
+          return (Doc, false);
+        }
+        catch (Exception ee)
+        {
+          ViewModelLocator.DialogService.ShowMessage("The following error occurred while trying to open specified document: " + ee.Message, true);
+          return (null, false);
+        }
+      }
+      else
+        return (Doc, true);
+    }
+
+    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token, Action<int, int> progressCallback, bool closeAfterDone = true)
     {
       if (string.IsNullOrEmpty(docPath) || !System.IO.File.Exists(docPath))
         return null;
@@ -93,6 +153,11 @@ namespace DuplicateFinderMulti.TestingShell
           System.Threading.Tasks.Task.Run(() => Doc.Close(SaveChanges: false));
         }
 
+        if (!AlreadyOpen && closeAfterDone)
+        {
+          System.Threading.Tasks.Task.Run(() => Doc.Close(SaveChanges: false));
+        }
+
         progressCallback?.Invoke(ParaCount, ParaCount);
 
         return Result;
@@ -102,7 +167,7 @@ namespace DuplicateFinderMulti.TestingShell
     public void GoToParagraph(int para)
     {
       if (App.ActiveDocument != null)
-        App.Selection.Start = App.ActiveDocument.Paragraphs[para].Range.Start;
+        Sel.Start = App.ActiveDocument.Paragraphs[para].Range.Start;
     }
 
     public void OpenDocument(string docPath, int? start, int? end)
@@ -113,10 +178,15 @@ namespace DuplicateFinderMulti.TestingShell
         Doc = App.Documents.Open(docPath);
 
       if (start != null)
-        App.Selection.Start = start.Value;
+        Sel.Start = start.Value;
 
       if (end != null)
-        App.Selection.End = end.Value;
+        Sel.End = end.Value;
+    }
+
+    public void FixQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
+    {
+      throw new NotImplementedException();
     }
   }
 }

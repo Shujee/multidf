@@ -10,8 +10,8 @@
         mc:Ignorable="d" 
         Width="500" SizeToContent="Height"
         WindowStartupLocation="CenterScreen" ShowInTaskbar="False" WindowStyle="None"
-        DataContext="{x:Static vm:ViewModelLocator.Main}"
-        d:DataContext="{d:DesignInstance Type=vm:MainVM}"
+        DataContext="{x:Static vm:ViewModelLocator.Auth}"
+        d:DataContext="{d:DesignInstance Type=vm:AuthVM, IsDesignTimeCreatable=True}"
         Loaded="Window_Loaded"
         FocusManager.FocusedElement="{Binding ElementName=EmailTextBox}">
 
@@ -63,8 +63,8 @@
     </Border>
     <TextBlock Grid.Row="2" Text="E-mail: " />
     <TextBlock Grid.Row="3" Text="Password: " />
-    <TextBox x:Name="EmailTextBox" Grid.Row="2" Grid.Column="1" Text="{Binding Email}" />
-    <PasswordBox Grid.Row="3" Grid.Column="1" x:Name="PasswordTextBox" />
+    <TextBox x:Name="EmailTextBox" Grid.Row="2" Grid.Column="1" Text="{Binding Email}" Padding="6" />
+    <PasswordBox Grid.Row="3" Grid.Column="1" x:Name="PasswordTextBox" Padding="6" />
     <CheckBox IsChecked="{Binding RememberMe}" Grid.Row="4" Content="Remember Me" Grid.Column="1" Margin="6,12" />
 
     <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.ColumnSpan="2" HorizontalAlignment="Center">

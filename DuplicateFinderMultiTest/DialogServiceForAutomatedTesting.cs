@@ -76,5 +76,10 @@ namespace DuplicateFinderMulti.Test
     {
       return @"F:\Office\Larry Gong\DuplicateFinder\Analysis\p" + DateTime.Now.ToString("yyyymmdd-hhmmss") + ".xml";
     }
+
+    public bool ShowUploadExamDialog()
+    {
+      throw new NotImplementedException();
+    }
   }
 }

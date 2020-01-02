@@ -1,6 +1,7 @@
 ﻿using DuplicateFinderMulti.VM;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -16,12 +17,20 @@ namespace DuplicateFinderMulti.Views
     public event Action<QA> QADoubleClicked;
 
     //My VM object
-    private MainVM MyVM => ((MainVM)this.DataContext);
+    private HFQVM MyVM => (HFQVM)this.DataContext;
     private ICollectionView QAs => (this.Resources["QACVS"] as CollectionViewSource).View;
 
     public HFQPane()
     {
       InitializeComponent();
+
+      MyVM.NewResultRowAdded += MyVM_NewResultRowAdded;
+    }
+
+    private void MyVM_NewResultRowAdded(HFQResultRowVM obj)
+    {
+      SearchBox.Text = "";
+      SearchBox.Focus();
     }
 
     private void SearchBox_KeyDown(object sender, KeyEventArgs e)
@@ -67,7 +76,8 @@ namespace DuplicateFinderMulti.Views
 
     private void CollectionViewSource_Filter(object sender, System.Windows.Data.FilterEventArgs e)
     {
-      e.Accepted = (e.Item as QA).Question.Contains(SearchBox.Text);
+      e.Accepted = (e.Item as QA).Question.IndexOf(SearchBox.Text, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    (e.Item as QA).Choices.Any(c => c.IndexOf(SearchBox.Text, StringComparison.OrdinalIgnoreCase) >= 0);
     }
   }
 }

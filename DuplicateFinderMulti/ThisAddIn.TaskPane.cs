@@ -54,7 +54,7 @@ namespace DuplicateFinderMulti
         var NewTaskPane = this.CustomTaskPanes.Add(ucAP, $"Multi-DF (ver: {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()})", doc.ActiveWindow);
 
         NewTaskPane.DockPosition = Office.MsoCTPDockPosition.msoCTPDockPositionLeft;
-        NewTaskPane.Width = 500;
+        NewTaskPane.Width = 575;
 
         // Display the custom task pane.
         NewTaskPane.Visible = true;

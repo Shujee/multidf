@@ -48,6 +48,7 @@ namespace DuplicateFinderMulti.VM
       SimpleIoc.Default.Unregister<RegisterVM>();
       SimpleIoc.Default.Unregister<DiffVM>();
       SimpleIoc.Default.Unregister<AboutVM>();
+      SimpleIoc.Default.Unregister<UploadExamVM>();
       SimpleIoc.Default.Unregister<AuthVM>();
       SimpleIoc.Default.Unregister<MainVM>();
       SimpleIoc.Default.Unregister<HFQVM>();
@@ -55,18 +56,18 @@ namespace DuplicateFinderMulti.VM
       SimpleIoc.Default.Unregister<IQAComparer>();
       SimpleIoc.Default.Unregister<IDocComparer>();
       
-      
-
       SimpleIoc.Default.Register<RegisterVM>();
       SimpleIoc.Default.Register<DiffVM>();
-      SimpleIoc.Default.Unregister<AuthVM>();
+      SimpleIoc.Default.Register<AboutVM>();
+      SimpleIoc.Default.Register<UploadExamVM>();
+      SimpleIoc.Default.Register<AuthVM>();
       SimpleIoc.Default.Register<MainVM>();
-      SimpleIoc.Default.Unregister<HFQVM>();
+      SimpleIoc.Default.Register<HFQVM>();
       SimpleIoc.Default.Register<IQAExtractionStrategy, DefaultQAExtractionStrategy>();
       SimpleIoc.Default.Register<IQAComparer, DefaultQAComparer>();
       SimpleIoc.Default.Register<IDocComparer, DefaultDocComparer>();
 
-      SimpleIoc.Default.Register<AboutVM>();
+      
     }
 
     /// <summary>
@@ -84,9 +85,10 @@ namespace DuplicateFinderMulti.VM
 
     public static AuthVM Auth => SimpleIoc.Default.GetInstance<AuthVM>();
     public static MainVM Main => SimpleIoc.Default.GetInstance<MainVM>();
-    public static HFQVM HFQ=> SimpleIoc.Default.GetInstance<HFQVM>();
+    public static HFQVM HFQ => SimpleIoc.Default.GetInstance<HFQVM>();
 
     public static RegisterVM Register => SimpleIoc.Default.GetInstance<RegisterVM>();
+    public static UploadExamVM UploadExam => SimpleIoc.Default.GetInstance<UploadExamVM>();
     public static AboutVM About => SimpleIoc.Default.GetInstance<AboutVM>();
 
     public static IQAExtractionStrategy QAExtractionStrategy => SimpleIoc.Default.GetInstance<IQAExtractionStrategy>();

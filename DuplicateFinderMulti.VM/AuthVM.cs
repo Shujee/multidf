@@ -9,6 +9,12 @@ namespace DuplicateFinderMulti.VM
   /// </summary>
   public class AuthVM : ViewModelBase
   {
+    public AuthVM()
+    {
+      Email = Properties.Settings.Default.Email;
+      Password = Properties.Settings.Default.Password;
+    }
+
     protected bool _IsLoggedIn;
     public bool IsLoggedIn
     {
@@ -29,12 +35,6 @@ namespace DuplicateFinderMulti.VM
       {
         Set(ref _IsCommunicating, value);
       }
-    }
-
-    private void InitAuth()
-    {
-      Email = Properties.Settings.Default.Email;
-      Password = Properties.Settings.Default.Password;
     }
 
     private RelayCommand _LoginCommand;

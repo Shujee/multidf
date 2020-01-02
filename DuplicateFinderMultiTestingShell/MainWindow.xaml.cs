@@ -12,7 +12,7 @@ namespace DuplicateFinderMulti.TestingShell
   /// <summary>
   /// Interaction logic for MainWindow.xaml
   /// </summary>
-  public partial class MainWindow : Window, IWordService
+  public partial class MainWindow : Fluent.RibbonWindow, IWordService
   {
     public string ActiveDocumentPath => throw new NotImplementedException();
 
@@ -20,22 +20,18 @@ namespace DuplicateFinderMulti.TestingShell
     {
       InitializeComponent();
 
-      if (!GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
-        SimpleIoc.Default.Register<IWordService, TestWordService>();
-
       SimpleIoc.Default.Register<IDialogService, DialogPresenter>();
     }
 
     private void AboutButton_Click(object sender, RoutedEventArgs e)
     {
-      ViewModelLocator.DialogService.OpenDiffWindow("The\nquick\nbrown\nfox\nover", "The\nfox\njumps\nover", new List<string>() { "A", "B", "C" }, new List<string>() { "C", "A", "B" });
-
-      //ViewModelLocator.DialogService.OpenAboutWindow();
+      ViewModelLocator.DialogService.OpenAboutWindow();
     }
 
     private void RegisterButton_Click(object sender, RoutedEventArgs e)
     {
       ViewModelLocator.DialogService.OpenRegisterWindow();
+      ShowHidePaneButton.Visibility = VM.ViewModelLocator.Register.IsRegistered ? Visibility.Visible : Visibility.Collapsed;
     }
 
     public string GetActiveDocumentText()
@@ -64,7 +60,7 @@ namespace DuplicateFinderMulti.TestingShell
       int Start = 0;
       for (int i = 0; i < Data.Length; i++)
       {
-        Res.Add(new WordParagraph(Data[i], Start,Start + Data[i].Length, ParagraphType.Text, 0, 0, 0 , 0));
+        Res.Add(new WordParagraph(Data[i], Start, Start + Data[i].Length, ParagraphType.Text, 0, 0, 0, 0));
         Start += Data[i].Length;
       }
 
@@ -73,8 +69,8 @@ namespace DuplicateFinderMulti.TestingShell
 
     public void SelectRange(int start, int end)
     {
-        TXT.SelectionStart = start;
-        TXT.SelectionLength = end - start;
+      TXT.SelectionStart = start;
+      TXT.SelectionLength = end - start;
     }
 
     public string GetRangeText(int start, int end)
@@ -106,19 +102,37 @@ namespace DuplicateFinderMulti.TestingShell
       TXT.Text = "Q1\rA quick brown fox A quick brown fox A quick brown fox A quick brown fox\rB\rC\r\rQ2\rA quick braun fixes A quick brown fox A quick brown fox A quick brown fox\rC\rB";
     }
 
-    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token, Action<int, int> progressCallback)
-    {
-      return new List<WordParagraph>();
-    }
-
     public void OpenDocument(string docPath, int? start, int? end)
     {
       throw new NotImplementedException();
     }
 
-    public void ExportDocumentToXPS(string docPath, string xpsPath)
+    public void ExportDocumentToFixedFormat(ExportFixedFormat format, string docPath, string outputPath, bool closeAfterDone)
     {
       throw new NotImplementedException();
+    }
+
+    public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token, Action<int, int> progressCallback, bool closeAfterDone = true)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void FixQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void CreateMergedDocument(string[] docs, string outputPath, bool closeAfterCreate)
+    {
+      throw new NotImplementedException();
+    }
+
+    private void ShowHidePane_Click(object sender, RoutedEventArgs e)
+    {
+      if (MV.Visibility == Visibility.Visible)
+        MV.Visibility = Visibility.Collapsed;
+      else
+        MV.Visibility = Visibility.Visible;
     }
   }
 }

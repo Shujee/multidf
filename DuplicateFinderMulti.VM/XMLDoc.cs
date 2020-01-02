@@ -2,11 +2,13 @@
 using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace DuplicateFinderMulti.VM
 {
@@ -152,7 +154,7 @@ namespace DuplicateFinderMulti.VM
           {
             try
             {
-              QAs = ViewModelLocator.QAExtractionStrategy.Extract(Paragraphs, _Token);
+              QAs = ViewModelLocator.QAExtractionStrategy.ExtractQAs(Paragraphs, _Token);
             }
             catch (Exception ex)
             {
@@ -207,5 +209,57 @@ namespace DuplicateFinderMulti.VM
           _TokenSource.Dispose();
       }
     }
+
+    #region "Serialize/De-serialize"
+    private static readonly Type[] AllObjectTypes = {
+      typeof(QA),
+    };
+
+    private static readonly DataContractSerializer DSSerializer = new DataContractSerializer(typeof(XMLDoc), AllObjectTypes, 0x7F_FFFF, false, true, null); //max graph size is 8,388,607‬ items
+
+    /// <summary>
+    /// This setting is required to prevent exceptions that are thrown by the serialization when it encounters control characters used by
+    /// Microsoft Word to denote newlines and non-breaking newlines.
+    /// </summary>
+    private static readonly XmlWriterSettings xmlWriterSettingsForWordDocs = new XmlWriterSettings()
+    {
+      NewLineChars = "\a\r\n",
+      CheckCharacters = false,
+      Encoding = System.Text.Encoding.UTF8,
+      NewLineHandling = NewLineHandling.Entitize,
+    };
+
+    public static XMLDoc FromXML(string xml)
+    {
+      try
+      {
+        StringReader s = new StringReader(xml);
+
+        using (var reader = XmlReader.Create(s, new XmlReaderSettings() { CheckCharacters = false }))
+        {
+          return (XMLDoc)DSSerializer.ReadObject(reader, true);
+        }
+      }
+      catch
+      {
+        return null;
+      }
+    }
+
+    public string ToXML()
+    {
+      StringBuilder sb = new StringBuilder();
+
+      StringWriter writer = new StringWriter(sb);
+      using (XmlWriter xmlWriter = XmlWriter.Create(writer, xmlWriterSettingsForWordDocs))
+      {
+        DSSerializer.WriteStartObject(xmlWriter, this);
+        DSSerializer.WriteObjectContent(xmlWriter, this);
+        DSSerializer.WriteEndObject(xmlWriter);
+      }
+
+      return sb.ToString();
+    }
+    #endregion
   }
 }

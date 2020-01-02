@@ -179,6 +179,23 @@ namespace DuplicateFinderMulti.Views
     }
   }
 
+  /// <summary>
+  /// Returns Boolean inverse of the input value
+  /// </summary>
+  [ValueConversion(typeof(bool), typeof(bool))]
+  public class NegationConverter : IValueConverter
+  {
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      return !(bool)value;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      return !(bool)value;
+    }
+  }
+
   public class ByteArrayToXPSDocumentConverter : IValueConverter
   {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
