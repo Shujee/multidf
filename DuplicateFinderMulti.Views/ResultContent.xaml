@@ -30,7 +30,7 @@
           </Grid.ColumnDefinitions>
 
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <fa:FontAwesome Icon="FileWordOutline" Foreground="Blue" FontSize="14" VerticalAlignment="Center" Margin="3" />
+            <fa:FontAwesome Icon="FileWordOutline" Foreground="#FF04A4A4" FontSize="14" VerticalAlignment="Center" Margin="3" />
             <TextBlock VerticalAlignment="Center" Margin="0,3" TextTrimming="CharacterEllipsis">
               <Run Text="{Binding Doc1.SourcePath, Converter={StaticResource PathToFileNameConverter}}" />
               (QAs: <Run Text="{Binding Count1, Mode=OneWay}" />)
@@ -38,16 +38,16 @@
           </StackPanel>
 
           <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center">
-            <fa:FontAwesome Icon="FileWordOutline" Foreground="Blue" FontSize="14" VerticalAlignment="Center" Margin="3" Grid.Column="2" />
+            <fa:FontAwesome Icon="FileWordOutline" Foreground="#FF04A4A4" FontSize="14" VerticalAlignment="Center" Margin="3" Grid.Column="2" />
             <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="0,3" TextTrimming="CharacterEllipsis">
               <Run Text="{Binding Doc2.SourcePath, Converter={StaticResource PathToFileNameConverter}}" />
               (QAs: <Run Text="{Binding Count2, Mode=OneWay}" />)
             </TextBlock>
           </StackPanel>
 
-          <Border BorderBrush="Green" BorderThickness="1" CornerRadius="5" Grid.Column="2" Margin="3"
+          <Border BorderBrush="#FF04A4A4" BorderThickness="1" CornerRadius="5" Grid.Column="2" Margin="3"
                             HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="Number of Questions in this document" >
-            <TextBlock Text="{Binding FilteredItems.Count, StringFormat='Total Matches: {0}'}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Green" Margin="3" />
+            <TextBlock Text="{Binding FilteredItems.Count, StringFormat='Total Matches: {0}'}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF04A4A4" Margin="3" />
           </Border>
         </Grid>
       </DataTemplate>
@@ -60,16 +60,16 @@
           </Grid.ColumnDefinitions>
 
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <fa:FontAwesome Icon="FileWordOutline" Foreground="Blue" FontSize="14" VerticalAlignment="Center" Margin="3" />
+            <fa:FontAwesome Icon="FileWordOutline" Foreground="#FF04A4A4" FontSize="14" VerticalAlignment="Center" Margin="3" />
             <TextBlock VerticalAlignment="Center" Margin="0,3" TextTrimming="CharacterEllipsis">
               <Run Text="{Binding Doc1.SourcePath, Converter={StaticResource PathToFileNameConverter}}" />
               (QAs: <Run Text="{Binding Count1, Mode=OneWay}" />)
             </TextBlock>
           </StackPanel>
 
-          <Border BorderBrush="Green" BorderThickness="1" CornerRadius="5" Grid.Column="1" Margin="3"
+          <Border BorderBrush="#FF04A4A4" BorderThickness="1" CornerRadius="5" Grid.Column="1" Margin="3"
                             HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="Number of Questions in this document" >
-            <TextBlock Text="{Binding FilteredItems.Count, StringFormat='Total Matches: {0}'}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Green" Margin="3" />
+            <TextBlock Text="{Binding FilteredItems.Count, StringFormat='Total Matches: {0}'}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF04A4A4" Margin="3" />
           </Border>
         </Grid>
       </DataTemplate>
@@ -168,12 +168,12 @@
                       <Setter Property="Template">
                         <Setter.Value>
                           <ControlTemplate TargetType="{x:Type Button}">
-                            <Border x:Name="ButtonBorder" BorderBrush="DodgerBlue" BorderThickness="1" CornerRadius="5" Grid.Column="3" VerticalAlignment="Center">
-                              <TextBlock x:Name="ButtonText" Text="{Binding Distance, StringFormat={}{0:P0}}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="DodgerBlue" Margin="3" />
+                            <Border x:Name="ButtonBorder" BorderBrush="#FF04A4A4" BorderThickness="1" CornerRadius="5" Grid.Column="3" VerticalAlignment="Center">
+                              <TextBlock x:Name="ButtonText" Text="{Binding Distance, StringFormat={}{0:P0}}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF04A4A4" Margin="3" />
                             </Border>
                             <ControlTemplate.Triggers>
                               <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="ButtonBorder" Property="Background" Value="DodgerBlue"/>
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="#FF04A4A4"/>
                                 <Setter TargetName="ButtonText" Property="Foreground" Value="White"/>
                               </Trigger>
                             </ControlTemplate.Triggers>

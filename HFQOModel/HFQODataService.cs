@@ -142,15 +142,16 @@ namespace HFQOModel
                               null);
     }
 
-    public async Task<bool> UploadResult(int exam_id, IEnumerable<HFQResultRow> result)
+    public async Task<bool> UploadResult(int exam_id, string machine_name, IEnumerable<HFQResultRow> result)
     {
-      return await Task.Run(() => REST.ExecuteRest<string>("upload/{exam}", Method.POST,
+      return await Task.Run(() => REST.ExecuteRest<string>("/exam/{exam}/upload_result", Method.POST,
                               new[]
                               {
                                   new RESTParameter(){ name = "Authorization", value = "Bearer " + _BearerToken, type = ParameterType.HttpHeader},
                                   new RESTParameter(){ name = "Accept", value = "application/json", type = ParameterType.HttpHeader},
                                   new RESTParameter(){ name = "exam", value = exam_id.ToString(), type = ParameterType.UrlSegment},
-                                  new RESTParameter(){ name = "qa_count", value = SimpleJson.SerializeObject(result), type = ParameterType.GetOrPost },
+                                  new RESTParameter(){ name = "machine_name", value = machine_name, type = ParameterType.GetOrPost },
+                                  new RESTParameter(){ name = "result", value = SimpleJson.SerializeObject(result), type = ParameterType.GetOrPost },
                               },
                               null,
                               null,

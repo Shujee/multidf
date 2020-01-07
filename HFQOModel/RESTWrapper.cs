@@ -104,7 +104,7 @@ namespace HFQOModel
 
           case (HttpStatusCode)422:
             var Ex = new Exception("Server returned error(s).");
-            foreach (var Err in CreateObjectFromJsonNode<ServerError>(Response, null, false).errors)
+            foreach (var Err in CreateObjectFromJsonNode<Dictionary<string, string>>(Response, null, false))
             {
               Ex.Data.Add(Err.Key, Err.Value);
             }

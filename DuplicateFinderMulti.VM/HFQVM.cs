@@ -59,7 +59,11 @@ namespace DuplicateFinderMulti.VM
     public int? ExamID
     {
       get => _ExamID;
-      set => Set(ref _ExamID, value);
+      set
+      {
+        Set(ref _ExamID, value);
+        UploadResultCommand.RaiseCanExecuteChanged();
+      }
     }
 
     private string _XPSPath;
@@ -254,10 +258,10 @@ namespace DuplicateFinderMulti.VM
           {
             if(ViewModelLocator.DialogService.AskBooleanQuestion("Are you sure you want to upload result to the server?"))
             {
-              ViewModelLocator.DataService.UploadResult(ExamID.Value, Result.Select(r => r.ToHFQResultRow()));
+              ViewModelLocator.DataService.UploadResult(ExamID.Value, Environment.MachineName, Result.Select(r => r.ToHFQResultRow()));
             }
           },
-          () => ExamID != null && Result!=null && Result.Count > 0);
+          () => ExamID != null);
         }
 
         return _UploadResultCommand;

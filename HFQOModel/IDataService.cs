@@ -57,6 +57,6 @@ namespace HFQOModel
     /// <returns></returns>
     Task<Dictionary<string, string>> GetExamsUL();
 
-    Task<bool> UploadResult(int exam_id, IEnumerable<HFQResultRow> result);
+    Task<bool> UploadResult(int exam_id, string machine_name, IEnumerable<HFQResultRow> result);
   }
 }

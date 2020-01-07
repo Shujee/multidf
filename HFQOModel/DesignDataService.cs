@@ -42,7 +42,7 @@ namespace HFQOModel
       throw new System.NotImplementedException();
     }
 
-    public Task<bool> UploadResult(int exam_id, IEnumerable<HFQResultRow> result)
+    public Task<bool> UploadResult(int exam_id, string machine_name, IEnumerable<HFQResultRow> result)
     {
       throw new System.NotImplementedException();
     }
