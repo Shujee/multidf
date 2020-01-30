@@ -1,4 +1,4 @@
-<project outputDir="F:\Office\Larry Gong\DuplicateFinder\DuplicateFinderMulti\DuplicateFinderMulti.VM\obj\Release" baseDir="F:\Office\Larry Gong\DuplicateFinder\DuplicateFinderMulti\DuplicateFinderMulti.VM\obj\Release" xmlns="http://confuser.codeplex.com">
+<project outputDir="F:\ACTIVE\DuplicateFinderMulti\DuplicateFinderMulti.VM\obj\Release" baseDir="F:\ACTIVE\DuplicateFinderMulti\DuplicateFinderMulti.VM\obj\Release" xmlns="http://confuser.codeplex.com">
 <rule pattern="true" />
 <module path="DuplicateFinderMulti.VM.dll">
 <rule pattern="true">
@@ -17,7 +17,10 @@
 </module>
 <probePath>..\..\..\packages\DiffPlex.1.4.4\lib\net40</probePath>
 <probePath>..\..\..\packages\MvvmLightLibsStd10.5.4.1.1\lib\net45</probePath>
+<probePath>..\..\..\packages\Newtonsoft.Json.12.0.3\lib\net45</probePath>
+<probePath>..\..\..\packages\NLog.4.6.8\lib\net45</probePath>
 <probePath>..\..\..\packages\QuickGraph.3.6.61119.7\lib\net4</probePath>
 <probePath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7</probePath>
 <probePath>..\..\..\DuplicateFinderMultiCommon\bin\Release</probePath>
+<probePath>..\..\..\HFQOModel\bin\Release</probePath>
 </project>

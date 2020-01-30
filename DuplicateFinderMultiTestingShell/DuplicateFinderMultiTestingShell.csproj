@@ -133,7 +133,7 @@
       <Name>DuplicateFinderMulti.Views</Name>
     </ProjectReference>
     <ProjectReference Include="..\DuplicateFinderMulti.VM\DuplicateFinderMulti.VM.csproj">
-      <Project>{20431550-13A3-444D-B398-6A13D32CA47C}</Project>
+      <Project>{20431550-13a3-444d-b398-6a13d32ca47c}</Project>
       <Name>DuplicateFinderMulti.VM</Name>
     </ProjectReference>
   </ItemGroup>

@@ -34,7 +34,7 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>DuplicateFinderMultiCommonLicenseKey.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>DuplicateFinderMultiCommonKey.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -49,6 +49,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="DuplicateFinderMultiCommonKey.pfx" />
     <None Include="DuplicateFinderMultiCommonLicenseKey.pfx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

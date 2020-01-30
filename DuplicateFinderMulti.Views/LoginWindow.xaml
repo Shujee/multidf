@@ -9,7 +9,8 @@
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d" 
         Width="500" SizeToContent="Height"
-        WindowStartupLocation="CenterScreen" ShowInTaskbar="False" WindowStyle="None"
+        WindowStartupLocation="CenterScreen" ShowInTaskbar="False" WindowStyle="None" 
+        Background="Transparent" AllowsTransparency="True"
         DataContext="{x:Static vm:ViewModelLocator.Auth}"
         d:DataContext="{d:DesignInstance Type=vm:AuthVM, IsDesignTimeCreatable=True}"
         Loaded="Window_Loaded"
@@ -23,7 +24,12 @@
     </ResourceDictionary>
   </Window.Resources>
 
-  <Grid>
+  <Border CornerRadius="15" Background="White" BorderThickness="1" BorderBrush="#00aff0" Padding="6" Margin="12">
+    <Border.Effect>
+      <DropShadowEffect BlurRadius="12" ShadowDepth="10" Color="LightGray" />
+    </Border.Effect>
+
+    <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
@@ -57,13 +63,13 @@
           <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <fa:ImageAwesome Icon="Unlock" Width="20" Height="20" Foreground="Green" HorizontalAlignment="Right" Margin="12" Grid.Column="1" />
+          <fa:ImageAwesome Icon="Unlock" Width="20" Height="20" Foreground="#00aff0" HorizontalAlignment="Right" Margin="12" Grid.Column="1" />
         <TextBlock Text="Login" VerticalAlignment="Center" Margin="6" FontSize="28" FontFamily="Calibri" FontWeight="Bold" />
       </Grid>
     </Border>
     <TextBlock Grid.Row="2" Text="E-mail: " />
     <TextBlock Grid.Row="3" Text="Password: " />
-    <TextBox x:Name="EmailTextBox" Grid.Row="2" Grid.Column="1" Text="{Binding Email}" Padding="6" />
+    <TextBox x:Name="EmailTextBox" Grid.Row="2" Grid.Column="1" Text="{Binding Email}" Padding="6" BorderThickness="0,0,0,1" />
     <PasswordBox Grid.Row="3" Grid.Column="1" x:Name="PasswordTextBox" Padding="6" />
     <CheckBox IsChecked="{Binding RememberMe}" Grid.Row="4" Content="Remember Me" Grid.Column="1" Margin="6,12" />
 
@@ -72,4 +78,5 @@
       <Button Content="Cancel" Width="80" Height="30" Margin="5,10" Click="Cancel_Click" />
     </StackPanel>
   </Grid>
+  </Border>
 </Window>

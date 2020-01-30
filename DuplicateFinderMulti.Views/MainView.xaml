@@ -41,7 +41,7 @@
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
-    <Border BorderBrush="Gray" Background="#FF04A4A4" Grid.Row="1" Margin="3,0">
+    <Border BorderBrush="Gray" Background="#00aff0" Grid.Row="1" Margin="3,0">
       <TextBlock Margin="18,12" FontFamily="Calibri" FontSize="18" TextTrimming="CharacterEllipsis" Foreground="White">
         <Run Text="{Binding SelectedProject.Name}" />
       </TextBlock>
@@ -56,7 +56,25 @@
       </ListBox.ItemContainerStyle>
       <ListBox.ItemTemplate>
         <DataTemplate>
-          <Border BorderBrush="LightGray" Background="Transparent"  BorderThickness="0" CornerRadius="3" Padding="3">
+          <Border BorderBrush="LightGray" BorderThickness="0" CornerRadius="3" Padding="3">
+            <Border.Style>
+              <Style TargetType="Border">
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding IsSyncWithSource}" Value="True">
+                    <Setter Property="Background" Value="Transparent" />
+                  </DataTrigger>
+                  <DataTrigger Binding="{Binding IsSyncWithSource}" Value="False">
+                    <Setter Property="Background">
+                      <Setter.Value>
+                        <SolidColorBrush Color="Red" Opacity=".2" />
+                      </Setter.Value>
+                    </Setter>
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </Border.Style>
+
+
             <Grid>
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -69,11 +87,11 @@
                 <RowDefinition Height="Auto" />
               </Grid.RowDefinitions>
 
-              <fa:FontAwesome Icon="FileWordOutline" Foreground="#FF04A4A4" FontSize="20" VerticalAlignment="Center" Margin="12,7" />
+              <fa:FontAwesome Icon="FileWordOutline" Foreground="#00aff0" FontSize="20" VerticalAlignment="Center" Margin="12,7" />
 
               <StackPanel Orientation="Horizontal" Grid.Column="1">
                 <TextBlock Text="{Binding Name}" FontSize="16" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="0,10,0,9" />
-                <Button x:Name="OpenSourceButton" Command="{Binding OpenSourceCommand}" fa:Awesome.Content="FolderOpen" ToolTip="Click to open source document" FontSize="14" Foreground="#FF04A4A4" 
+                <Button x:Name="OpenSourceButton" Command="{Binding OpenSourceCommand}" fa:Awesome.Content="FolderOpen" ToolTip="Click to open source document" FontSize="14" Foreground="#00aff0" 
                       Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="6,3" Focusable="False">
                   <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource ImageButtonStyle}">
@@ -87,7 +105,20 @@
                 </Button>
               </StackPanel>
 
-              <TextBlock Text="{Binding LastModified}" Grid.Row="1" FontSize="14" Foreground="LightGray" Grid.Column="1" TextTrimming="CharacterEllipsis" />
+              <TextBlock Text="{Binding LastModified}" Grid.Row="1" FontSize="14" Grid.Column="1" TextTrimming="CharacterEllipsis">
+                <TextBlock.Style>
+                  <Style TargetType="TextBlock">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding IsSyncWithSource}" Value="True">
+                        <Setter Property="Foreground" Value="LightGray" />
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding IsSyncWithSource}" Value="False">
+                        <Setter Property="Foreground" Value="Black" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </TextBlock.Style>
+              </TextBlock>
 
               <!--<fa:FontAwesome FontSize="14" Grid.Column="4" VerticalAlignment="Center" ToolTipService.ShowDuration="30000" Margin="3">
                 <fa:FontAwesome.ToolTip>
@@ -100,7 +131,7 @@
                     <Style.Triggers>
                       <DataTrigger Binding="{Binding IsSyncWithSource}" Value="True">
                         <Setter Property="Icon" Value="Check" />
-                        <Setter Property="Foreground" Value="#FF04A4A4" />
+                        <Setter Property="Foreground" Value="#00aff0" />
                       </DataTrigger>
                       <DataTrigger Binding="{Binding IsSyncWithSource}" Value="False">
                         <Setter Property="Icon" Value="ExclamationCircle" />
@@ -126,7 +157,7 @@
                         </Setter>
                       </DataTrigger>
                       <DataTrigger Binding="{Binding IsSyncWithSource}" Value="True">
-                        <Setter Property="BorderBrush" Value="#FF04A4A4" />
+                        <Setter Property="BorderBrush" Value="#00aff0" />
                         <Setter Property="ToolTip" Value="Number of Questions in this document" />
                       </DataTrigger>
                     </Style.Triggers>
@@ -138,7 +169,7 @@
                     <Style TargetType="Label">
                       <Style.Triggers>
                         <DataTrigger Binding="{Binding IsSyncWithSource}" Value="True">
-                          <Setter Property="Foreground" Value="#FF04A4A4" />
+                          <Setter Property="Foreground" Value="#00aff0" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding IsSyncWithSource}" Value="False">
                           <Setter Property="Foreground" Value="Red" />
@@ -149,14 +180,27 @@
                 </Label>
               </Border>
 
-              <ProgressBar Value="{Binding ProcessingProgress, Mode=OneWay}" Margin="0,3" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Height="5" Background="White" BorderBrush="White" Foreground="#FF04A4A4" />
+              <ProgressBar Value="{Binding ProcessingProgress, Mode=OneWay}" Margin="0,3" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Height="5">
+                <ProgressBar.Style>
+                  <Style TargetType="ProgressBar">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding IsSyncWithSource}" Value="True">
+                        <Setter Property="Foreground" Value="#00aff0" />
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding IsSyncWithSource}" Value="False">
+                        <Setter Property="Foreground" Value="Red" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </ProgressBar.Style>
+              </ProgressBar>
             </Grid>
           </Border>
         </DataTemplate>
       </ListBox.ItemTemplate>
     </ListBox>
 
-    <GridSplitter Grid.Row="3" Height="5"  ResizeBehavior="PreviousAndNext" Background="#FF04A4A4" HorizontalAlignment="Stretch" Margin="3" />
+    <GridSplitter Grid.Row="3" Height="5"  ResizeBehavior="PreviousAndNext" Background="#00aff0" HorizontalAlignment="Stretch" Margin="3" />
 
     <local:ResultContent Grid.Row="4" AllowOneExpansionOnly="True" />
 

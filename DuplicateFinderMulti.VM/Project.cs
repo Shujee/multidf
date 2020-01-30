@@ -102,7 +102,10 @@ namespace DuplicateFinderMulti.VM
         Set(ref _AllXMLDocs, value);
 
         if (_AllXMLDocs != null)
+        {
           _AllXMLDocs.CollectionChanged += _AllXMLDocs_CollectionChanged;
+          RaisePropertyChanged(nameof(UploadExamCommand));
+        }
       }
     }
 
@@ -257,10 +260,14 @@ namespace DuplicateFinderMulti.VM
         {
           _UploadExamCommand = new RelayCommand(() =>
           {
-            var Res = ViewModelLocator.DialogService.ShowUploadExamDialog();
             var VM = ViewModelLocator.UploadExam;
+            VM.RefreshExamsCommand.Execute(null);
+            VM.FileName = this.AllXMLDocs.FirstOrDefault()?.Name;
+            VM.QACount = this.AllXMLDocs.Sum(doc => doc.QAs.Count);
 
-            if (Res && ((VM.CreateNew && !string.IsNullOrEmpty(VM.NewExamName)) || (!VM.CreateNew && VM.SelectedExam.Key != null)))
+            var Res = ViewModelLocator.DialogService.ShowUploadExamDialog(VM);          
+
+            if (Res && ((VM.CreateNew && !string.IsNullOrEmpty(VM.NewExamName)) || (!VM.CreateNew && VM.SelectedExam != null)))
             {
               Task.Run(() =>
               {
@@ -320,12 +327,12 @@ namespace DuplicateFinderMulti.VM
 
                           if (VM.CreateNew)
                           {
-                            ViewModelLocator.DataService.UploadExam(XPSFile, XMLFile, VM.NewExamName, XMLDoc.QAs.Count);
+                            ViewModelLocator.DataService.UploadExam(XPSFile, XMLFile, VM.NewExamNumber, VM.NewExamName, VM.NewExamDescription, XMLDoc.QAs.Count, Newtonsoft.Json.JsonConvert.SerializeObject(XMLDoc.QAs), VM.FileName);
                             ViewModelLocator.DialogService.ShowMessage("Master file was uploaded successfully.", false);
                           }
                           else
                           {
-                            ViewModelLocator.DataService.UpdateExamFiles(XPSFile, XMLFile, int.Parse(VM.SelectedExam.Key), XMLDoc.QAs.Count);
+                            ViewModelLocator.DataService.UpdateExamFiles(XPSFile, XMLFile, VM.SelectedExam.id, XMLDoc.QAs.Count, Newtonsoft.Json.JsonConvert.SerializeObject(XMLDoc.QAs),VM.Remarks, VM.FileName);
                             ViewModelLocator.DialogService.ShowMessage("Master file was updated successfully.", false);
                           }
                         }

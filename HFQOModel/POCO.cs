@@ -23,7 +23,17 @@
     /// <summary>
     /// ID of this master file
     /// </summary>
-    public int exam_id { get; set; }
+    public int id { get; set; }
+
+    /// <summary>
+    /// Exam number. Must be unique for new master files.
+    /// </summary>
+    public string number { get; set; }
+
+    /// <summary>
+    /// Exam name
+    /// </summary>
+    public string name { get; set; }
 
     /// <summary>
     /// Master XPS File in Base64 encoding.
@@ -34,6 +44,26 @@
     /// Master XML File in Base64 encoding.
     /// </summary>
     public string xml { get; set; }
+
+    /// <summary>
+    /// Number of QAs in this master file.
+    /// </summary>
+    public int qa_count { get; set; }
+
+    /// <summary>
+    /// Name of the original DOCX file that was used to upload this exam.
+    /// </summary>
+    public string origfilename { get; set; }
+
+    /// <summary>
+    /// Represents the type of changes that are contained in this Master File. Can be one of the 3 values UPDATED, CORRECTIONS, FIXES. Null for new master files.
+    /// </summary>
+    public string remarks { get; set; }
+
+    /// <summary>
+    /// The date on which this Master File was last updated.
+    /// </summary>
+    public string updated_at { get; set; }
   }
 
   /// <summary>

@@ -77,6 +77,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataServiceTests.cs" />
     <Compile Include="DialogServiceForAutomatedTesting.cs" />
     <Compile Include="MainTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -94,6 +95,10 @@
     <ProjectReference Include="..\DuplicateFinderMulti.VM\DuplicateFinderMulti.VM.csproj">
       <Project>{20431550-13a3-444d-b398-6a13d32ca47c}</Project>
       <Name>DuplicateFinderMulti.VM</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HFQOModel\HFQOModel.csproj">
+      <Project>{F0EC84C1-2903-4152-BF36-744C51622EE8}</Project>
+      <Name>HFQOModel</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

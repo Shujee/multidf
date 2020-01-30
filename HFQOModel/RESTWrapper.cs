@@ -6,13 +6,6 @@ using System.Net;
 
 namespace HFQOModel
 {
-  public class RESTParameter
-  {
-    public string name { get; set; }
-    public string value { get; set; }
-    public ParameterType type { get; set; }
-  }
-
   public class ServerError
   {
     public string message { get; set; }
@@ -23,6 +16,9 @@ namespace HFQOModel
   {
     public RESTWrapper(string baseURL, int timeout) : base(baseURL)
     {
+      ServicePointManager.Expect100Continue = true;
+      ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
       ServicePointManager.DefaultConnectionLimit = 1000;
 
       OurWebClient = new System.Net.Http.HttpClient();
@@ -59,7 +55,7 @@ namespace HFQOModel
     /// <param name="method">HTTP Method</param>
     /// <param name="parameters">parameters including query, header and segment parameters</param>
     /// <returns>IResponse object returned by the service.</returns>
-    private IRestResponse ExecuteRest(string resource, Method method, RESTParameter[] parameters, object jsonBody, FileParameter[] files)
+    private IRestResponse ExecuteRest(string resource, Method method, Parameter[] parameters, object jsonBody, FileParameter[] files)
     {
       var request = new RestRequest(resource, method);
 
@@ -67,7 +63,7 @@ namespace HFQOModel
       {
         //Add parameters to the rest call
         foreach (var p in parameters)
-          request.AddParameter(p.name, p.value, p.type);
+          request.AddParameter(p.Name, p.Value, p.Type);
       }
 
       if (jsonBody != null)
@@ -126,7 +122,7 @@ namespace HFQOModel
     /// <param name="method">HTTP Method</param>
     /// <param name="parameters">parameters including query, header and segment parameters</param>
     /// <returns>Deserialized .NET object created from response JSON.</returns>
-    public T ExecuteRest<T>(string resource, Method method, RESTParameter[] parameters, object jsonBody, FileParameter[] files)
+    public T ExecuteRest<T>(string resource, Method method, Parameter[] parameters, object jsonBody, FileParameter[] files)
     {
       var Response = ExecuteRest(resource, method, parameters, jsonBody, files);
 
@@ -148,7 +144,7 @@ namespace HFQOModel
     /// <param name="headers">HTTP headers that need tobe sent with this request</param>
     /// <param name="segment">Segment values in case resource URL contains segment parameters</param>
     /// <returns>Deserialized .NET object created from response JSON.</returns>
-    public T ExecuteRest<T>(string resource, Method method, RESTParameter[] parameters, object jsonBody,
+    public T ExecuteRest<T>(string resource, Method method, Parameter[] parameters, object jsonBody,
                               string responseNodeKey, bool isArrayNode, FileParameter[] files)
     {
       var Response = ExecuteRest(resource, method, parameters, jsonBody, files);
@@ -244,6 +240,8 @@ namespace HFQOModel
             }
             else if (value is string)
               return value.ToString();
+            else if (value is bool)
+              return bool.Parse(value.ToString());
             else
               return base.DeserializeObject(value, type);
           }

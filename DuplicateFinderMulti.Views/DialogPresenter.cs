@@ -187,9 +187,9 @@ namespace DuplicateFinderMulti.Views
       return Result;
     }
 
-    public bool ShowUploadExamDialog()
+    public bool ShowUploadExamDialog(UploadExamVM vm)
     {
-      var w = new UploadExamDialog();
+      var w = new UploadExamDialog(vm);
       MakeChild(w); //Show this dialog as child of Microsoft Word window.
       var Result = w.ShowDialog().Value;
       return Result;

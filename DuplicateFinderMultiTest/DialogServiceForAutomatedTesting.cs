@@ -77,7 +77,7 @@ namespace DuplicateFinderMulti.Test
       return @"F:\Office\Larry Gong\DuplicateFinder\Analysis\p" + DateTime.Now.ToString("yyyymmdd-hhmmss") + ".xml";
     }
 
-    public bool ShowUploadExamDialog()
+    public bool ShowUploadExamDialog(UploadExamVM vm)
     {
       throw new NotImplementedException();
     }

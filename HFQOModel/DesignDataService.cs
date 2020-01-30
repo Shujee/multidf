@@ -12,12 +12,27 @@ namespace HFQOModel
       throw new System.NotImplementedException();
     }
 
+    public Task<bool> ExamNumberExists(string number)
+    {
+      return Task.FromResult(false);
+    }
+
+    public string GetClientCity()
+    {
+      return "Karachi";
+    }
+
+    public string GetClientCountry()
+    {
+      return "Pakistan";
+    }
+
     public Task<Dictionary<string, string>> GetExamsDL()
     {
       throw new System.NotImplementedException();
     }
 
-    public Task<Dictionary<string, string>> GetExamsUL()
+    public Task<MasterFile[]> GetExamsUL()
     {
       throw new System.NotImplementedException();
     }
@@ -32,17 +47,22 @@ namespace HFQOModel
       throw new System.NotImplementedException();
     }
 
-    public bool UpdateExamFiles(string xpsPath, string xmlPath, int exam_id, int qa_count)
+    public bool UpdateExamFiles(string xpsPath, string xmlPath, int exam_id, int qa_count, string qa_json, string remarks, string origfilename)
     {
       throw new System.NotImplementedException();
     }
 
-    public bool UploadExam(string xpsPath, string xmlPath, string exam_name, int qa_count)
+    public bool UploadExam(string xpsPath, string xmlPath, string exam_number, string exam_name, string description, int qa_count, string qa_json, string origfilename)
     {
       throw new System.NotImplementedException();
     }
 
     public Task<bool> UploadResult(int exam_id, string machine_name, IEnumerable<HFQResultRow> result)
+    {
+      throw new System.NotImplementedException();
+    }
+
+    public Task<bool> UploadResult(int exam_id, string machine_name, string city, string country, IEnumerable<HFQResultRow> result)
     {
       throw new System.NotImplementedException();
     }

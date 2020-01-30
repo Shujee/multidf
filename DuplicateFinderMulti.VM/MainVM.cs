@@ -127,7 +127,12 @@ namespace DuplicateFinderMulti.VM
 
         //bind new project's event listener
         if (_SelectedProject != null)
+        {
           _SelectedProject.PropertyChanged += SelectedProject_PropertyChanged;
+          _SelectedProject.UploadExamCommand.RaiseCanExecuteChanged();
+          _SelectedProject.MergeAsPDFCommand.RaiseCanExecuteChanged();
+          _SelectedProject.CheckSyncWithSourceCommand.RaiseCanExecuteChanged();
+        }
       }
     }
 
@@ -200,8 +205,38 @@ namespace DuplicateFinderMulti.VM
               else
               {
                 var ProjectXML = System.IO.File.ReadAllText(ProjectPath);
-                SelectedProject = Project.FromXML(ProjectXML);
-                _SelectedProject.SavePath = ProjectPath;
+                var TempSelectedProject = Project.FromXML(ProjectXML);
+                TempSelectedProject.SavePath = ProjectPath;
+                bool ProjectFileChanged = false;
+
+                foreach (var Doc in TempSelectedProject.AllXMLDocs)
+                {
+                  if(!System.IO.File.Exists( Doc.SourcePath))
+                  {
+                    var Res = ViewModelLocator.DialogService.AskTernaryQuestion($"Document '{Doc.SourcePath}' does not exist on the disk. Do you want to locate it manually?");
+
+                    if (Res.HasValue)
+                    {
+                      if(Res.Value)
+                      {
+                        var NewDocx = ViewModelLocator.DialogService.ShowOpen("Word documents (*.doc, *.docx, *.docm)|*.doc;*.docx;*.docm", System.IO.Path.GetDirectoryName(ProjectPath), "Select Word Document");
+
+                        if (NewDocx != null)
+                        {
+                          Doc.SourcePath = NewDocx;
+                          ProjectFileChanged = true;
+                        }
+                      }
+                    }
+                    else
+                      return;
+                  }
+                }
+
+                if (ProjectFileChanged)
+                  TempSelectedProject.SaveCommand.Execute(null);
+
+                SelectedProject = TempSelectedProject;
 
                 UpdateMRU(ProjectPath);
 

@@ -82,13 +82,12 @@ namespace DuplicateFinderMulti.VM
     public static IWordService WordService => SimpleIoc.Default.GetInstance<IWordService>();
     public static DiffVM Diff => SimpleIoc.Default.GetInstanceWithoutCaching<DiffVM>();
 
-
     public static AuthVM Auth => SimpleIoc.Default.GetInstance<AuthVM>();
     public static MainVM Main => SimpleIoc.Default.GetInstance<MainVM>();
     public static HFQVM HFQ => SimpleIoc.Default.GetInstance<HFQVM>();
 
     public static RegisterVM Register => SimpleIoc.Default.GetInstance<RegisterVM>();
-    public static UploadExamVM UploadExam => SimpleIoc.Default.GetInstance<UploadExamVM>();
+    public static UploadExamVM UploadExam => SimpleIoc.Default.GetInstanceWithoutCaching<UploadExamVM>();
     public static AboutVM About => SimpleIoc.Default.GetInstance<AboutVM>();
 
     public static IQAExtractionStrategy QAExtractionStrategy => SimpleIoc.Default.GetInstance<IQAExtractionStrategy>();

@@ -33,7 +33,7 @@ namespace HFQOModel
     /// <param name="xpsPath"></param>
     /// <param name="xmlPath"></param>
     /// <param name="machine_name"></param>
-    bool UploadExam(string xpsPath, string xmlPath, string exam_name, int qa_count);
+    bool UploadExam(string xpsPath, string xmlPath, string exam_number, string exam_name, string description, int qa_count, string qa_json, string origfilename);
 
     /// <summary>
     /// Updates the XPS and XML files of an existing exam. Can only be done by the uploader user who originally uploaded he exam.
@@ -43,7 +43,7 @@ namespace HFQOModel
     /// <param name="exam_id"></param>
     /// <param name="qa_count"></param>
     /// <returns></returns>
-    bool UpdateExamFiles(string xpsPath, string xmlPath, int exam_id, int qa_count);
+    bool UpdateExamFiles(string xpsPath, string xmlPath, int exam_id, int qa_count, string qa_json, string remarks, string origfilename);
 
     /// <summary>
     /// Returns the list of Master Files that are accessible to currently logged in user.
@@ -55,8 +55,10 @@ namespace HFQOModel
     /// Returns the list of Master Files that were uploaded by the currently logged in user.
     /// </summary>
     /// <returns></returns>
-    Task<Dictionary<string, string>> GetExamsUL();
+    Task<MasterFile[]> GetExamsUL();
 
     Task<bool> UploadResult(int exam_id, string machine_name, IEnumerable<HFQResultRow> result);
+
+    Task<bool> ExamNumberExists(string number);
   }
 }

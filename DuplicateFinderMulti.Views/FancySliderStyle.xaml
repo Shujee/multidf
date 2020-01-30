@@ -65,7 +65,7 @@
   </Style>
   <ControlTemplate x:Key="SliderThumbHorizontalDefault" TargetType="{x:Type Thumb}">
     <Grid HorizontalAlignment="Center" UseLayoutRounding="True" VerticalAlignment="Center">
-      <Ellipse x:Name="grip" Fill="#FF04A4A4" Stretch="Fill" SnapsToDevicePixels="True" Stroke="{StaticResource SliderThumb.Static.Border}" StrokeThickness="1" 
+      <Ellipse x:Name="grip" Fill="#00aff0" Stretch="Fill" SnapsToDevicePixels="True" Stroke="{StaticResource SliderThumb.Static.Border}" StrokeThickness="1" 
                      UseLayoutRounding="True" VerticalAlignment="Center" Width="32" Height="32">
         <Ellipse.Effect>
           <DropShadowEffect ShadowDepth="1" />

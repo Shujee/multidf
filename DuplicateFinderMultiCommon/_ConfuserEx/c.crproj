@@ -1,4 +1,4 @@
-<project outputDir="F:\Office\Larry Gong\DuplicateFinder\DuplicateFinderMulti\DuplicateFinderMultiCommon\obj\Release" baseDir="F:\Office\Larry Gong\DuplicateFinder\DuplicateFinderMulti\DuplicateFinderMultiCommon\obj\Release" xmlns="http://confuser.codeplex.com">
+<project outputDir="F:\ACTIVE\DuplicateFinderMulti\DuplicateFinderMultiCommon\obj\Release" baseDir="F:\ACTIVE\DuplicateFinderMulti\DuplicateFinderMultiCommon\obj\Release" xmlns="http://confuser.codeplex.com">
 <rule pattern="true" />
 <module path="DuplicateFinderMultiCommon.dll">
 <rule pattern="true">

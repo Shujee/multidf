@@ -135,7 +135,7 @@ namespace DuplicateFinderMulti.VM
 
                   if (MF != null)
                   {
-                    ExamID = MF.exam_id;
+                    ExamID = MF.id;
 
                     var XPSBytes = Encryption.Decrypt(Convert.FromBase64String(MF.xps));
                     var XPSFilePath = System.IO.Path.GetTempFileName();
@@ -258,7 +258,11 @@ namespace DuplicateFinderMulti.VM
           {
             if(ViewModelLocator.DialogService.AskBooleanQuestion("Are you sure you want to upload result to the server?"))
             {
-              ViewModelLocator.DataService.UploadResult(ExamID.Value, Environment.MachineName, Result.Select(r => r.ToHFQResultRow()));
+              ViewModelLocator.DataService.UploadResult(ExamID.Value, Environment.MachineName, Result.Select(r => r.ToHFQResultRow())).ContinueWith(t =>
+              {
+                if (t.IsCompleted && !t.IsFaulted)
+                  ViewModelLocator.DialogService.ShowMessage("Results uploaded successfully.", false);
+              });
             }
           },
           () => ExamID != null);

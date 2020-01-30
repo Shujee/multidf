@@ -1,6 +1,9 @@
 ﻿using RestSharp;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace HFQOModel
 {
@@ -16,24 +19,31 @@ namespace HFQOModel
 
     public async Task<bool> Login(string email, string password)
     {
+      try
+      {
       var Response = await Task.Run(() => REST.ExecuteRest<LoginToken>("login", Method.POST,
                  new[]
                  {
-                      new RESTParameter(){ name = "email", value = email, type = ParameterType.GetOrPost },
-                      new RESTParameter(){ name = "password", value = password, type = ParameterType.GetOrPost },
+                      new Parameter(){ Name = "email", Value = email, Type = ParameterType.GetOrPost },
+                      new Parameter(){ Name = "password", Value = password, Type = ParameterType.GetOrPost },
                  },
                  null,
                  "token",  //json response is wrapped in "token" node
                  false,
                  null));
-      
-      //Check if credentials are correct
-      if (Response == null)
-        return false;
-      else
+
+        //Check if credentials are correct
+        if (Response == null)
+          return false;
+        else
+        {
+          _BearerToken = Response.access_token;
+          return true;
+        }
+      }
+      catch
       {
-        _BearerToken = Response.access_token;
-        return true;
+        return false;
       }
     }
 
@@ -43,8 +53,8 @@ namespace HFQOModel
                 REST.ExecuteRest<string>("logout", Method.POST,
                                         new[]
                                         {
-                                            new RESTParameter(){ name = "Authorization", value = "Bearer " + _BearerToken, type = ParameterType.HttpHeader},
-                                            new RESTParameter(){ name = "Accept", value = "application/json", type = ParameterType.HttpHeader},
+                                            new Parameter(){ Name = "Authorization", Value = "Bearer " + _BearerToken, Type = ParameterType.HttpHeader},
+                                            new Parameter(){ Name = "Accept", Value = "application/json", Type = ParameterType.HttpHeader},
                                         },
                                         null,
                                         null,
@@ -54,15 +64,19 @@ namespace HFQOModel
       _BearerToken = null;
     }
 
-    public bool UploadExam(string xpsPath, string xmlPath, string exam_name, int qa_count)
+    public bool UploadExam(string xpsPath, string xmlPath, string exam_number, string exam_name, string description, int qa_count, string qa_json, string origfilename)
     {
       var Response = REST.ExecuteRest<string>("exam", Method.POST,
                               new[]
                               {
-                                  new RESTParameter(){ name = "Authorization", value = "Bearer " + _BearerToken, type = ParameterType.HttpHeader},
-                                  new RESTParameter(){ name = "Accept", value = "application/json", type = ParameterType.HttpHeader},
-                                  new RESTParameter(){ name = "name", value = exam_name, type = ParameterType.GetOrPost },
-                                  new RESTParameter(){ name = "qa_count", value = qa_count.ToString(), type = ParameterType.GetOrPost },
+                                  new Parameter(){ Name = "Authorization", Value = "Bearer " + _BearerToken, Type = ParameterType.HttpHeader},
+                                  new Parameter(){ Name = "Accept", Value = "application/json", Type = ParameterType.HttpHeader},
+                                  new Parameter(){ Name = "number", Value = exam_number, Type = ParameterType.GetOrPost },
+                                  new Parameter(){ Name = "name", Value = exam_name, Type = ParameterType.GetOrPost },
+                                  new Parameter(){ Name = "description", Value = description, Type = ParameterType.GetOrPost },
+                                  new Parameter(){ Name = "qa_count", Value = qa_count.ToString(), Type = ParameterType.GetOrPost },
+                                  new Parameter(){ Name = "qas", Value = qa_json, Type = ParameterType.GetOrPost },
+                                  new Parameter(){ Name = "origfilename", Value = origfilename, Type = ParameterType.GetOrPost },
                               },
                               null,
                               null,
@@ -76,15 +90,20 @@ namespace HFQOModel
       return Response != null;
     }
 
-    public bool UpdateExamFiles(string xpsPath, string xmlPath, int exam_id, int qa_count)
+    public bool UpdateExamFiles(string xpsPath, string xmlPath, int exam_id, int qa_count, string qa_json, string remarks, string origfilename)
     {
-      var Response = REST.ExecuteRest<string>("exam/{exam}/update_files", Method.POST,
+      var Response = REST.ExecuteRest<bool>("exam/{exam}/update_files", Method.POST,
                               new[]
                               {
-                                  new RESTParameter(){ name = "Authorization", value = "Bearer " + _BearerToken, type = ParameterType.HttpHeader},
-                                  new RESTParameter(){ name = "Accept", value = "application/json", type = ParameterType.HttpHeader},
-                                  new RESTParameter(){ name = "exam", value = exam_id.ToString(), type = ParameterType.UrlSegment},
-                                  new RESTParameter(){ name = "qa_count", value = qa_count.ToString(), type = ParameterType.GetOrPost },
+                                  new Parameter(){ Name = "Authorization", Value = "Bearer " + _BearerToken, Type = ParameterType.HttpHeader},
+                                  new Parameter(){ Name = "Accept", Value = "application/json", Type = ParameterType.HttpHeader},
+
+                                  new Parameter(){ Name = "exam", Value = exam_id.ToString(), Type = ParameterType.UrlSegment},
+
+                                  new Parameter(){ Name = "qa_count", Value = qa_count.ToString(), Type = ParameterType.GetOrPost },
+                                  new Parameter(){ Name = "qas", Value = qa_json, Type = ParameterType.GetOrPost },
+                                  new Parameter(){ Name = "remarks", Value = remarks, Type = ParameterType.GetOrPost },
+                                  new Parameter(){ Name = "origfilename", Value = origfilename, Type = ParameterType.GetOrPost },
                               },
                               null,
                               null,
@@ -95,7 +114,7 @@ namespace HFQOModel
                               });
 
       //Check if credentials are correct
-      return Response != null;
+      return Response;
     }
 
     public async Task<Dictionary<string, string>> GetExamsDL()
@@ -103,8 +122,8 @@ namespace HFQOModel
       return await Task.Run(() => REST.ExecuteRest<Dictionary<string, string>>("user/myexams/dl", Method.GET,
                               new[]
                               {
-                                  new RESTParameter(){ name = "Authorization", value = "Bearer " + _BearerToken, type = ParameterType.HttpHeader},
-                                  new RESTParameter(){ name = "Accept", value = "application/json", type = ParameterType.HttpHeader},
+                                  new Parameter(){ Name = "Authorization", Value = "Bearer " + _BearerToken, Type = ParameterType.HttpHeader},
+                                  new Parameter(){ Name = "Accept", Value = "application/json", Type = ParameterType.HttpHeader},
                               },
                               null,
                               null,
@@ -112,13 +131,13 @@ namespace HFQOModel
                               null));
     }
 
-    public async Task<Dictionary<string, string>> GetExamsUL()
+    public async Task<MasterFile[]> GetExamsUL()
     {
-      return await Task.Run(() => REST.ExecuteRest<Dictionary<string, string>>("user/myexams/ul", Method.GET,
+      return await Task.Run(() => REST.ExecuteRest<MasterFile[]>("user/myexams/ul", Method.GET,
                               new[]
                               {
-                                  new RESTParameter(){ name = "Authorization", value = "Bearer " + _BearerToken, type = ParameterType.HttpHeader},
-                                  new RESTParameter(){ name = "Accept", value = "application/json", type = ParameterType.HttpHeader},
+                                  new Parameter(){ Name = "Authorization", Value = "Bearer " + _BearerToken, Type = ParameterType.HttpHeader},
+                                  new Parameter(){ Name = "Accept", Value = "application/json", Type = ParameterType.HttpHeader},
                               },
                               null,
                               null,
@@ -128,13 +147,13 @@ namespace HFQOModel
 
     public MasterFile DownloadExam(int access_id, string machine_name)
     {
-      return REST.ExecuteRest<MasterFile>("access/{access}/download", Method.GET,
+      return REST.ExecuteRest<MasterFile>("access/{access}/download", Method.POST,
                               new[]
                               {
-                                  new RESTParameter(){ name = "Authorization", value = "Bearer " + _BearerToken, type = ParameterType.HttpHeader},
-                                  new RESTParameter(){ name = "Accept", value = "application/json", type = ParameterType.HttpHeader},
-                                  new RESTParameter(){ name = "machine_name", value = machine_name, type = ParameterType.GetOrPost },
-                                  new RESTParameter(){ name = "access", value = access_id.ToString(), type = ParameterType.UrlSegment},
+                                  new Parameter(){ Name = "Authorization", Value = "Bearer " + _BearerToken, Type = ParameterType.HttpHeader},
+                                  new Parameter(){ Name = "Accept", Value = "application/json", Type = ParameterType.HttpHeader},
+                                  new Parameter(){ Name = "machine_name", Value = machine_name, Type = ParameterType.GetOrPost },
+                                  new Parameter(){ Name = "access", Value = access_id.ToString(), Type = ParameterType.UrlSegment},
                               },
                               null,
                               null,
@@ -147,16 +166,31 @@ namespace HFQOModel
       return await Task.Run(() => REST.ExecuteRest<string>("/exam/{exam}/upload_result", Method.POST,
                               new[]
                               {
-                                  new RESTParameter(){ name = "Authorization", value = "Bearer " + _BearerToken, type = ParameterType.HttpHeader},
-                                  new RESTParameter(){ name = "Accept", value = "application/json", type = ParameterType.HttpHeader},
-                                  new RESTParameter(){ name = "exam", value = exam_id.ToString(), type = ParameterType.UrlSegment},
-                                  new RESTParameter(){ name = "machine_name", value = machine_name, type = ParameterType.GetOrPost },
-                                  new RESTParameter(){ name = "result", value = SimpleJson.SerializeObject(result), type = ParameterType.GetOrPost },
+                                  new Parameter(){ Name = "Authorization", Value = "Bearer " + _BearerToken, Type = ParameterType.HttpHeader},
+                                  new Parameter(){ Name = "Accept", Value = "application/json", Type = ParameterType.HttpHeader},
+                                  new Parameter(){ Name = "exam", Value = exam_id.ToString(), Type = ParameterType.UrlSegment},
+                                  new Parameter(){ Name = "machine_name", Value = machine_name, Type = ParameterType.GetOrPost },
+                                  new Parameter(){ Name = "result", Value = SimpleJson.SerializeObject(result), Type = ParameterType.GetOrPost },
                               },
                               null,
                               null,
                               false,
                               null)).ContinueWith(t => t.IsCompleted && !t.IsFaulted);
+    }
+
+    public async Task<bool> ExamNumberExists(string number)
+    {
+      return await Task.Run(() => REST.ExecuteRest<bool>("exam_number_exists/{number}", Method.GET,
+                                   new[]
+                                   {
+                                  new Parameter(){ Name = "Authorization", Value = "Bearer " + _BearerToken, Type = ParameterType.HttpHeader},
+                                  new Parameter(){ Name = "Accept", Value = "application/json", Type = ParameterType.HttpHeader},
+                                  new Parameter(){ Name = "number", Value = number, Type = ParameterType.UrlSegment},
+                                   },
+                                   null,
+                                   null,
+                                   false,
+                                   null));
     }
   }
 }

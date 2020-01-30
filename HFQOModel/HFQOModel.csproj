@@ -70,6 +70,7 @@
     </Compile>
     <Compile Include="RESTWrapper.cs" />
     <Compile Include="RESTWrapper.Progress.cs" />
+    <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

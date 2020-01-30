@@ -18,7 +18,7 @@ namespace HFQOModel
     public event Action<UploadProgressEventArgs> ProgressChanged;
     public event Action<string> PostCompleted;
 
-    public async Task<T> PostRequestWithProgress<T>(string resource, RESTParameter[] parameters, object jsonBody,
+    public async Task<T> PostRequestWithProgress<T>(string resource, Parameter[] parameters, object jsonBody,
                               string responseNodeKey, bool isArrayNode)
     {
       // adding necessary Headers and parameters
@@ -28,10 +28,10 @@ namespace HFQOModel
       {
         foreach (var Param in parameters)
         {
-          switch (Param.type)
+          switch (Param.Type)
           {
             case ParameterType.HttpHeader:
-              requestMessage.Headers.Add(Param.name, Param.value);
+              requestMessage.Headers.Add(Param.Name, Param.Value.ToString());
               break;
             default:
               InvalidParamFlag = true;
@@ -39,7 +39,7 @@ namespace HFQOModel
           }
 
           if (InvalidParamFlag)
-            throw new Exception($"Parameters of type {Param.type} are not supported.");
+            throw new Exception($"Parameters of type {Param.Type} are not supported.");
         }
 
         var BodyBuffer = Encoding.UTF8.GetBytes(SimpleJson.SerializeObject(jsonBody) ?? "");
