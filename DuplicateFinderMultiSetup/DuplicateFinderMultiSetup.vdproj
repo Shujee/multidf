@@ -27,6 +27,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_023A6A24126C7BDB91DF3B717574F720"
+        "OwnerKey" = "8:_5D7C561CAAAF7B560FD9F99384B8672C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_02F1FBA4F637441C9D31645A4D9454D8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -83,6 +89,24 @@
         {
         "MsmKey" = "8:_0BD2C6940200C95DD27188F82C63B1EC"
         "OwnerKey" = "8:_BFF2DE9F5BFE46B594BE8E32FC720DC8"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_0D5CEC9570015A08F00945075C934458"
+        "OwnerKey" = "8:_5D7C561CAAAF7B560FD9F99384B8672C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_0D5CEC9570015A08F00945075C934458"
+        "OwnerKey" = "8:_BFF2DE9F5BFE46B594BE8E32FC720DC8"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_0D5CEC9570015A08F00945075C934458"
+        "OwnerKey" = "8:_E91FB60A2CE2703575B9DCC9DCFA622D"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -178,7 +202,7 @@
         "Entry"
         {
         "MsmKey" = "8:_4B44877CD0B11AE95C1541E599779229"
-        "OwnerKey" = "8:_549E86C68FC6DD497BA364CE81D38943"
+        "OwnerKey" = "8:_0D5CEC9570015A08F00945075C934458"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -202,18 +226,6 @@
         "Entry"
         {
         "MsmKey" = "8:_50418547FDFBF61F5FEABE1D310F9478"
-        "OwnerKey" = "8:_BFF2DE9F5BFE46B594BE8E32FC720DC8"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_549E86C68FC6DD497BA364CE81D38943"
-        "OwnerKey" = "8:_E91FB60A2CE2703575B9DCC9DCFA622D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_549E86C68FC6DD497BA364CE81D38943"
         "OwnerKey" = "8:_BFF2DE9F5BFE46B594BE8E32FC720DC8"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -406,18 +418,6 @@
         "Entry"
         {
         "MsmKey" = "8:_A0A93CFB593CB4CD172C0A5AB9823C93"
-        "OwnerKey" = "8:_BFF2DE9F5BFE46B594BE8E32FC720DC8"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A26BBDCDE866AF1312A1F49A8FE9D23E"
-        "OwnerKey" = "8:_549E86C68FC6DD497BA364CE81D38943"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A26BBDCDE866AF1312A1F49A8FE9D23E"
         "OwnerKey" = "8:_BFF2DE9F5BFE46B594BE8E32FC720DC8"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -627,6 +627,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_F144099044F3ECA9AC5D400599FCA7B0"
+        "OwnerKey" = "8:_0D5CEC9570015A08F00945075C934458"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F144099044F3ECA9AC5D400599FCA7B0"
+        "OwnerKey" = "8:_BFF2DE9F5BFE46B594BE8E32FC720DC8"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_F7F94CD4C7DB2261977A4172DC6B44A2"
         "OwnerKey" = "8:_BFF2DE9F5BFE46B594BE8E32FC720DC8"
         "MsmSig" = "8:_UNDEFINED"
@@ -778,19 +790,19 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_549E86C68FC6DD497BA364CE81D38943"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A26BBDCDE866AF1312A1F49A8FE9D23E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_39435530D89D403A3406037DBAF3F5C4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_0D5CEC9570015A08F00945075C934458"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_F144099044F3ECA9AC5D400599FCA7B0"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1576,6 +1588,37 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_0D5CEC9570015A08F00945075C934458"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:HFQOModel, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_0D5CEC9570015A08F00945075C934458"
+                    {
+                    "Name" = "8:HFQOModel.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:HFQOModel.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_1C135586D8A74001A6AAD18DCCE0ECF3"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_1797119BA656013F58532E4E06482098"
             {
             "AssemblyRegister" = "3:1"
@@ -1828,7 +1871,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:DuplicateFinderMultiCommon, Version=1.0.7.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:DuplicateFinderMultiCommon, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_39435530D89D403A3406037DBAF3F5C4"
@@ -2072,37 +2115,6 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_549E86C68FC6DD497BA364CE81D38943"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:HFQOModel, Version=1.0.7.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_549E86C68FC6DD497BA364CE81D38943"
-                    {
-                    "Name" = "8:HFQOModel.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:HFQOModel.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_1C135586D8A74001A6AAD18DCCE0ECF3"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_56156D245660AA630F9CFBC2D8456792"
             {
             "AssemblyRegister" = "3:1"
@@ -2169,7 +2181,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:DuplicateFinderMulti.Views, Version=1.0.7.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:DuplicateFinderMulti.Views, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_5D7C561CAAAF7B560FD9F99384B8672C"
@@ -2881,37 +2893,6 @@
                     }
                 }
             "SourcePath" = "8:System.Globalization.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_1C135586D8A74001A6AAD18DCCE0ECF3"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A26BBDCDE866AF1312A1F49A8FE9D23E"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:RestSharp, Version=106.6.10.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_A26BBDCDE866AF1312A1F49A8FE9D23E"
-                    {
-                    "Name" = "8:RestSharp.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:RestSharp.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1C135586D8A74001A6AAD18DCCE0ECF3"
@@ -3708,7 +3689,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:DuplicateFinderMulti.VM, Version=1.0.7.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:DuplicateFinderMulti.VM, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_E91FB60A2CE2703575B9DCC9DCFA622D"
@@ -3811,6 +3792,37 @@
                     }
                 }
             "SourcePath" = "8:System.Net.NetworkInformation.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_1C135586D8A74001A6AAD18DCCE0ECF3"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F144099044F3ECA9AC5D400599FCA7B0"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:RestSharp, Version=106.6.10.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_F144099044F3ECA9AC5D400599FCA7B0"
+                    {
+                    "Name" = "8:RestSharp.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:RestSharp.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1C135586D8A74001A6AAD18DCCE0ECF3"
@@ -4133,15 +4145,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:DuplicateFinderMulti"
-        "ProductCode" = "8:{A8C2F92A-575A-4452-811D-3E340B537242}"
-        "PackageCode" = "8:{619B6E30-31A4-4C90-AC4C-2487EE65196A}"
+        "ProductCode" = "8:{9161D8CE-90DC-4941-A867-25FF92C38478}"
+        "PackageCode" = "8:{62FB9744-2B77-4AC1-9118-F28C50B6F2DD}"
         "UpgradeCode" = "8:{5A925BAF-47E5-4BF5-93C2-B0C3C245B96F}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.1.0"
+        "ProductVersion" = "8:1.2.0"
         "Manufacturer" = "8:DuplicateFinderMulti"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

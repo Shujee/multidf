@@ -48,7 +48,7 @@ namespace DuplicateFinderMulti.Views
 
     private void ComboBox_GotFocus(object sender, RoutedEventArgs e)
     {
-      (sender as ComboBox).IsDropDownOpen = true;
+      //(sender as ComboBox).IsDropDownOpen = true;
     }
   }
 }

@@ -67,6 +67,52 @@
   }
 
   /// <summary>
+  /// Represents an exam that can be downloaded by the currently logged in user. 
+  /// </summary>
+  public class AccessibleMasterFile
+  {
+    /// <summary>
+    /// Access ID that allows currently logged in user to download an exam
+    /// </summary>
+    public int access_id { get; set; }
+
+    /// <summary>
+    /// ID of this master file
+    /// </summary>
+    public int exam_id { get; set; }
+
+    /// <summary>
+    /// Exam number. Must be unique for new master files.
+    /// </summary>
+    public string number { get; set; }
+
+    /// <summary>
+    /// Exam name
+    /// </summary>
+    public string name { get; set; }
+
+    /// <summary>
+    /// Number of QAs in this master file.
+    /// </summary>
+    public int qa_count { get; set; }
+
+    /// <summary>
+    /// Represents the type of changes that are contained in this Master File. Can be one of the 3 values UPDATED, CORRECTIONS, FIXES. Null for new master files.
+    /// </summary>
+    public string remarks { get; set; }
+
+    /// <summary>
+    /// The date on which this Master File was last updated.
+    /// </summary>
+    public string updated_at { get; set; }
+
+    /// <summary>
+    /// The end date of this access after which current user will not be able to download this exam
+    /// </summary>
+    public string end { get; set; }
+  }
+
+  /// <summary>
   /// Represents a single result row that stores question number and index of up to 3 matching entries in the master file.
   /// </summary>
   public class HFQResultRow

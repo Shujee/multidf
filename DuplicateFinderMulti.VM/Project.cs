@@ -595,6 +595,12 @@ namespace DuplicateFinderMulti.VM
         {
           _ProcessCommand = new RelayCommand(() =>
           {
+            if(graph.Vertices.Any(v => !v.IsSyncWithSource))
+            {
+              if (!ViewModelLocator.DialogService.AskBooleanQuestion("One or more documents in this project are not synchronized with their source files. These documents will not be analyzed. Do you want to continue?"))
+                return;
+            }
+
             IsProcessing = true;
 
             //progress increment
@@ -607,22 +613,28 @@ namespace DuplicateFinderMulti.VM
             List<Task> Tasks = new List<Task>();
             foreach (var V1 in graph.Vertices)
             {
-              foreach (var V2 in graph.Vertices)
+              if(V1.IsSyncWithSource)
               {
-                if (V1.QAs != null && V2.QAs != null && !graph.ContainsEdge(V1, V2))
+                foreach (var V2 in graph.Vertices)
                 {
-                  var Edge = new OurEdge(V1, V2, null);
-
-                  if (graph.AddEdge(Edge))
+                  if (V2.IsSyncWithSource)
                   {
-                    var Task = ViewModelLocator.DocComparer.Compare(V1, V2, ViewModelLocator.QAComparer, true, token);
-                    Task.ContinueWith((t1) =>
+                    if (V1.QAs != null && V2.QAs != null && !graph.ContainsEdge(V1, V2))
                     {
-                      Edge.Tag = t1.Result;
-                      IsDirty = true;
-                    });
+                      var Edge = new OurEdge(V1, V2, null);
 
-                    Tasks.Add(Task);
+                      if (graph.AddEdge(Edge))
+                      {
+                        var Task = ViewModelLocator.DocComparer.Compare(V1, V2, ViewModelLocator.QAComparer, true, token);
+                        Task.ContinueWith((t1) =>
+                        {
+                          Edge.Tag = t1.Result;
+                          IsDirty = true;
+                        });
+
+                        Tasks.Add(Task);
+                      }
+                    }
                   }
                 }
               }

@@ -117,16 +117,16 @@ namespace HFQOModel
       return Response;
     }
 
-    public async Task<Dictionary<string, string>> GetExamsDL()
+    public async Task<AccessibleMasterFile[]> GetExamsDL()
     {
-      return await Task.Run(() => REST.ExecuteRest<Dictionary<string, string>>("user/myexams/dl", Method.GET,
+      return await Task.Run(() => REST.ExecuteRest<AccessibleMasterFile[]>("user/myexams/dl", Method.GET,
                               new[]
                               {
                                   new Parameter(){ Name = "Authorization", Value = "Bearer " + _BearerToken, Type = ParameterType.HttpHeader},
                                   new Parameter(){ Name = "Accept", Value = "application/json", Type = ParameterType.HttpHeader},
                               },
                               null,
-                              null,
+                              "data",
                               true,
                               null));
     }

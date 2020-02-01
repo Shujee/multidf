@@ -5,7 +5,10 @@ using HFQOModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.IO.IsolatedStorage;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace DuplicateFinderMulti.VM
@@ -30,6 +33,10 @@ namespace DuplicateFinderMulti.VM
             ViewModelLocator.DataService.GetExamsDL().ContinueWith(t2 => {
               MyExams = t2.Result;
               RaisePropertyChanged(nameof(MyExams));
+
+              if (MyExams.Length > 0)
+                SelectedAccess = MyExams[0];
+
               GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() => ViewModelLocator.Main.UpdateProgress(true, "Ready", 0));
             });
           }
@@ -45,10 +52,10 @@ namespace DuplicateFinderMulti.VM
     /// <summary>
     /// Important: ID field contains Access Id, not Exam Id.
     /// </summary>
-    public Dictionary<string, string> MyExams { get; private set; }
+    public AccessibleMasterFile[] MyExams { get; private set; }
 
-    private string _SelectedAccess;
-    public string SelectedAccess
+    private AccessibleMasterFile _SelectedAccess;
+    public AccessibleMasterFile SelectedAccess
     {
       get => _SelectedAccess;
       set => Set(ref _SelectedAccess, value);
@@ -131,15 +138,24 @@ namespace DuplicateFinderMulti.VM
                 try
                 {
                   ViewModelLocator.Auth.IsCommunicating = true;
-                  var MF = ViewModelLocator.DataService.DownloadExam(int.Parse(_SelectedAccess), Environment.MachineName);
+                  var MF = ViewModelLocator.DataService.DownloadExam(_SelectedAccess.access_id, Environment.MachineName);
 
                   if (MF != null)
                   {
                     ExamID = MF.id;
 
                     var XPSBytes = Encryption.Decrypt(Convert.FromBase64String(MF.xps));
-                    var XPSFilePath = System.IO.Path.GetTempFileName();
-                    System.IO.File.WriteAllBytes(XPSFilePath, XPSBytes);
+
+                    //Store this downloaded data into an isolated storage file
+                    IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
+                    var XPSFileName = DateTime.Now.ToString($"yyyyMMHHmmss_{MF.id}.xps");
+                    string XPSFilePath;
+                    using (IsolatedStorageFileStream isoStream = new IsolatedStorageFileStream(XPSFileName, FileMode.CreateNew, isoStore))
+                    {
+                      isoStream.Write(XPSBytes, 0, XPSBytes.Length);
+                      XPSFilePath = isoStream.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(isoStream).ToString();
+                    }
+
                     XPSPath = XPSFilePath;
 
                     var XMLString = Encoding.UTF8.GetString(Encryption.Decrypt(Convert.FromBase64String(MF.xml)));

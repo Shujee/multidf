@@ -49,7 +49,7 @@ namespace HFQOModel
     /// Returns the list of Master Files that are accessible to currently logged in user.
     /// </summary>
     /// <returns></returns>
-    Task<Dictionary<string, string>> GetExamsDL();
+    Task<AccessibleMasterFile[]> GetExamsDL();
     
     /// <summary>
     /// Returns the list of Master Files that were uploaded by the currently logged in user.

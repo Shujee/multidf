@@ -27,7 +27,7 @@ namespace HFQOModel
       return "Pakistan";
     }
 
-    public Task<Dictionary<string, string>> GetExamsDL()
+    public Task<AccessibleMasterFile[]> GetExamsDL()
     {
       throw new System.NotImplementedException();
     }

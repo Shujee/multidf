@@ -57,7 +57,7 @@ namespace DuplicateFinderMulti.VM
   [KnownType(typeof(DFResult[]))]
   public class OurGraph : UndirectedGraph<XMLDoc, OurEdge>, ISerializable
   {
-    private double _DiffThreshold = .1;
+    private double _DiffThreshold = .2;
     public double DiffThreshold
     {
       get => _DiffThreshold;
