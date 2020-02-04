@@ -1592,7 +1592,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:HFQOModel, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:HFQOModel, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_0D5CEC9570015A08F00945075C934458"
@@ -1871,7 +1871,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:DuplicateFinderMultiCommon, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:DuplicateFinderMultiCommon, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_39435530D89D403A3406037DBAF3F5C4"
@@ -2181,7 +2181,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:DuplicateFinderMulti.Views, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:DuplicateFinderMulti.Views, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_5D7C561CAAAF7B560FD9F99384B8672C"
@@ -3689,7 +3689,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:DuplicateFinderMulti.VM, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:DuplicateFinderMulti.VM, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_E91FB60A2CE2703575B9DCC9DCFA622D"
@@ -4145,15 +4145,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:DuplicateFinderMulti"
-        "ProductCode" = "8:{9161D8CE-90DC-4941-A867-25FF92C38478}"
-        "PackageCode" = "8:{62FB9744-2B77-4AC1-9118-F28C50B6F2DD}"
+        "ProductCode" = "8:{0566E44F-0D76-42B8-A558-A64616A50C21}"
+        "PackageCode" = "8:{9D5E4C0B-3510-4EED-B495-A327D29683AA}"
         "UpgradeCode" = "8:{5A925BAF-47E5-4BF5-93C2-B0C3C245B96F}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.2.0"
+        "ProductVersion" = "8:1.2.4"
         "Manufacturer" = "8:DuplicateFinderMulti"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

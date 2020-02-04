@@ -712,7 +712,7 @@ namespace DuplicateFinderMulti.VM
               {
                 var DestFile = GetAvailableFileName(Doc.SourcePath, DestFolder);
                 File.Copy(Doc.SourcePath, DestFile);
-                Doc.SourcePath = DestFile;
+                Doc.SourcePath = Path.GetFileName(DestFile);
               }
 
               P.IsDirty = false;

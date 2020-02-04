@@ -1,10 +1,9 @@
-﻿using System.Linq;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using System.Collections.Generic;
 using System;
-using System.Collections;
-using DuplicateFinderMultiCommon;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace DuplicateFinderMulti.VM
 {
@@ -101,7 +100,7 @@ namespace DuplicateFinderMulti.VM
     /// <param name="e"></param>
     private void Auth_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-      if(e.PropertyName == nameof(AuthVM.IsLoggedIn))
+      if (e.PropertyName == nameof(AuthVM.IsLoggedIn))
       {
         if (this._SelectedProject != null)
           _SelectedProject.UploadExamCommand.RaiseCanExecuteChanged();
@@ -211,13 +210,24 @@ namespace DuplicateFinderMulti.VM
 
                 foreach (var Doc in TempSelectedProject.AllXMLDocs)
                 {
-                  if(!System.IO.File.Exists( Doc.SourcePath))
+                  //check if SourcePath contains only file name, not full path. If so, check if the document resides in project's folder (support for relative path).
+                  //If both of these conditions are true, then update SourcePath to fully qualified path using project path.
+                  if (Path.GetFileName(Doc.SourcePath) == Doc.SourcePath)
+                  {
+                    if (File.Exists(Path.Combine(Path.GetDirectoryName( ProjectPath), Doc.SourcePath)))
+                    {
+                      Doc.SourcePath = Path.Combine(Path.GetDirectoryName(ProjectPath), Doc.SourcePath);
+                      ProjectFileChanged = true;
+                    }
+                  }
+
+                  if (!File.Exists(Doc.SourcePath))
                   {
                     var Res = ViewModelLocator.DialogService.AskTernaryQuestion($"Document '{Doc.SourcePath}' does not exist on the disk. Do you want to locate it manually?");
 
                     if (Res.HasValue)
                     {
-                      if(Res.Value)
+                      if (Res.Value)
                       {
                         var NewDocx = ViewModelLocator.DialogService.ShowOpen("Word documents (*.doc, *.docx, *.docm)|*.doc;*.docx;*.docm", System.IO.Path.GetDirectoryName(ProjectPath), "Select Word Document");
 
@@ -271,9 +281,9 @@ namespace DuplicateFinderMulti.VM
     public string ProgressMessage { get; private set; }
     public double ProgressValue { get; private set; }
 
-    private DateTime _ProgressStartTime =DateTime.Now;
+    private DateTime _ProgressStartTime = DateTime.Now;
     public TimeSpan ElapsedTime => DateTime.Now.Subtract(_ProgressStartTime);
-    public TimeSpan EstimatedRemainingTime => ProgressValue == 0? TimeSpan.Zero : TimeSpan.FromSeconds((ElapsedTime.TotalSeconds / ProgressValue) * (1 - ProgressValue));
+    public TimeSpan EstimatedRemainingTime => ProgressValue == 0 ? TimeSpan.Zero : TimeSpan.FromSeconds((ElapsedTime.TotalSeconds / ProgressValue) * (1 - ProgressValue));
 
     /// <summary>
     /// Updates main progress bar message and value. Runs code on UI thread because UI elements is bound to these properties.
