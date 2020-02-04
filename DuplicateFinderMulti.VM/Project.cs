@@ -435,7 +435,7 @@ namespace DuplicateFinderMulti.VM
 
     private Task AddDocInternal(string Doc, int? insertAt = null)
     {
-      System.IO.FileInfo FileInfo = new System.IO.FileInfo(Doc);
+      FileInfo FileInfo = new FileInfo(Doc);
 
       var NewDoc = new XMLDoc()
       {

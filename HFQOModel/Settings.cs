@@ -23,6 +23,7 @@
     {
 #if (DEBUG)
       this["ServerURL"] = "http://hfq:8080/api/v1/";
+      //this["ServerURL"] = "https://hfqserver.com/api/v1/";
 #else
       this["ServerURL"] = "https://hfqserver.com/api/v1/";
 #endif

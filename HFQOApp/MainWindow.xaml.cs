@@ -41,14 +41,14 @@ namespace HFQOApp
 #endif
     }
 
-    private void HFQPane_QADoubleClicked(QA qa)
+    private void HFQPane_QASelected(QA qa)
     {
       var fds = DV.Document as FixedDocumentSequence;
       DocumentReference docReference = fds.References.First();
       FixedDocument fd = docReference.GetDocument(false);
       var HighlightPage = fd.Pages[qa.StartPage - 1].GetPageRoot(false);
 
-      var XPSPageHeight = fds.DocumentPaginator.PageSize.Height;     
+      var XPSPageHeight = fds.DocumentPaginator.PageSize.Height;
 
       //Set width binding to that of the parent FixedPage
       Binding WidthBinding = new Binding("Width");

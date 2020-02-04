@@ -14,7 +14,7 @@ namespace DuplicateFinderMulti.Views
   /// </summary>
   public partial class HFQPane : UserControl
   {
-    public event Action<QA> QADoubleClicked;
+    public event Action<QA> QASelected;
 
     //My VM object
     private HFQVM MyVM => (HFQVM)this.DataContext;
@@ -48,17 +48,6 @@ namespace DuplicateFinderMulti.Views
       QAs.Refresh();
     }
 
-    private void FilesListItem_DoubleClick(object sender, MouseButtonEventArgs e)
-    {
-      if (e.Source is ListBoxItem lbi)
-      {
-        if(lbi.DataContext is QA qa)
-        {
-          QADoubleClicked?.Invoke(qa);
-        }
-      }
-    }
-
     private void ClearButton_Click(object sender, RoutedEventArgs e)
     {
       SearchBox.Text = "";
@@ -67,17 +56,18 @@ namespace DuplicateFinderMulti.Views
       QAs.Refresh();
     }
 
-    private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-    {
-      if (e.Source is ListBoxItem lbi)
-      {
-      }
-    }
-
     private void CollectionViewSource_Filter(object sender, System.Windows.Data.FilterEventArgs e)
     {
       e.Accepted = (e.Item as QA).Question.IndexOf(SearchBox.Text, StringComparison.OrdinalIgnoreCase) >= 0 ||
                     (e.Item as QA).Choices.Any(c => c.IndexOf(SearchBox.Text, StringComparison.OrdinalIgnoreCase) >= 0);
+    }
+
+    private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      if (sender is ListBox lb)
+      {
+          QASelected?.Invoke(lb.SelectedItem as QA);
+      }
     }
   }
 }

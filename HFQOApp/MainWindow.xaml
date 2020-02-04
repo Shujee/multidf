@@ -112,7 +112,7 @@
       </Button>
     </ToolBar>
 
-    <view:HFQPane Grid.Row="1" Grid.Column="0" Margin="0,0,5,0" QADoubleClicked="HFQPane_QADoubleClicked" />
+    <view:HFQPane Grid.Row="1" Grid.Column="0" Margin="0,0,5,0" QASelected="HFQPane_QASelected" />
     <GridSplitter Grid.Row="1" Grid.Column="0" Width="5" HorizontalAlignment="Right" ResizeBehavior="CurrentAndNext" Background="LightGray" />
     <DocumentViewer Name="DV" Grid.Row="1" Grid.Column="1" Document="{Binding XPSPath, Mode=OneWay, Converter={StaticResource PathToFixedDocumentConverter}}" Focusable="False">
       <DocumentViewer.Resources>

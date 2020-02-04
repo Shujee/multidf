@@ -24,7 +24,7 @@ namespace DuplicateFinderMulti.VM
       _Token = _TokenSource.Token;
     }
 
-    public string Name => string.IsNullOrEmpty(_SourcePath) ? "" : System.IO.Path.GetFileName(_SourcePath);
+    public string Name => string.IsNullOrEmpty(_SourcePath) ? "" : Path.GetFileName(_SourcePath);
 
     private string _SourcePath;
     public string SourcePath
@@ -83,11 +83,11 @@ namespace DuplicateFinderMulti.VM
     {
       get
       {
-        if (!string.IsNullOrEmpty(SourcePath) && System.IO.File.Exists(SourcePath))
+        if (!string.IsNullOrEmpty(_SourcePath) && File.Exists(_SourcePath))
         {
           RaisePropertyChanged(nameof(SyncInfo));
 
-          System.IO.FileInfo fileInfo = new System.IO.FileInfo(SourcePath);
+          FileInfo fileInfo = new FileInfo(_SourcePath);
           return fileInfo.LastWriteTime == LastModified && fileInfo.Length == Size;
         }
         else
@@ -99,9 +99,9 @@ namespace DuplicateFinderMulti.VM
     {
       get
       {
-        if (!string.IsNullOrEmpty(SourcePath) && System.IO.File.Exists(SourcePath))
+        if (!string.IsNullOrEmpty(_SourcePath) && File.Exists(_SourcePath))
         {
-          System.IO.FileInfo fileInfo = new System.IO.FileInfo(SourcePath);
+          FileInfo fileInfo = new FileInfo(_SourcePath);
 
           var Info = new FileAttributesComparison
           {
@@ -128,12 +128,12 @@ namespace DuplicateFinderMulti.VM
         {
           _OpenSourceCommand = new RelayCommand(() =>
           {
-            if (!string.IsNullOrEmpty(_SourcePath) && System.IO.File.Exists(_SourcePath))
+            if (!string.IsNullOrEmpty(_SourcePath) && File.Exists(_SourcePath))
               ViewModelLocator.WordService.OpenDocument(_SourcePath, null, null);
             else
               ViewModelLocator.DialogService.ShowMessage("Source document does not exist.", true);
           },
-          () => !string.IsNullOrEmpty(_SourcePath) && System.IO.File.Exists(_SourcePath));
+          () => !string.IsNullOrEmpty(_SourcePath) && File.Exists(_SourcePath));
         }
 
         return _OpenSourceCommand;
@@ -142,7 +142,7 @@ namespace DuplicateFinderMulti.VM
 
     public Task UpdateQAs()
     {
-      if (!string.IsNullOrEmpty(_SourcePath) && System.IO.File.Exists(_SourcePath))
+      if (!string.IsNullOrEmpty(_SourcePath) && File.Exists(_SourcePath))
       {
         return Task.Run(() =>
         {
@@ -225,7 +225,7 @@ namespace DuplicateFinderMulti.VM
     {
       NewLineChars = "\a\r\n",
       CheckCharacters = false,
-      Encoding = System.Text.Encoding.UTF8,
+      Encoding = Encoding.UTF8,
       NewLineHandling = NewLineHandling.Entitize,
     };
 
