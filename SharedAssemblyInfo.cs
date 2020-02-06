@@ -4,8 +4,8 @@
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("DuplicateFinderMulti")]
-[assembly: AssemblyProduct("DuplicateFinderMulti")]
+[assembly: AssemblyCompany("MultiDF")]
+[assembly: AssemblyProduct("MultiDF")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

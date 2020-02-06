@@ -1,6 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
-using DuplicateFinderMulti.VM;
-using DuplicateFinderMulti.Views;
+using MultiDF.VM;
+using MultiDF.Views;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;

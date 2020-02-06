@@ -1,0 +1,101 @@
+﻿<Window x:Class="MultiDF.Views.ExamsListDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:MultiDF.VM;assembly=MultiDF.VM"
+        xmlns:model="clr-namespace:HFQOModel;assembly=HFQOModel"
+        mc:Ignorable="d"
+        Title="Open Exam" 
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="None" 
+        AllowsTransparency="True" Background="{x:Null}"
+        Width="500" SizeToContent="Height"
+        FocusManager.FocusedElement="{Binding ElementName=txtValue}"
+        DataContext="{x:Static vm:ViewModelLocator.HFQ}"
+        d:DataContext="{d:DesignInstance Type=vm:HFQVM, IsDesignTimeCreatable=True}">
+
+  <Window.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Styles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Window.Resources>
+
+  <Border CornerRadius="15" Background="White" BorderThickness="1" BorderBrush="#00aff0" Padding="6" Margin="12">
+    <Border.Effect>
+      <DropShadowEffect BlurRadius="20" ShadowDepth="10" Color="LightGray" />
+    </Border.Effect>
+
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+
+      <TextBlock Text="Select master file to open:" Margin="14,12,10,6" Grid.ColumnSpan="2" TextWrapping="Wrap" />
+
+      <ComboBox ItemsSource="{Binding MyExams}" Background="Yellow" SelectedItem="{Binding SelectedAccess}"
+      Grid.Row="1" MinWidth="200" Margin="12,12,12,0" Padding="3" Grid.ColumnSpan="2" BorderThickness="0,0,0,1" 
+      FontSize="12" BorderBrush="LightGray" GotFocus="ComboBox_GotFocus" HorizontalContentAlignment="Stretch" Style="{DynamicResource TransparentComboBoxStyle}">
+
+        <ComboBox.Resources>
+          <Style TargetType="ToggleButton">
+            <Setter Property="Background" Value="Yellow" />
+          </Style>
+        </ComboBox.Resources>
+
+        <ComboBox.ItemContainerStyle>
+          <Style TargetType="ComboBoxItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+          </Style>
+        </ComboBox.ItemContainerStyle>
+
+        <ComboBox.ItemTemplate>
+          <DataTemplate DataType="model:AccessibleMasterFile">
+            <Grid Margin="6" HorizontalAlignment="Stretch">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+              </Grid.RowDefinitions>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+
+              <TextBlock Grid.Row="0" Grid.ColumnSpan="2" FontWeight="Bold" FontSize="16">
+              <Run Text="{Binding number}" />
+              (<Run Text="{Binding name}" />)
+              </TextBlock>
+
+              <TextBlock Grid.Row="1" Text="Last updated on:" />
+              <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding updated_at}" />
+
+              <TextBlock Grid.Row="2" Text="Expires on:" />
+              <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding end}" />
+
+              <TextBlock Grid.Row="3" Text="Last Action:" />
+              <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding remarks}" />
+
+              <TextBlock Grid.Row="4" Text="QAs:" />
+              <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding qa_count}" />
+            </Grid>
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+
+      <Button Content="OK" Grid.Row="2" Grid.Column="0" Width="70" Height="30" Margin="6,24,6,12" HorizontalAlignment="Right" Click="OK_Click" IsDefault="True" />
+      <Button Content="Cancel" Grid.Row="2" Grid.Column="1" Width="70" Height="30" Margin="6,24,6,12" HorizontalAlignment="Left" Click="Cancel_Click" IsCancel="True" />
+    </Grid>
+
+  </Border>
+</Window>

@@ -1,0 +1,309 @@
+﻿<UserControl x:Class="MultiDF.Views.MainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:MultiDF.Views"
+             xmlns:vm="clr-namespace:MultiDF.VM;assembly=MultiDF.VM"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance Type=vm:MainVM, IsDesignTimeCreatable=True}"
+             DataContext="{Binding Source={x:Static vm:ViewModelLocator.Main}}"
+             FontFamily="Calibri">
+  <Grid>
+    <Grid.Resources>
+      <ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries>
+          <ResourceDictionary Source="ImageButtonStyle.xaml" />
+        </ResourceDictionary.MergedDictionaries>
+        
+        <BooleanToVisibilityConverter x:Key="B2VConverter" />
+        <local:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
+        <local:ConnectionStatusToStringConverter x:Key="ConnectionStatusToStringConverter" />
+        <local:PathToFileNameConverter x:Key="PathToFileNameConverter" />
+        <local:NonZeroToTrueConverter x:Key="NonZeroToTrueConverter" />
+
+
+        <Style TargetType="Button" x:Key="ToolbarButton">
+          <Setter Property="Padding" Value="6" />
+          <Setter Property="FontSize" Value="24" />
+        </Style>
+      </ResourceDictionary>
+    </Grid.Resources>
+
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <Border BorderBrush="Gray" Background="#00aff0" Grid.Row="1" Margin="3,0">
+      <TextBlock Margin="18,12" FontFamily="Calibri" FontSize="18" TextTrimming="CharacterEllipsis" Foreground="White">
+        <Run Text="{Binding SelectedProject.Name}" />
+      </TextBlock>
+    </Border>
+
+    <ListBox Grid.Row="2" ItemsSource="{Binding SelectedProject.AllXMLDocs}" SelectedItem="{Binding SelectedProject.SelectedDoc}" 
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="3" BorderBrush="LightGray">
+      <ListBox.ItemContainerStyle>
+        <Style TargetType="ListBoxItem">
+          <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+      </ListBox.ItemContainerStyle>
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <Border BorderBrush="LightGray" BorderThickness="0" CornerRadius="3" Padding="3">
+            <Border.Style>
+              <Style TargetType="Border">
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding IsSyncWithSource}" Value="True">
+                    <Setter Property="Background" Value="Transparent" />
+                  </DataTrigger>
+                  <DataTrigger Binding="{Binding IsSyncWithSource}" Value="False">
+                    <Setter Property="Background">
+                      <Setter.Value>
+                        <SolidColorBrush Color="Red" Opacity=".2" />
+                      </Setter.Value>
+                    </Setter>
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </Border.Style>
+
+
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+              </Grid.RowDefinitions>
+
+              <fa:FontAwesome Icon="FileWordOutline" Foreground="#00aff0" FontSize="20" VerticalAlignment="Center" Margin="12,7" />
+
+              <StackPanel Orientation="Horizontal" Grid.Column="1">
+                <TextBlock Text="{Binding Name}" FontSize="16" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="0,10,0,9" />
+                <Button x:Name="OpenSourceButton" Command="{Binding OpenSourceCommand}" fa:Awesome.Content="FolderOpen" ToolTip="Click to open source document" FontSize="14" Foreground="#00aff0" 
+                      Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="6,3" Focusable="False">
+                  <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource ImageButtonStyle}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Border}, Path=IsMouseOver}" Value="False">
+                          <Setter Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                  </Button.Style>
+                </Button>
+              </StackPanel>
+
+              <TextBlock Text="{Binding LastModified}" Grid.Row="1" FontSize="14" Grid.Column="1" TextTrimming="CharacterEllipsis">
+                <TextBlock.Style>
+                  <Style TargetType="TextBlock">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding IsSyncWithSource}" Value="True">
+                        <Setter Property="Foreground" Value="LightGray" />
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding IsSyncWithSource}" Value="False">
+                        <Setter Property="Foreground" Value="Black" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </TextBlock.Style>
+              </TextBlock>
+
+              <!--<fa:FontAwesome FontSize="14" Grid.Column="4" VerticalAlignment="Center" ToolTipService.ShowDuration="30000" Margin="3">
+                <fa:FontAwesome.ToolTip>
+                  <ToolTip DataContext="{Binding Path=PlacementTarget.DataContext.SyncInfo, RelativeSource={x:Static RelativeSource.Self}}">
+                    <local:FileComparisonTooltip />
+                  </ToolTip>
+                </fa:FontAwesome.ToolTip>
+                <fa:FontAwesome.Style>
+                  <Style TargetType="fa:FontAwesome">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding IsSyncWithSource}" Value="True">
+                        <Setter Property="Icon" Value="Check" />
+                        <Setter Property="Foreground" Value="#00aff0" />
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding IsSyncWithSource}" Value="False">
+                        <Setter Property="Icon" Value="ExclamationCircle" />
+                        <Setter Property="Foreground" Value="Red" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </fa:FontAwesome.Style>
+              </fa:FontAwesome>-->
+
+              <Border BorderThickness="1" CornerRadius="25" Grid.Column="2" MinWidth="30" MinHeight="30" Margin="3" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Border.Style>
+                  <Style TargetType="Border">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding IsSyncWithSource}" Value="False">
+                        <Setter Property="BorderBrush" Value="Red" />
+                        <Setter Property="ToolTip">
+                          <Setter.Value>
+                            <ToolTip DataContext="{Binding Path=PlacementTarget.DataContext.SyncInfo, RelativeSource={x:Static RelativeSource.Self}}">
+                              <local:FileComparisonTooltip />
+                            </ToolTip>
+                          </Setter.Value>
+                        </Setter>
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding IsSyncWithSource}" Value="True">
+                        <Setter Property="BorderBrush" Value="#00aff0" />
+                        <Setter Property="ToolTip" Value="Number of Questions in this document" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </Border.Style>
+
+                <Label Content="{Binding QAs.Count}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center">
+                  <Label.Style>
+                    <Style TargetType="Label">
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSyncWithSource}" Value="True">
+                          <Setter Property="Foreground" Value="#00aff0" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsSyncWithSource}" Value="False">
+                          <Setter Property="Foreground" Value="Red" />
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </Label.Style>
+                </Label>
+              </Border>
+
+              <ProgressBar Value="{Binding ProcessingProgress, Mode=OneWay}" Margin="0,3" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Height="5">
+                <ProgressBar.Style>
+                  <Style TargetType="ProgressBar">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding IsSyncWithSource}" Value="True">
+                        <Setter Property="Foreground" Value="#00aff0" />
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding IsSyncWithSource}" Value="False">
+                        <Setter Property="Foreground" Value="Red" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </ProgressBar.Style>
+              </ProgressBar>
+            </Grid>
+          </Border>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <GridSplitter Grid.Row="3" Height="5"  ResizeBehavior="PreviousAndNext" Background="#00aff0" HorizontalAlignment="Stretch" Margin="3" />
+
+    <local:ResultContent Grid.Row="4" AllowOneExpansionOnly="True" />
+
+    <StatusBar Grid.Row="6" Height="30">
+      <StatusBar.ItemsPanel>
+        <ItemsPanelTemplate>
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+          </Grid>
+        </ItemsPanelTemplate>
+      </StatusBar.ItemsPanel>
+
+      <StatusBarItem Grid.Column="0" HorizontalContentAlignment="Stretch">
+        <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1">
+          <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0" HorizontalAlignment="Stretch">
+            <TextBlock Text="{Binding ProgressMessage, Mode=OneWay}" />
+          </Border>
+        </Border>
+      </StatusBarItem>
+
+      <StatusBarItem Grid.Column="1" HorizontalContentAlignment="Stretch" Width="70" ToolTip="Elapsed time">
+        <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1">
+          <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0" HorizontalAlignment="Stretch">
+            <TextBlock Text="{Binding ElapsedTime, Mode=OneWay, StringFormat=hh\\:mm\\:ss}" HorizontalAlignment="Right" />
+          </Border>
+        </Border>
+      </StatusBarItem>
+
+      <StatusBarItem Grid.Column="2" HorizontalContentAlignment="Stretch" Width="70" ToolTip="Estimated remaining time">
+        <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1">
+          <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0" HorizontalAlignment="Stretch">
+            <TextBlock Text="{Binding EstimatedRemainingTime, Mode=OneWay, StringFormat=hh\\:mm\\:ss}" HorizontalAlignment="Right" />
+          </Border>
+        </Border>
+      </StatusBarItem>
+
+
+      <StatusBarItem Grid.Column="3" HorizontalContentAlignment="Stretch">
+        <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1">
+          <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0" HorizontalAlignment="Stretch">
+            <TextBlock Margin="3">
+              <Run>Count = </Run>
+              <Run Text="{Binding SelectedProject.Graph.Results.Length, Mode=OneWay, FallbackValue=0}" />
+            </TextBlock>
+          </Border>
+        </Border>
+      </StatusBarItem>
+
+      <StatusBarItem Grid.Column="4">
+        <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1" Margin="1,0" Grid.Column="1">
+          <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0">
+            <ProgressBar Value="{Binding ProgressValue, Mode=OneWay}" Maximum="100" Width="100" Height="10" Margin="3" />
+          </Border>
+        </Border>
+      </StatusBarItem>
+
+      <StatusBarItem Grid.Column="5" DataContext="{Binding Source={x:Static vm:ViewModelLocator.Auth}}">
+        <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1" Margin="1,0" Grid.Column="2">
+          <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0">
+
+            <Ellipse Width="12" Height="12" Stroke="Gray" HorizontalAlignment="Right" Margin="3">
+              <Ellipse.Fill>
+                <SolidColorBrush Color="{Binding IsLoggedIn, Converter={StaticResource ConnectionStatusConverter}, FallbackValue=Red}" />
+              </Ellipse.Fill>
+              <Ellipse.Style>
+                <Style TargetType="Ellipse">
+                  <Style.Resources>
+                    <Storyboard x:Key="ConnectingStoryBoard" RepeatBehavior="Forever">
+                      <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:1" />
+                      <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:1" BeginTime="0:0:1" />
+                    </Storyboard>
+                  </Style.Resources>
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsCommunicating}" Value="True">
+                      <Setter Property="ToolTip" Value="Connection Status: Communicating" />
+                      <DataTrigger.EnterActions>
+                        <BeginStoryboard Name="ConnectingStoryBoardBegin" Storyboard="{StaticResource ConnectingStoryBoard}" />
+                      </DataTrigger.EnterActions>
+                      <DataTrigger.ExitActions>
+                        <StopStoryboard BeginStoryboardName="ConnectingStoryBoardBegin" />
+                      </DataTrigger.ExitActions>
+                    </DataTrigger>
+
+                    <DataTrigger Binding="{Binding IsLoggedIn}" Value="False">
+                      <Setter Property="ToolTip" Value="{Binding IsLoggedIn, Converter={StaticResource ConnectionStatusToStringConverter}}" />
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </Ellipse.Style>
+              <Ellipse.Effect>
+                <DropShadowEffect Color="{Binding IsLoggedIn, Converter={StaticResource ConnectionStatusConverter}, FallbackValue=Red}" BlurRadius="7" Direction="90" ShadowDepth="0" />
+              </Ellipse.Effect>
+            </Ellipse>
+          </Border>
+        </Border>
+      </StatusBarItem>
+    </StatusBar>
+  </Grid>
+</UserControl>

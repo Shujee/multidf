@@ -1,0 +1,36 @@
+﻿<Window x:Class="MultiDF.Views.InputBox"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Multi-DF" 
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False"
+        Width="500" SizeToContent="Height"
+        FocusManager.FocusedElement="{Binding ElementName=txtValue}">
+  <Window.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Styles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Window.Resources>
+  
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+
+    <TextBlock x:Name="lblDescription" Text="Please provide a name for this master file:" Margin="12,12,12,6" Grid.ColumnSpan="2" TextWrapping="Wrap" />
+    <TextBox x:Name="txtValue" Grid.Row="1" MinWidth="200" Margin="12,12,12,0" Grid.ColumnSpan="2" />
+
+    <Button Content="OK" Grid.Row="2" Grid.Column="0" Margin="6,24,6,12" HorizontalAlignment="Right" Click="OK_Click" IsDefault="True" />
+    <Button Content="Cancel" Grid.Row="2" Grid.Column="1" Margin="6,24,6,12" HorizontalAlignment="Left" Click="Cancel_Click" IsCancel="True" />
+  </Grid>
+</Window>
