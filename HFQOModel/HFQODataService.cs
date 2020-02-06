@@ -17,33 +17,33 @@ namespace HFQOModel
       REST = new RESTWrapper(HFQOModel.Properties.Settings.Default.ServerURL, 0);
     }
 
-    public async Task<bool> Login(string email, string password)
+    public async Task<UserType> Login(string email, string password)
     {
       try
       {
-      var Response = await Task.Run(() => REST.ExecuteRest<LoginToken>("login", Method.POST,
+      var Response = await Task.Run(() => REST.ExecuteRest<LoginResponse>("login", Method.POST,
                  new[]
                  {
                       new Parameter(){ Name = "email", Value = email, Type = ParameterType.GetOrPost },
                       new Parameter(){ Name = "password", Value = password, Type = ParameterType.GetOrPost },
                  },
                  null,
-                 "token",  //json response is wrapped in "token" node
+                 null,  //json response is wrapped in "token" node
                  false,
                  null));
 
         //Check if credentials are correct
         if (Response == null)
-          return false;
+          return UserType.None;
         else
         {
-          _BearerToken = Response.access_token;
-          return true;
+          _BearerToken = Response.token.access_token;
+          return (UserType)Response.type;
         }
       }
       catch
       {
-        return false;
+        return UserType.None;
       }
     }
 

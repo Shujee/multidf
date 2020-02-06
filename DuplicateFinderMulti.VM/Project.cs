@@ -368,7 +368,7 @@ namespace DuplicateFinderMulti.VM
               });
             }
           },
-          () => ViewModelLocator.Auth.IsLoggedIn && this.AllXMLDocs.Count > 0);
+          () => ViewModelLocator.Auth.IsLoggedIn && (ViewModelLocator.Auth.UserType == HFQOModel.UserType.Admin || ViewModelLocator.Auth.UserType == HFQOModel.UserType.Uploader) && this.AllXMLDocs.Count > 0);
         }
 
         return _UploadExamCommand;

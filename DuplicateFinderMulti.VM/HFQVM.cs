@@ -61,18 +61,6 @@ namespace DuplicateFinderMulti.VM
       set => Set(ref _SelectedAccess, value);
     }
 
-
-    private int? _ExamID;
-    public int? ExamID
-    {
-      get => _ExamID;
-      set
-      {
-        Set(ref _ExamID, value);
-        UploadResultCommand.RaiseCanExecuteChanged();
-      }
-    }
-
     private string _XPSPath;
     public string XPSPath
     {
@@ -142,8 +130,6 @@ namespace DuplicateFinderMulti.VM
 
                   if (MF != null)
                   {
-                    ExamID = MF.id;
-
                     var XPSBytes = Encryption.Decrypt(Convert.FromBase64String(MF.xps));
 
                     //Store this downloaded data into an isolated storage file
@@ -180,7 +166,7 @@ namespace DuplicateFinderMulti.VM
                 ViewModelLocator.DialogService.ShowMessage("You did not select a master file to download.", false);
             }
           },
-          () => ViewModelLocator.Auth.IsLoggedIn);
+          () => ViewModelLocator.Auth.IsLoggedIn && (ViewModelLocator.Auth.UserType == UserType.Admin || ViewModelLocator.Auth.UserType == UserType.Downloader));
         }
 
         return _OpenExamCommand;
@@ -237,7 +223,7 @@ namespace DuplicateFinderMulti.VM
 
             SelectedResultIndex++;
           },
-          () => Result!=null && SelectedResultIndex >= 0);
+          () => Result != null);
         }
 
         return _GoToNextCommand;
@@ -272,16 +258,28 @@ namespace DuplicateFinderMulti.VM
         {
           _UploadResultCommand = new RelayCommand(() =>
           {
-            if(ViewModelLocator.DialogService.AskBooleanQuestion("Are you sure you want to upload result to the server?"))
+            if (ViewModelLocator.DialogService.AskBooleanQuestion("Are you sure you want to upload result to the server?"))
             {
-              ViewModelLocator.DataService.UploadResult(ExamID.Value, Environment.MachineName, Result.Select(r => r.ToHFQResultRow())).ContinueWith(t =>
+              ViewModelLocator.DataService.UploadResult(_SelectedAccess.exam_id, Environment.MachineName, Result.Select(r => r.ToHFQResultRow())).ContinueWith(t =>
               {
                 if (t.IsCompleted && !t.IsFaulted)
+                {
                   ViewModelLocator.DialogService.ShowMessage("Results uploaded successfully.", false);
+                  SelectedAccess = null;
+                  Result = null;
+                  SelectedResultIndex = 0;
+                  SearchText = "";
+
+                  //delete xps file from isolated storage
+                  IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
+                  isoStore.DeleteFile(_XPSPath);
+                  XPSPath = "";
+                  XMLDoc = null;
+                }
               });
             }
           },
-          () => ExamID != null);
+          () => ViewModelLocator.Auth.IsLoggedIn && (ViewModelLocator.Auth.UserType == UserType.Admin || ViewModelLocator.Auth.UserType == UserType.Downloader) && _SelectedAccess != null);
         }
 
         return _UploadResultCommand;

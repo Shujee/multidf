@@ -1,9 +1,23 @@
 ﻿namespace HFQOModel
 {
+  public enum UserType
+  {
+    None = 0,
+    Admin = 1,
+    Uploader = 2,
+    Downloader = 3
+  }
+
   public class IDName
   {
     public string ID { get; set; }
     public string Name { get; set; }
+  }
+
+  public class LoginResponse
+  {
+    public int type { get; set; }
+    public LoginToken token { get; set; }
   }
 
   public class LoginToken

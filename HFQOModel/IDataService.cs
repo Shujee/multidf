@@ -12,7 +12,7 @@ namespace HFQOModel
     /// <param name="email"></param>
     /// <param name="password"></param>
     /// <returns></returns>
-    Task<bool> Login(string email, string password);
+    Task<UserType> Login(string email, string password);
 
     /// <summary>
     /// Clears locally saved authentication token.

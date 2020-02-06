@@ -37,9 +37,9 @@ namespace HFQOModel
       throw new System.NotImplementedException();
     }
 
-    public Task<bool> Login(string email, string password)
+    public Task<UserType> Login(string email, string password)
     {
-      return Task.FromResult<bool>(true);
+      return Task.FromResult<UserType>(UserType.Uploader);
     }
 
     public Task Logout()

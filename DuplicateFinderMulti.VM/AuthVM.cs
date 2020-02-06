@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using HFQOModel;
 using Settings = DuplicateFinderMulti.VM.Properties.Settings;
 
 namespace DuplicateFinderMulti.VM
@@ -19,12 +20,19 @@ namespace DuplicateFinderMulti.VM
     public bool IsLoggedIn
     {
       get { return _IsLoggedIn; }
-      set
+      private set
       {
         Set(ref _IsLoggedIn, value);
         LoginCommand.RaiseCanExecuteChanged();
         LogoutCommand.RaiseCanExecuteChanged();
       }
+    }
+
+    private UserType _UserType;
+    public UserType UserType
+    {
+      get => _UserType;
+      private set => Set(ref _UserType, value);
     }
 
     private bool _IsCommunicating;
@@ -58,10 +66,13 @@ namespace DuplicateFinderMulti.VM
               {
                 GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
-                  if (t.Result)
-                    IsLoggedIn = true;
-                  else
+                  if (t.Result == UserType.None)
                     ViewModelLocator.DialogService.ShowMessage("Internet connection error or specified credentials are not correct.", true);
+                  else
+                  {
+                    UserType = t.Result;
+                    IsLoggedIn = true;
+                  }
 
                   IsCommunicating = false;
                 });
