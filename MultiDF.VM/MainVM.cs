@@ -1,5 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +12,7 @@ namespace MultiDF.VM
     public const string FILTER_IMAGE_FILES_ALL_FILES = "Image Files (*.bmp, *.jpg, *.png, *.gif)|*.bmp;*.jpg;*.png;*.gif|All Files (*.*)|*.*";
     public const string FILTER_XML_FILES = "XML Files (*.xml)|*.xml";
 
-    public MainVM()
+    public void Init()
     {
       _ProgressStartTime = DateTime.Now;
 
@@ -22,7 +22,6 @@ namespace MultiDF.VM
         {
           IsDirty = false,
           Name = "Project 1",
-          AllXMLDocs = new System.Collections.ObjectModel.ObservableCollection<XMLDoc>()
         };
 
         _SelectedProject.AllXMLDocs.Add(new XMLDoc()

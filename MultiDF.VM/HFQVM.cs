@@ -1,6 +1,6 @@
 ﻿using MultiDFCommon;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 using HFQOModel;
 using System;
 using System.Collections.Generic;
@@ -80,6 +80,13 @@ namespace MultiDF.VM
       set => Set(ref _XML, value);
     }
 
+    private bool _IsBusy;
+    public bool IsBusy
+    {
+      get => _IsBusy;
+      set => Set(ref _IsBusy, value);
+    }
+
     private string _SearchText;
     public string SearchText
     {
@@ -110,7 +117,7 @@ namespace MultiDF.VM
         {
           _OpenExamCommand = new RelayCommand(() =>
           {
-            if(Result.Count > 0)
+            if(Result != null && Result.Count > 0)
             {
               var SaveChanges = ViewModelLocator.DialogService.AskTernaryQuestion("Upload current result before opening new master file?");
 
@@ -123,8 +130,12 @@ namespace MultiDF.VM
               }
             }
 
+            IsBusy = true;
+
             ViewModelLocator.DataService.GetExamsDL().ContinueWith(t2 =>
             {
+              IsBusy = false;
+
               if (t2.IsFaulted)
               {
                 ViewModelLocator.DialogService.ShowMessage("Could not fetch exams list from the server. Please try again later. The error message is: " + t2.Exception.Message, true);
@@ -145,6 +156,8 @@ namespace MultiDF.VM
                     {
                       try
                       {
+                        IsBusy = true;
+
                         ViewModelLocator.Auth.IsCommunicating = true;
                         var MF = ViewModelLocator.DataService.DownloadExam(_SelectedAccess.access_id, Environment.MachineName);
 
@@ -154,18 +167,18 @@ namespace MultiDF.VM
 
                           //Store this downloaded data into an isolated storage file
                           IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
-                          var XPSFileName = DateTime.Now.ToString($"yyyyMMHHmmss_{MF.id}.xps");
+                          var XPSFileName = DateTime.Now.ToString("yyyyMMHHmmss") + $"_{MF.id}.xps";
                           string XPSFilePath;
                           using (IsolatedStorageFileStream isoStream = new IsolatedStorageFileStream(XPSFileName, FileMode.CreateNew, isoStore))
                           {
                             isoStream.Write(XPSBytes, 0, XPSBytes.Length);
                             XPSFilePath = isoStream.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(isoStream).ToString();
+                            //isoStore.DeleteFile(_XPSPath);
                           }
-
-                          XPSPath = XPSFilePath;
 
                           var XMLString = Encoding.UTF8.GetString(Encryption.Decrypt(Convert.FromBase64String(MF.xml)));
                           XMLDoc = XMLDoc.FromXML(XMLString);
+                          XPSPath = XPSFilePath;
 
                           Result.Clear();
                           RaisePropertyChanged(nameof(Result));
@@ -188,6 +201,7 @@ namespace MultiDF.VM
                       finally
                       {
                         ViewModelLocator.Auth.IsCommunicating = false;
+                        IsBusy = false;
                       }
                     }
                     else
@@ -288,23 +302,38 @@ namespace MultiDF.VM
         {
           _UploadResultCommand = new RelayCommand(() =>
           {
+            if(Result.Any(r => r.A1 == null))
+            {
+              ViewModelLocator.DialogService.ShowMessage("One or more entries do not have any value in A1 column. Please fix these entries before uploading result.", true);
+              return;
+            }
+
             if (ViewModelLocator.DialogService.AskBooleanQuestion("Are you sure you want to upload result to the server?"))
             {
+              IsBusy = true;
+
               ViewModelLocator.DataService.UploadResult(_SelectedAccess.exam_id, Environment.MachineName, Result.Select(r => r.ToHFQResultRow())).ContinueWith(t =>
               {
+                IsBusy = false;
+
                 if (!t.IsFaulted)
                 {
-                  ViewModelLocator.DialogService.ShowMessage("Results uploaded successfully.", false);
-                  SelectedAccess = null;
-                  Result = null;
-                  SelectedResultIndex = 0;
-                  SearchText = "";
+                  GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                  {
+                    ViewModelLocator.DialogService.ShowMessage("Results uploaded successfully.", false);
+                    SelectedAccess = null;
 
-                  //delete xps file from isolated storage
-                  IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
-                  isoStore.DeleteFile(_XPSPath);
-                  XPSPath = "";
-                  XMLDoc = null;
+                    Result.Clear();
+                    RaisePropertyChanged(nameof(Result));
+
+                    SelectedResultIndex = 0;
+                    SearchText = "";
+
+                    //delete xps file from isolated storage
+                    IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
+                    XPSPath = "";
+                    XMLDoc = null;
+                  });
                 }
                 else
                 {
@@ -319,6 +348,5 @@ namespace MultiDF.VM
         return _UploadResultCommand;
       }
     }
-
   }
 }

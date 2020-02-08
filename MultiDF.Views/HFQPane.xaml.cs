@@ -64,9 +64,13 @@ namespace MultiDF.Views
 
     private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      if (sender is ListBox lb)
+    }
+
+    private void ListBoxItem_MouseUp(object sender, MouseButtonEventArgs e)
+    {
+      if (sender is ListBoxItem lbi)
       {
-          QASelected?.Invoke(lb.SelectedItem as QA);
+        QASelected?.Invoke(lbi.DataContext as QA);
       }
     }
   }

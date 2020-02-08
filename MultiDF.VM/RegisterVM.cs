@@ -1,6 +1,6 @@
 ﻿using MultiDFCommon;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 
 namespace MultiDF.VM
 {

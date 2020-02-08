@@ -76,6 +76,7 @@ namespace MultiDF
       }
 
       PopulateMRUs();
+      ViewModelLocator.Main.Init();
     }
 
     private void PopulateMRUs()

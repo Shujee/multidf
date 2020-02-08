@@ -66,7 +66,7 @@ namespace HFQOModel
 
     public bool UploadExam(string xpsPath, string xmlPath, string exam_number, string exam_name, string description, int qa_count, string qa_json, string origfilename)
     {
-      var Response = REST.ExecuteRest<string>("exam", Method.POST,
+      var Response = REST.ExecuteRest<MasterFile>("exam", Method.POST,
                               new[]
                               {
                                   new Parameter(){ Name = "Authorization", Value = "Bearer " + _BearerToken, Type = ParameterType.HttpHeader},

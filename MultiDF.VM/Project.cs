@@ -1,5 +1,5 @@
 ﻿using MultiDFCommon;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -38,6 +38,16 @@ namespace MultiDF.VM
       ViewModelLocator.DocComparer.QACompared += DocComparer_QACompared;
       ViewModelLocator.DocComparer.QASkipped += DocComparer_QASkipped;
       ViewModelLocator.DocComparer.DocCompareCompleted += DocComparer_DocCompareCompleted;
+
+      AllXMLDocs = new ObservableCollection<XMLDoc>();
+      AllXMLDocs.CollectionChanged += (sender, e) =>
+      {
+        GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+        {
+          UploadExamCommand.RaiseCanExecuteChanged();
+          MergeAsPDFCommand.RaiseCanExecuteChanged();
+        });
+      };
     }
 
     private void DocComparer_QACompared(object sender, QAComparedArgs e)
@@ -90,29 +100,7 @@ namespace MultiDF.VM
       }
     }
 
-    private ObservableCollection<XMLDoc> _AllXMLDocs = new ObservableCollection<XMLDoc>();
-    public ObservableCollection<XMLDoc> AllXMLDocs
-    {
-      get { return _AllXMLDocs; }
-      set
-      {
-        if (_AllXMLDocs != null)
-          _AllXMLDocs.CollectionChanged -= _AllXMLDocs_CollectionChanged;
-
-        Set(ref _AllXMLDocs, value);
-
-        if (_AllXMLDocs != null)
-        {
-          _AllXMLDocs.CollectionChanged += _AllXMLDocs_CollectionChanged;
-          RaisePropertyChanged(nameof(UploadExamCommand));
-        }
-      }
-    }
-
-    private void _AllXMLDocs_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-    {
-      RaisePropertyChanged(nameof(UploadExamCommand));
-    }
+    public ObservableCollection<XMLDoc> AllXMLDocs { get; private set; }
 
     private XMLDoc _SelectedDoc;
     public XMLDoc SelectedDoc
@@ -242,8 +230,6 @@ namespace MultiDF.VM
           () => this.AllXMLDocs.Count > 0);
         }
 
-        this.AllXMLDocs.CollectionChanged += (sender, e) => _MergeAsPDFCommand.RaiseCanExecuteChanged();
-
         return _MergeAsPDFCommand;
       }
     }
@@ -368,7 +354,10 @@ namespace MultiDF.VM
               });
             }
           },
-          () => ViewModelLocator.Auth.IsLoggedIn && (ViewModelLocator.Auth.UserType == HFQOModel.UserType.Admin || ViewModelLocator.Auth.UserType == HFQOModel.UserType.Uploader) && this.AllXMLDocs.Count > 0);
+          () => ViewModelLocator.Auth.IsLoggedIn && 
+                (ViewModelLocator.Auth.UserType == HFQOModel.UserType.Admin || 
+                ViewModelLocator.Auth.UserType == HFQOModel.UserType.Uploader) 
+                && this.AllXMLDocs.Count > 0);
         }
 
         return _UploadExamCommand;
@@ -445,9 +434,9 @@ namespace MultiDF.VM
       };
 
       if (insertAt != null)
-        this._AllXMLDocs.Insert(insertAt.Value, NewDoc);
+        this.AllXMLDocs.Insert(insertAt.Value, NewDoc);
       else
-        this._AllXMLDocs.Add(NewDoc);
+        this.AllXMLDocs.Add(NewDoc);
 
       graph.AddVertex(NewDoc);
 
@@ -465,7 +454,7 @@ namespace MultiDF.VM
           _RemoveSelectedDocCommand = new RelayCommand(() =>
           {
             graph.RemoveVertex(_SelectedDoc);
-            this._AllXMLDocs.Remove(_SelectedDoc);
+            this.AllXMLDocs.Remove(_SelectedDoc);
 
             this.IsDirty = true;
           },
@@ -502,6 +491,7 @@ namespace MultiDF.VM
 
                 this.IsDirty = false;
                 this._SavePath = TempSavePath;
+                this.Name = Path.GetFileNameWithoutExtension(_SavePath);
                 string ProjectXML = this.ToXML();
                 File.WriteAllText(TempSavePath, ProjectXML);
 
@@ -548,8 +538,8 @@ namespace MultiDF.VM
 
               //remove this doc from the graph and add again to clear old processed results
               graph.RemoveVertex(SelectedDoc);
-              var MyIndex = this._AllXMLDocs.IndexOf(SelectedDoc);
-              this._AllXMLDocs.Remove(SelectedDoc);
+              var MyIndex = this.AllXMLDocs.IndexOf(SelectedDoc);
+              this.AllXMLDocs.Remove(SelectedDoc);
 
               //now add it again as a new doc
               AddDocInternal(DocPath, MyIndex);

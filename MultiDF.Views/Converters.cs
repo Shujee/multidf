@@ -245,7 +245,7 @@ namespace MultiDF.Views
   {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      if (value == null)
+      if (value == null || (value is string s && s == ""))
         return null;
       else
       {
