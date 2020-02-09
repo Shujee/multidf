@@ -17,9 +17,9 @@ namespace MultiDFKeyGen
     private void GenerateButton_Click(object sender, RoutedEventArgs e)
     {
       if (txtEmail.Text.Trim() == "" || txtCode.Text.Trim() == "")
-        MessageBox.Show("E-mail and Code must be provided.", "Multi-DF KeyGen");
+        MessageBox.Show("E-mail and Code must be provided.", "MultiDF KeyGen");
       else if(!ExpiryDatePicker.SelectedDate.HasValue)
-        MessageBox.Show("Expiry date must be selected.", "Multi-DF KeyGen");
+        MessageBox.Show("Expiry date must be selected.", "MultiDF KeyGen");
       else
       {
         try
@@ -35,7 +35,7 @@ namespace MultiDFKeyGen
 
     private void CloseButton_Click(object sender, RoutedEventArgs e)
     {
-      if (MessageBox.Show("Are you sure you want to exit?", "Multi-DF KeyGen", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+      if (MessageBox.Show("Are you sure you want to exit?", "MultiDF KeyGen", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
         this.Close();
     }
 

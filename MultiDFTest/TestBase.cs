@@ -29,7 +29,12 @@ namespace MultiDF.Test
         SavePath = @"F:\some\path\project1.xml"
       };
 
-      P.AllXMLDocs = new System.Collections.ObjectModel.ObservableCollection<XMLDoc>(Enumerable.Range(1, 4).Select(i => CreateRandomXMLDoc()));
+      var Docs = Enumerable.Range(1, 4).Select(i => CreateRandomXMLDoc());
+
+      foreach (var D in Docs)
+      {
+        P.AllXMLDocs.Add(D);
+      }
 
       return P;
     }

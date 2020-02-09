@@ -72,7 +72,7 @@ namespace MultiDF
     {
       if (ViewModelLocator.Main.SelectedProject.IsDirty)
       {
-        if (ViewModelLocator.DialogService.AskBooleanQuestion("Save changes to active Multi-DF project?"))
+        if (ViewModelLocator.DialogService.AskBooleanQuestion("Save changes to active MultiDF project?"))
           ViewModelLocator.Main.SelectedProject.SaveCommand.Execute(null);
       }
 

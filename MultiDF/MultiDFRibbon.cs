@@ -187,7 +187,7 @@ namespace MultiDF
 
       foreach (Document Doc in Globals.ThisAddIn.Application.Documents)
       {
-        var DupTaskPanes = Globals.ThisAddIn.CustomTaskPanes.Where(tp => tp.Title.StartsWith("Multi-DF"));
+        var DupTaskPanes = Globals.ThisAddIn.CustomTaskPanes.Where(tp => tp.Title.StartsWith("MultiDF"));
 
         foreach (var TP in DupTaskPanes)
         {

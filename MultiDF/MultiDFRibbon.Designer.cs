@@ -80,7 +80,7 @@
       this.tabMultiDF.Groups.Add(this.grpSourceDocs);
       this.tabMultiDF.Groups.Add(this.grpAnalysis);
       this.tabMultiDF.Groups.Add(this.grpAbout);
-      this.tabMultiDF.Label = "Multi-DF";
+      this.tabMultiDF.Label = "MultiDF";
       this.tabMultiDF.Name = "tabMultiDF";
       // 
       // grpPane

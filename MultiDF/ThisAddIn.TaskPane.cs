@@ -51,7 +51,7 @@ namespace MultiDF
         // The first two arguments of the Add method specify a control to add to the custom task pane and the title to display on the task pane. 
         // The third argument, which is optional, specifies the parent window for the custom task pane. 
         var ucAP = new MultiDFPaneUC();
-        var NewTaskPane = this.CustomTaskPanes.Add(ucAP, $"Multi-DF (ver: {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()})", doc.ActiveWindow);
+        var NewTaskPane = this.CustomTaskPanes.Add(ucAP, $"MultiDF (ver: {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()})", doc.ActiveWindow);
 
         NewTaskPane.DockPosition = Office.MsoCTPDockPosition.msoCTPDockPositionLeft;
         NewTaskPane.Width = 575;
@@ -77,7 +77,7 @@ namespace MultiDF
           {
             var ctp = this.CustomTaskPanes[i - 1];
 
-            if (ctp.Title.StartsWith("Multi-DF"))
+            if (ctp.Title.StartsWith("MultiDF"))
               this.CustomTaskPanes.RemoveAt(i - 1); // If this is our task pane, remove it
           }
 
@@ -104,7 +104,7 @@ namespace MultiDF
         {
           // Get a reference to the window hosting the task pane
           var ctpWindow = (Word.Window)WordHelper.GetWindowSafe(_ctp);
-          if (_ctp.Title.StartsWith("Multi-DF") && ctpWindow == doc.ActiveWindow)
+          if (_ctp.Title.StartsWith("MultiDF") && ctpWindow == doc.ActiveWindow)
           {
             // If the title of this task pane is Select a date 
             // and the currently active window is hosting it, remove it

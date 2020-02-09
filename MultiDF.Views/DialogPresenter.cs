@@ -17,7 +17,7 @@ namespace MultiDF.Views
 
     public void ShowMessage(string msg, bool isError)
     {
-        MessageBox.Show(msg, "Multi-DF Word Add-in", MessageBoxButton.OK, isError? MessageBoxImage.Error : MessageBoxImage.Information);
+        MessageBox.Show(msg, "MultiDF Word Add-in", MessageBoxButton.OK, isError? MessageBoxImage.Error : MessageBoxImage.Information);
     }
 
     /// <summary>
@@ -44,7 +44,7 @@ namespace MultiDF.Views
     /// <returns></returns>
     public bool? AskTernaryQuestion(string msg)
     {
-      var Res = MessageBox.Show(msg, "Multi-DF", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
+      var Res = MessageBox.Show(msg, "MultiDF", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
 
       if (Res == MessageBoxResult.Yes)
         return true;
@@ -56,7 +56,7 @@ namespace MultiDF.Views
 
     public bool AskBooleanQuestion(string msg)
     {
-      var Res = MessageBox.Show(msg, "Multi-DF", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+      var Res = MessageBox.Show(msg, "MultiDF", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
       return Res == MessageBoxResult.Yes;
     }
 

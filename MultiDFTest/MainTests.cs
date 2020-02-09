@@ -139,9 +139,13 @@ namespace MultiDF.Test
       {
         IsDirty = true,
         Name = "Project 1",
-        AllXMLDocs = new System.Collections.ObjectModel.ObservableCollection<XMLDoc>(
-              Enumerable.Range(1, Faker.RandomNumber.Next(10, 60)).Select(i => CreateRandomXMLDoc()))
       };
+
+      var Docs = Enumerable.Range(1, Faker.RandomNumber.Next(10, 60)).Select(i => CreateRandomXMLDoc());
+      foreach (var D in Docs)
+      {
+        P.AllXMLDocs.Add(D);
+      }
 
       var MyXML = P.ToXML();
       var P2 = Project.FromXML(MyXML);

@@ -64,7 +64,7 @@ namespace MultiDF.VM.Properties {
         ///   Looks up a localized string similar to &lt;html&gt;
         ///&lt;head&gt;
         ///  &lt;title&gt;
-        ///    Multi-DF Results
+        ///    MultiDF Results
         ///  &lt;/title&gt;
         ///  &lt;style&gt;
         ///    thead {
