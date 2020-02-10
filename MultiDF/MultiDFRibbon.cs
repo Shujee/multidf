@@ -81,16 +81,19 @@ namespace MultiDF
 
     private void PopulateMRUs()
     {
-      foreach (var mru in ViewModelLocator.Main.MRU)
+      if (ViewModelLocator.Main.MRU != null && ViewModelLocator.Main.MRU.Count > 0)
       {
-        var DDI = Factory.CreateRibbonButton();
+        foreach (var mru in ViewModelLocator.Main.MRU)
+        {
+          var DDI = Factory.CreateRibbonButton();
 
-        DDI.Label = System.IO.Path.GetFileNameWithoutExtension(mru); //show only file name in the menu text
-        DDI.Tag = mru; //store full project file path in Tag. This will be used later in Click event to pass project file path to OpenCommand.
-        DDI.OfficeImageId = "PageOrientationPortrait";
-        DDI.Click += DDI_Click;
+          DDI.Label = System.IO.Path.GetFileNameWithoutExtension(mru); //show only file name in the menu text
+          DDI.Tag = mru; //store full project file path in Tag. This will be used later in Click event to pass project file path to OpenCommand.
+          DDI.OfficeImageId = "PageOrientationPortrait";
+          DDI.Click += DDI_Click;
 
-        btnOpenProject.Items.Add(DDI);
+          btnOpenProject.Items.Add(DDI);
+        }
       }
 
       var Sep = Factory.CreateRibbonSeparator();
@@ -99,13 +102,13 @@ namespace MultiDF
       var BrowseDDI = Factory.CreateRibbonButton();
 
       BrowseDDI.Label = "Browse...";
-      BrowseDDI.Tag = "BrowseButton"; //store full project file path in Tag. This will be used later in Click event to pass project file path to OpenCommand.
+      BrowseDDI.Tag = "BrowseButton";
       BrowseDDI.OfficeImageId = "FileOpen";
       BrowseDDI.Click += DDI_Click;
 
       btnOpenProject.Items.Add(BrowseDDI);
     }
-
+      
     private void DDI_Click(object sender, RibbonControlEventArgs e)
     {
       //Control Tag property holds full path of the Project file.

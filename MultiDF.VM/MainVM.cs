@@ -12,6 +12,12 @@ namespace MultiDF.VM
     public const string FILTER_IMAGE_FILES_ALL_FILES = "Image Files (*.bmp, *.jpg, *.png, *.gif)|*.bmp;*.jpg;*.png;*.gif|All Files (*.*)|*.*";
     public const string FILTER_XML_FILES = "XML Files (*.xml)|*.xml";
 
+    public MainVM()
+    {
+      if (VM.Properties.Settings.Default.MRU == null)
+        VM.Properties.Settings.Default.MRU = new System.Collections.Specialized.StringCollection();
+    }
+
     public void Init()
     {
       _ProgressStartTime = DateTime.Now;
@@ -85,9 +91,6 @@ namespace MultiDF.VM
       {
         NewCommand.Execute(null);
       }
-
-      if (VM.Properties.Settings.Default.MRU == null)
-        VM.Properties.Settings.Default.MRU = new System.Collections.Specialized.StringCollection();
 
       ViewModelLocator.Auth.PropertyChanged += Auth_PropertyChanged;
     }
