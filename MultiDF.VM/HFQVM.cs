@@ -47,8 +47,16 @@ namespace MultiDF.VM
           }
           else
           {
+            SelectedAccess = null;
+
+            Result.Clear();
+            RaisePropertyChanged(nameof(Result));
+
+            SelectedResultIndex = 0;
+            SearchText = "";
+
+            XPSPath = "";
             XMLDoc = null;
-            XPSPath = null;
           }
         }
       };
@@ -329,8 +337,6 @@ namespace MultiDF.VM
                     SelectedResultIndex = 0;
                     SearchText = "";
 
-                    //delete xps file from isolated storage
-                    IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
                     XPSPath = "";
                     XMLDoc = null;
                   });
