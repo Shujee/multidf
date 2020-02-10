@@ -100,7 +100,7 @@ namespace MultiDF.VM
       }
     }
 
-    public ObservableCollection<XMLDoc> AllXMLDocs { get; private set; }
+    public ObservableCollection<XMLDoc> AllXMLDocs { get; set; }
 
     private XMLDoc _SelectedDoc;
     public XMLDoc SelectedDoc
@@ -568,6 +568,9 @@ namespace MultiDF.VM
           {
             foreach (var Doc in this.AllXMLDocs)
               Doc.RaisePropertyChanged(nameof(XMLDoc.IsSyncWithSource));
+
+            if (this.AllXMLDocs.All(d => d.IsSyncWithSource))
+              ViewModelLocator.DialogService.ShowMessage("All documents are in sync with their sources.", false);
           },
           () => !IsExtractingQA);
         }
