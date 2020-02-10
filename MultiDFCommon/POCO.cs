@@ -1,4 +1,4 @@
-﻿namespace HFQOModel
+﻿namespace MultiDFCommon
 {
   public enum UserType
   {

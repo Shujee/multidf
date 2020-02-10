@@ -291,6 +291,10 @@
       <Project>{F0EC84C1-2903-4152-BF36-744C51622EE8}</Project>
       <Name>HFQOModel</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MultiDFCommon\MultiDFCommon.csproj">
+      <Project>{73855FCF-BA21-4447-AB46-303506516534}</Project>
+      <Name>MultiDFCommon</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterCompile">

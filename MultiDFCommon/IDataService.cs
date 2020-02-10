@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace HFQOModel
+namespace MultiDFCommon
 {
   public interface IDataService
   {

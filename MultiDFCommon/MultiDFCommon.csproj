@@ -45,7 +45,9 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Encryption.cs" />
+    <Compile Include="IDataService.cs" />
     <Compile Include="LicenseGen.cs" />
+    <Compile Include="POCO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

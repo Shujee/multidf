@@ -59,8 +59,6 @@
     </Compile>
     <Compile Include="DesignDataService.cs" />
     <Compile Include="HFQODataService.cs" />
-    <Compile Include="IDataService.cs" />
-    <Compile Include="POCO.cs" />
     <Compile Include="ProgressableStreamContent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -79,6 +77,12 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MultiDFCommon\MultiDFCommon.csproj">
+      <Project>{73855FCF-BA21-4447-AB46-303506516534}</Project>
+      <Name>MultiDFCommon</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

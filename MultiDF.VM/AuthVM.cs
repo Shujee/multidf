@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using HFQOModel;
+using MultiDFCommon;
 using Settings = MultiDF.VM.Properties.Settings;
 
 namespace MultiDF.VM

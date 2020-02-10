@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using MultiDFCommon;
 
 namespace MultiDF.VM
 {
@@ -10,7 +11,7 @@ namespace MultiDF.VM
 
     }
 
-    public HFQResultRowVM(HFQOModel.HFQResultRow resultRow)
+    public HFQResultRowVM(HFQResultRow resultRow)
     {
       _Q = resultRow.q;
       _A1 = resultRow.a1;
@@ -85,9 +86,9 @@ namespace MultiDF.VM
     /// Returns a new HFQResultRow object (the model object) that can then be passed to the data service.
     /// </summary>
     /// <returns></returns>
-    public HFQOModel.HFQResultRow ToHFQResultRow()
+    public HFQResultRow ToHFQResultRow()
     {
-      return new HFQOModel.HFQResultRow()
+      return new HFQResultRow()
       {
         q = _Q,
         a1 = _A1,

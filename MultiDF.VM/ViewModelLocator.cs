@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using HFQOModel;
+using MultiDFCommon;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
@@ -66,8 +67,6 @@ namespace MultiDF.VM
       SimpleIoc.Default.Register<IQAExtractionStrategy, DefaultQAExtractionStrategy>();
       SimpleIoc.Default.Register<IQAComparer, DefaultQAComparer>();
       SimpleIoc.Default.Register<IDocComparer, DefaultDocComparer>();
-
-      
     }
 
     /// <summary>

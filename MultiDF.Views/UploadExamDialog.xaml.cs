@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Interop;
+using MultiDFCommon;
 
 namespace MultiDF.Views
 {
@@ -117,7 +118,7 @@ namespace MultiDF.Views
     {
       if (e.Item is MasterFile MF)
       {
-        e.Accepted = 
+        e.Accepted =
                       MF.number.IndexOf(SearchBox.Text, StringComparison.OrdinalIgnoreCase) >= 0 ||
                       MF.name.IndexOf(SearchBox.Text, StringComparison.OrdinalIgnoreCase) >= 0 ||
                       MF.origfilename.IndexOf(SearchBox.Text, StringComparison.OrdinalIgnoreCase) >= 0;

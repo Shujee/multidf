@@ -355,8 +355,8 @@ namespace MultiDF.VM
             }
           },
           () => ViewModelLocator.Auth.IsLoggedIn && 
-                (ViewModelLocator.Auth.UserType == HFQOModel.UserType.Admin || 
-                ViewModelLocator.Auth.UserType == HFQOModel.UserType.Uploader) 
+                (ViewModelLocator.Auth.UserType == UserType.Admin || 
+                ViewModelLocator.Auth.UserType == UserType.Uploader) 
                 && this.AllXMLDocs.Count > 0);
         }
 
