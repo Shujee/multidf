@@ -1,13 +1,9 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
-using MultiDF.VM;
-using MultiDF.Views;
-using System.Linq;
+using HFQOViews;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Media;
-using System.Windows.Shapes;
+using VMBase;
 
 namespace HFQOApp
 {
@@ -19,21 +15,16 @@ namespace HFQOApp
     //Word's Point (1/72 inch) to Point to WPF's Pixel (1/96 inch) ratio.
     const float POINT2PIXEL = 96f / 72f;
 
-    private Rectangle HighlightRect = new Rectangle();
+    private readonly DialogPresenter DLG = new DialogPresenter();
 
     public MainWindow()
     {
-      SimpleIoc.Default.Register<IDialogService, DialogPresenter>();
+      SimpleIoc.Default.Register<MultiDFCommon.IDialogService>(() => DLG);
+      SimpleIoc.Default.Register<HFQOVM.IDialogService>(() => DLG);
 
       InitializeComponent();
 
       DocumentViewer.FitToWidthCommand.Execute(null, DV);
-      
-      HighlightRect.Fill = new SolidColorBrush(Colors.SkyBlue);
-      HighlightRect.Opacity = 0.5;
-      HighlightRect.RenderTransform = new TranslateTransform(0, 0);
-      
-      Panel.SetZIndex(HighlightRect, 1000);
 
 #if(DEBUG)
       //DV.Document = (FixedDocumentSequence)(new PathToFixedDocumentConverter().Convert(@"F:\Office\Larry Gong\\Analysis\Sample Question for DF Multi.xps", typeof(FixedDocumentSequence), null, null));

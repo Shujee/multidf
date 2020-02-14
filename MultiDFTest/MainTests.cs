@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using VMBase;
 
 namespace MultiDF.Test
 {
@@ -16,8 +17,8 @@ namespace MultiDF.Test
     {
       var DirName = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
       var FileName = System.IO.Path.Combine(DirName, "File 1 for DF.docx");
-      var Paras = ViewModelLocator.WordService.GetDocumentParagraphs(FileName, token, null);
-      var QAs = ViewModelLocator.QAExtractionStrategy.ExtractQAs(Paras, new System.Threading.CancellationToken());
+      var Paras = VM.ViewModelLocator.WordService.GetDocumentParagraphs(FileName, token, null);
+      var QAs = VM.ViewModelLocator.QAExtractionStrategy.ExtractQAs(Paras, new System.Threading.CancellationToken());
       Assert.IsTrue(QAs.Count == 18);
       Assert.IsTrue(QAs[8].Choices.Count == 4);
       Assert.IsTrue(QAs[8].Answer == "C");
@@ -28,8 +29,8 @@ namespace MultiDF.Test
     {
       var DirName = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
       var FileName = System.IO.Path.Combine(DirName, "File 2 for DF.docx");
-      var Paras = ViewModelLocator.WordService.GetDocumentParagraphs(FileName, token, null);
-      var QAs = ViewModelLocator.QAExtractionStrategy.ExtractQAs(Paras, new System.Threading.CancellationToken());
+      var Paras = VM.ViewModelLocator.WordService.GetDocumentParagraphs(FileName, token, null);
+      var QAs = VM.ViewModelLocator.QAExtractionStrategy.ExtractQAs(Paras, new System.Threading.CancellationToken());
 
       Assert.IsTrue(QAs.Count == 10);
       Assert.IsTrue(QAs[4].Choices.Count == 4);
@@ -42,8 +43,8 @@ namespace MultiDF.Test
     {
       var DirName = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
       var FileName = System.IO.Path.Combine(DirName, "File 3 for DF.docx");
-      var Paras = ViewModelLocator.WordService.GetDocumentParagraphs(FileName, token, null);
-      var QAs = ViewModelLocator.QAExtractionStrategy.ExtractQAs(Paras, new System.Threading.CancellationToken());
+      var Paras = VM.ViewModelLocator.WordService.GetDocumentParagraphs(FileName, token, null);
+      var QAs = VM.ViewModelLocator.QAExtractionStrategy.ExtractQAs(Paras, new System.Threading.CancellationToken());
 
       Assert.IsTrue(QAs.Count == 10);
       Assert.IsTrue(QAs[5].Choices.Count == 3);
@@ -262,7 +263,7 @@ namespace MultiDF.Test
 
               if (graph.AddEdge(Edge))
               {
-                var Task = ViewModelLocator.DocComparer.Compare(V1, V2, QAComparer, true, token);
+                var Task = VM.ViewModelLocator.DocComparer.Compare(V1, V2, QAComparer, true, token);
                 Task.ContinueWith(t =>
                   {
                     Edge.Tag = t.Result;

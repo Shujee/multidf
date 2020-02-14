@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MultiDF.VM
+namespace VMBase
 {
   public class FileAttributesComparison
   {

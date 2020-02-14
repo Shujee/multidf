@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
+using VMBase;
 
 namespace MultiDF.VM
 {
@@ -53,8 +54,9 @@ namespace MultiDF.VM
   /// For custom serialization, we are inheriting the QuickGraph class
   /// </summary>
   [Serializable]
+  [KnownType(typeof(XMLDoc))]
   [KnownType(typeof(XMLDoc[]))]
-  [KnownType(typeof(DFResult[]))]
+  [KnownType(typeof(DFResult))]
   public class OurGraph : UndirectedGraph<XMLDoc, OurEdge>, ISerializable
   {
     private double _DiffThreshold = .2;

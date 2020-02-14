@@ -5,9 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:vm="clr-namespace:MultiDF.VM;assembly=MultiDF.VM"
+             xmlns:vmbase="clr-namespace:VMBase;assembly=VMBase"
              mc:Ignorable="d" 
              Background="White" BorderBrush="Gray" BorderThickness="1"
-             d:DataContext="{d:DesignInstance Type=vm:FileAttributesComparison, IsDesignTimeCreatable=True}">
+             d:DataContext="{d:DesignInstance Type=vmbase:FileAttributesComparison, IsDesignTimeCreatable=True}">
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="Auto" />

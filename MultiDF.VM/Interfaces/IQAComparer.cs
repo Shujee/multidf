@@ -1,4 +1,6 @@
-﻿namespace MultiDF.VM
+﻿using VMBase;
+
+namespace MultiDF.VM
 {
   public interface IQAComparer
   {

@@ -1,12 +1,8 @@
-﻿using MultiDF.Views;
-using MultiDF.VM;
-using GalaSoft.MvvmLight.Ioc;
+﻿using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Office.Interop.Word;
+using MultiDF.Views;
+using MultiDF.VM;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using Word = Microsoft.Office.Interop.Word;
 
@@ -14,11 +10,15 @@ namespace MultiDF
 {
   public partial class ThisAddIn : IWordService
   {
+    private readonly DialogPresenter DLG = new DialogPresenter();
+
     private void ThisAddIn_Startup(object sender, System.EventArgs e)
     {
       //Services injection
       SimpleIoc.Default.Register<IWordService>(() => this);
-      SimpleIoc.Default.Register<IDialogService, DialogPresenter>();
+
+      SimpleIoc.Default.Register<MultiDFCommon.IDialogService>(() => DLG);
+      SimpleIoc.Default.Register<MultiDF.VM.IDialogService>(() => DLG);
 
       var ExpiryDate = ViewModelLocator.Register.ExpiryDate;
 

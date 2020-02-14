@@ -136,6 +136,18 @@
       <Project>{20431550-13a3-444d-b398-6a13d32ca47c}</Project>
       <Name>MultiDF.VM</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MultiDFCommon\MultiDFCommon.csproj">
+      <Project>{73855FCF-BA21-4447-AB46-303506516534}</Project>
+      <Name>MultiDFCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ViewsBase\ViewsBase.csproj">
+      <Project>{9652f8f9-8923-479c-9ffe-a0bd084baf65}</Project>
+      <Name>ViewsBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VMBase\VMBase.csproj">
+      <Project>{433f61bd-9a2f-41d0-82ab-42af8bb94df7}</Project>
+      <Name>VMBase</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

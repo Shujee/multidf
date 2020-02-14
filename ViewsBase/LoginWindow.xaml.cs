@@ -1,10 +1,10 @@
-﻿using MultiDF.VM;
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
+using VMBase;
 
-namespace MultiDF.Views
+namespace ViewsBase
 {
   public partial class LoginWindow
   {
@@ -32,16 +32,16 @@ namespace MultiDF.Views
       InitializeComponent();
 
       //Password box cannot be bound in XAML
-      PasswordTextBox.Password = ViewModelLocator.Auth.Password;
+      PasswordTextBox.Password = ViewModelLocatorBase.Auth.Password;
     }
 
     private void OK_Click(object sender, System.Windows.RoutedEventArgs e)
     {
-      ViewModelLocator.Auth.Password = PasswordTextBox.Password; //PasswordBox is not using Binding
+      ViewModelLocatorBase.Auth.Password = PasswordTextBox.Password; //PasswordBox is not using Binding
 
-      if(string.IsNullOrEmpty(ViewModelLocator.Auth.Email ) || string.IsNullOrEmpty(ViewModelLocator.Auth.Password))
+      if(string.IsNullOrEmpty(ViewModelLocatorBase.Auth.Email ) || string.IsNullOrEmpty(ViewModelLocatorBase.Auth.Password))
       {
-        ViewModelLocator.DialogService.ShowMessage("E-mail and Password fields must not be blank.", true);
+        ViewModelLocatorBase.DialogService.ShowMessage("E-mail and Password fields must not be blank.", true);
         return;
       }
 

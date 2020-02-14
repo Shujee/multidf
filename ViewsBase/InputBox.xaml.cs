@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 
-namespace MultiDF.Views
+namespace ViewsBase
 {
   /// <summary>
   /// Interaction logic for InputBox.xaml

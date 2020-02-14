@@ -5,6 +5,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:MultiDF.Views"
+             xmlns:viewbase="clr-namespace:ViewsBase;assembly=ViewsBase"
              xmlns:vm="clr-namespace:MultiDF.VM;assembly=MultiDF.VM"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="800"
@@ -19,10 +20,10 @@
         </ResourceDictionary.MergedDictionaries>
         
         <BooleanToVisibilityConverter x:Key="B2VConverter" />
-        <local:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
-        <local:ConnectionStatusToStringConverter x:Key="ConnectionStatusToStringConverter" />
-        <local:PathToFileNameConverter x:Key="PathToFileNameConverter" />
-        <local:NonZeroToTrueConverter x:Key="NonZeroToTrueConverter" />
+        <viewbase:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
+        <viewbase:ConnectionStatusToStringConverter x:Key="ConnectionStatusToStringConverter" />
+        <viewbase:PathToFileNameConverter x:Key="PathToFileNameConverter" />
+        <viewbase:NonZeroToTrueConverter x:Key="NonZeroToTrueConverter" />
 
 
         <Style TargetType="Button" x:Key="ToolbarButton">
@@ -91,7 +92,7 @@
 
               <StackPanel Orientation="Horizontal" Grid.Column="1">
                 <TextBlock Text="{Binding Name}" FontSize="16" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="0,10,0,9" />
-                <Button x:Name="OpenSourceButton" Command="{Binding OpenSourceCommand}" fa:Awesome.Content="FolderOpen" ToolTip="Click to open source document" FontSize="14" Foreground="#00aff0" 
+                <Button x:Name="OpenSourceButton" Command="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=DataContext.SelectedProject.OpenSourceCommand}" fa:Awesome.Content="FolderOpen" ToolTip="Click to open source document" FontSize="14" Foreground="#00aff0" 
                       Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="6,3" Focusable="False">
                   <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource ImageButtonStyle}">

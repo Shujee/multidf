@@ -9,7 +9,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace MultiDF.Views
+namespace ViewsBase
 {
   public class WatermarkService
   {

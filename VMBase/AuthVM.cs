@@ -1,10 +1,9 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
-using HFQOModel;
 using MultiDFCommon;
-using Settings = MultiDF.VM.Properties.Settings;
+using Settings = VMBase.Properties.Settings;
 
-namespace MultiDF.VM
+namespace VMBase
 {
   /// <summary>
   /// Handles client authentication (login/logout etc.)
@@ -59,16 +58,16 @@ namespace MultiDF.VM
             if (!string.IsNullOrEmpty(Email) || !string.IsNullOrEmpty(Password))
               RememberMe = true;
 
-            if (ViewModelLocator.DialogService.ShowLogin())
+            if (ViewModelLocatorBase.DialogService.ShowLogin())
             {
               IsCommunicating = true;
 
-              ViewModelLocator.DataService.Login(_Email, _Password).ContinueWith(t =>
+              ViewModelLocatorBase.DataService.Login(_Email, _Password).ContinueWith(t =>
               {
                 GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                   if (t.Result == UserType.None)
-                    ViewModelLocator.DialogService.ShowMessage("Internet connection error or specified credentials are not correct.", true);
+                    ViewModelLocatorBase.DialogService.ShowMessage("Internet connection error or specified credentials are not correct.", true);
                   else
                   {
                     UserType = t.Result;
@@ -108,7 +107,7 @@ namespace MultiDF.VM
           _LogoutCommand = new RelayCommand(() =>
           {
             IsCommunicating = true;
-            ViewModelLocator.DataService.Logout().ContinueWith(t =>
+            ViewModelLocatorBase.DataService.Logout().ContinueWith(t =>
             {
               GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
               {

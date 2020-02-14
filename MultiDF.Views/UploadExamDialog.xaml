@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultiDF.Views"
+        xmlns:viewbase="clr-namespace:ViewsBase;assembly=ViewsBase"
         xmlns:vm="clr-namespace:MultiDF.VM;assembly=MultiDF.VM"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
@@ -17,12 +18,12 @@
   <Window.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="Styles.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/ViewsBase;component/Styles.xaml" />
       </ResourceDictionary.MergedDictionaries>
 
       <CollectionViewSource x:Key="QACVS" Source="{Binding Exams}" IsLiveFilteringRequested="True" Filter="CollectionViewSource_Filter" />
 
-      <local:NegationConverter x:Key="NegationConverter" />
+      <viewbase:NegationConverter x:Key="NegationConverter" />
       <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </ResourceDictionary>
   </Window.Resources>
@@ -131,9 +132,9 @@
               <TextBox x:Name="SearchBox" Text="{Binding SearchText}" Padding="6" Margin="6,3" Height="40" VerticalContentAlignment="Center" 
                        Grid.Column="1" HorizontalAlignment="Right" ToolTip="Search exams by number, name or file name" Width="300" BorderThickness="0,0,0,1"
                        KeyDown="SearchBox_KeyDown">
-                <local:WatermarkService.Watermark>
+                <viewbase:WatermarkService.Watermark>
                   <TextBlock Text="Search" />
-                </local:WatermarkService.Watermark>
+                </viewbase:WatermarkService.Watermark>
               </TextBox>
 
               <Button Padding="3" Click="ClearButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Margin="28,6" ToolTip="Clear search text" Width="Auto" Grid.Column="1">

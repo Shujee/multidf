@@ -25,7 +25,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>5</ApplicationRevision>
+    <ApplicationRevision>6</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -83,6 +83,7 @@
     </Reference>
     <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="PresentationUI, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="ReachFramework" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -155,13 +156,25 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MultiDF.Views\MultiDF.Views.csproj">
-      <Project>{dcede48b-2ced-4d11-9547-62261c20e460}</Project>
-      <Name>MultiDF.Views</Name>
+    <ProjectReference Include="..\HFQOViews\HFQOViews.csproj">
+      <Project>{81efcec9-d079-4a90-a349-c2b7f314d52a}</Project>
+      <Name>HFQOViews</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MultiDF.VM\MultiDF.VM.csproj">
-      <Project>{20431550-13a3-444d-b398-6a13d32ca47c}</Project>
-      <Name>MultiDF.VM</Name>
+    <ProjectReference Include="..\HFQOVM\HFQOVM.csproj">
+      <Project>{c681f0e1-358f-4329-997a-0a8fb0249a91}</Project>
+      <Name>HFQOVM</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MultiDFCommon\MultiDFCommon.csproj">
+      <Project>{73855FCF-BA21-4447-AB46-303506516534}</Project>
+      <Name>MultiDFCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ViewsBase\ViewsBase.csproj">
+      <Project>{9652f8f9-8923-479c-9ffe-a0bd084baf65}</Project>
+      <Name>ViewsBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VMBase\VMBase.csproj">
+      <Project>{433f61bd-9a2f-41d0-82ab-42af8bb94df7}</Project>
+      <Name>VMBase</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

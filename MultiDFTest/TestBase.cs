@@ -4,6 +4,7 @@ using System.Threading;
 using MultiDF.VM;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using VMBase;
 
 namespace MultiDF.Test
 {

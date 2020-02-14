@@ -182,7 +182,7 @@ namespace MultiDF
 
     private void RegisterButton_Click(object sender, RibbonControlEventArgs e)
     {
-      VM.ViewModelLocator.DialogService.OpenRegisterWindow();
+      VM.ViewModelLocator.DialogServiceMultiDF.OpenRegisterWindow();
 
       btnShowHidePane.Visible = VM.ViewModelLocator.Register.IsRegistered;
 
@@ -207,7 +207,7 @@ namespace MultiDF
 
     private void AboutButton_Click(object sender, RibbonControlEventArgs e)
     {
-      VM.ViewModelLocator.DialogService.OpenAboutWindow();
+      VM.ViewModelLocator.DialogServiceMultiDF.OpenAboutWindow();
     }
 
     private void btnLogin_Click(object sender, RibbonControlEventArgs e)

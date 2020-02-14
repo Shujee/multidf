@@ -4,10 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using VMBase;
 
 namespace MultiDF.VM
 {
-  public partial class MainVM : ViewModelBase
+  public partial class MainVM : VMBase.MainBase
   {
     public const string FILTER_IMAGE_FILES_ALL_FILES = "Image Files (*.bmp, *.jpg, *.png, *.gif)|*.bmp;*.jpg;*.png;*.gif|All Files (*.*)|*.*";
     public const string FILTER_XML_FILES = "XML Files (*.xml)|*.xml";
@@ -214,7 +215,7 @@ namespace MultiDF.VM
                 {
                   //check if SourcePath contains only file name, not full path. If so, check if the document resides in project's folder (support for relative path).
                   //If both of these conditions are true, then update SourcePath to fully qualified path using project path.
-                  if (Path.GetFileName(Doc.SourcePath) == Doc.SourcePath)
+                  if (!string.IsNullOrEmpty(Doc.SourcePath) && Path.GetFileName(Doc.SourcePath) == Doc.SourcePath)
                   {
                     if (File.Exists(Path.Combine(Path.GetDirectoryName( ProjectPath), Doc.SourcePath)))
                     {
@@ -223,7 +224,7 @@ namespace MultiDF.VM
                     }
                   }
 
-                  if (!File.Exists(Doc.SourcePath))
+                  if (string.IsNullOrEmpty(Doc.SourcePath) || !File.Exists(Doc.SourcePath))
                   {
                     var Res = ViewModelLocator.DialogService.AskTernaryQuestion($"Document '{Doc.SourcePath}' does not exist on the disk. Do you want to locate it manually?");
 
@@ -278,34 +279,5 @@ namespace MultiDF.VM
 
       VM.Properties.Settings.Default.Save();
     }
-
-    #region "Status"
-    public string ProgressMessage { get; private set; }
-    public double ProgressValue { get; private set; }
-
-    private DateTime _ProgressStartTime = DateTime.Now;
-    public TimeSpan ElapsedTime => DateTime.Now.Subtract(_ProgressStartTime);
-    public TimeSpan EstimatedRemainingTime => ProgressValue == 0 ? TimeSpan.Zero : TimeSpan.FromSeconds((ElapsedTime.TotalSeconds / ProgressValue) * (1 - ProgressValue));
-
-    /// <summary>
-    /// Updates main progress bar message and value. Runs code on UI thread because UI elements is bound to these properties.
-    /// </summary>
-    /// <param name="markStartTime"></param>
-    /// <param name="msg"></param>
-    /// <param name="value"></param>
-    public void UpdateProgress(bool markStartTime, string msg, double value)
-    {
-      GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
-      {
-        if (markStartTime)
-          _ProgressStartTime = DateTime.Now;
-
-        if (msg != null)
-          ProgressMessage = msg;
-
-        ProgressValue = value;
-      });
-    }
-    #endregion
   }
 }

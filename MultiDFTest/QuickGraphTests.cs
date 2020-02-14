@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MultiDF.VM;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QuickGraph;
+using VMBase;
 
 namespace MultiDF.Test
 {

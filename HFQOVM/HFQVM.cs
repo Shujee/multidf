@@ -1,19 +1,18 @@
-﻿using MultiDFCommon;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
-using HFQOModel;
+using MultiDFCommon;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using VMBase;
 
-namespace MultiDF.VM
+namespace HFQOVM
 {
-  public class HFQVM : ViewModelBase
+  public class HFQVM : VMBase.MainBase
   {
     public event Action<HFQResultRowVM> NewResultRowAdded;
 
@@ -29,13 +28,13 @@ namespace MultiDF.VM
 
           if(ViewModelLocator.Auth.IsLoggedIn)
           {
-            ViewModelLocator.Main.UpdateProgress(true, "Fetching master files list", 0);
+              UpdateProgress(true, "Fetching master files list", 0);
             ViewModelLocator.DataService.GetExamsDL().ContinueWith(t2 => {
               if (!t2.IsFaulted)
               {
                 GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
-                  ViewModelLocator.Main.UpdateProgress(true, "Ready", 0);
+                  UpdateProgress(true, "Ready", 0);
                   MyExams = t2.Result;
                   RaisePropertyChanged(nameof(MyExams));
 
@@ -152,11 +151,11 @@ namespace MultiDF.VM
               {
                 GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
-                  ViewModelLocator.Main.UpdateProgress(true, "Ready", 0);
+                  UpdateProgress(true, "Ready", 0);
                   MyExams = t2.Result;
                   RaisePropertyChanged(nameof(MyExams));
 
-                  var Res = ViewModelLocator.DialogService.ShowExamsListDialog();
+                  var Res = ViewModelLocator.DialogServiceHFQ.ShowExamsListDialog();
 
                   if (Res)
                   {

@@ -25,12 +25,12 @@ namespace MultiDF.TestingShell
 
     private void AboutButton_Click(object sender, RoutedEventArgs e)
     {
-      ViewModelLocator.DialogService.OpenAboutWindow();
+      ViewModelLocator.DialogServiceMultiDF.OpenAboutWindow();
     }
 
     private void RegisterButton_Click(object sender, RoutedEventArgs e)
     {
-      ViewModelLocator.DialogService.OpenRegisterWindow();
+      ViewModelLocator.DialogServiceMultiDF.OpenRegisterWindow();
       ShowHidePaneButton.Visibility = VM.ViewModelLocator.Register.IsRegistered ? Visibility.Visible : Visibility.Collapsed;
     }
 

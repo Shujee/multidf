@@ -144,30 +144,19 @@
     <Compile Include="AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters.cs" />
     <Compile Include="DiffWindow.xaml.cs">
       <DependentUpon>DiffWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="DummyWordService.cs" />
-    <Compile Include="ExamsListDialog.xaml.cs">
-      <DependentUpon>ExamsListDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="FileComparisonTooltip.xaml.cs">
       <DependentUpon>FileComparisonTooltip.xaml</DependentUpon>
     </Compile>
     <Compile Include="UploadExamDialog.xaml.cs">
       <DependentUpon>UploadExamDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="InputBox.xaml.cs">
-      <DependentUpon>InputBox.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="LoginWindow.xaml.cs">
-      <DependentUpon>LoginWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="NativeMethods.cs" />
     <Compile Include="NoButtonsWindow.cs" />
-    <Compile Include="HFQPane.xaml.cs">
-      <DependentUpon>HFQPane.xaml</DependentUpon>
-    </Compile>
     <Compile Include="RegisterWindow.xaml.cs">
       <DependentUpon>RegisterWindow.xaml</DependentUpon>
     </Compile>
@@ -181,12 +170,7 @@
       <DependentUpon>ResultsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="TreeViewItemTemplateSelector.cs" />
-    <Compile Include="Watermark.cs" />
     <Page Include="AboutWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ExamsListDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -206,25 +190,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="InputBox.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="LoginWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Converters.cs" />
     <Compile Include="DialogPresenter.cs" />
     <Page Include="DiffWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="HFQPane.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -243,10 +214,6 @@
     <Page Include="StretchedTreeViewItemStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Styles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -294,6 +261,14 @@
     <ProjectReference Include="..\MultiDFCommon\MultiDFCommon.csproj">
       <Project>{73855FCF-BA21-4447-AB46-303506516534}</Project>
       <Name>MultiDFCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ViewsBase\ViewsBase.csproj">
+      <Project>{9652f8f9-8923-479c-9ffe-a0bd084baf65}</Project>
+      <Name>ViewsBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VMBase\VMBase.csproj">
+      <Project>{433f61bd-9a2f-41d0-82ab-42af8bb94df7}</Project>
+      <Name>VMBase</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

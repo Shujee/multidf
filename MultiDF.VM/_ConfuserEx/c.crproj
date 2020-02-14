@@ -23,4 +23,5 @@
 <probePath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7</probePath>
 <probePath>..\..\..\MultiDFCommon\bin\Release</probePath>
 <probePath>..\..\..\HFQOModel\bin\Release</probePath>
+<probePath>..\..\..\VMBase\bin\Release</probePath>
 </project>

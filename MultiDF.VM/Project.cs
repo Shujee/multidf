@@ -11,9 +11,22 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using VMBase;
+using System.Xml.Linq;
+using System.Text;
 
 namespace MultiDF.VM
 {
+  /// <summary>
+  /// Public property of this type are serialized as XML attribute instead of XML child element.
+  /// </summary>
+  /// <typeparam name="T"></typeparam>
+  public class AttributeProperty<T>
+  {
+    [XmlAttribute]
+    public T Value { get; set; }
+  }
+
   /// <summary>
   /// Represents a MultiDF project. A project is a set of input files and ad hoc/complete results.
   /// </summary>
@@ -21,6 +34,12 @@ namespace MultiDF.VM
   [KnownType(typeof(OurGraph))]
   public class Project : GalaSoft.MvvmLight.ObservableObject, IDisposable
   {
+    public AttributeProperty<string> Version
+    {
+      get => new AttributeProperty<string>() { Value = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() };
+      set { } //Serializer writes a property to the output only when it has a setter
+    }
+
     //Token will be used to cancel running comparisons.
     private readonly CancellationTokenSource _TokenSource = new CancellationTokenSource();
     private CancellationToken token;
@@ -154,7 +173,7 @@ namespace MultiDF.VM
         {
           _OpenResultsWindowCommand = new RelayCommand(() =>
           {
-            ViewModelLocator.DialogService.OpenResultsWindow();
+            ViewModelLocator.DialogServiceMultiDF.OpenResultsWindow();
           },
           () => true);
         }
@@ -251,7 +270,7 @@ namespace MultiDF.VM
             VM.FileName = this.AllXMLDocs.FirstOrDefault()?.Name;
             VM.QACount = this.AllXMLDocs.Sum(doc => doc.QAs.Count);
 
-            var Res = ViewModelLocator.DialogService.ShowUploadExamDialog(VM);          
+            var Res = ViewModelLocator.DialogServiceMultiDF.ShowUploadExamDialog(VM);          
 
             if (Res && ((VM.CreateNew && !string.IsNullOrEmpty(VM.NewExamName)) || (!VM.CreateNew && VM.SelectedExam != null)))
             {
@@ -294,7 +313,7 @@ namespace MultiDF.VM
 
                   //Create the XML file
                   var XMLDoc = new XMLDoc() { SourcePath = TempDocxPath };
-                  XMLDoc.UpdateQAs().ContinueWith(t2 =>
+                  UpdateQAs(XMLDoc).ContinueWith(t2 =>
                   {
                     if (t2.IsCompleted && !t2.IsFaulted)
                     {
@@ -441,7 +460,7 @@ namespace MultiDF.VM
       graph.AddVertex(NewDoc);
 
       //Populate QAs for the newly added document. This call is asynchronous.
-      return NewDoc.UpdateQAs();
+      return UpdateQAs(NewDoc);
     }
 
     private RelayCommand _RemoveSelectedDocCommand;
@@ -748,7 +767,7 @@ namespace MultiDF.VM
         {
           _OpenDiffCommand = new RelayCommand<DFResultRow>((row) =>
           {
-            ViewModelLocator.DialogService.OpenDiffWindow(row.Q1.Question, row.Q2.Question, row.Q1.Choices, row.Q2.Choices);
+            ViewModelLocator.DialogServiceMultiDF.OpenDiffWindow(row.Q1.Question, row.Q2.Question, row.Q1.Choices, row.Q2.Choices);
           },
           (row) => true);
         }
@@ -802,8 +821,12 @@ namespace MultiDF.VM
     private static readonly Type[] AllObjectTypes = {
       typeof(QA),
       typeof(XMLDoc),
+      typeof(XMLDoc[]),
       typeof(DFResultRow),
+      typeof(OurGraph),
+      typeof(OurEdge),
       typeof(DFResult),
+      typeof(DFResult[]),
     };
 
     private static readonly DataContractSerializer DSSerializer = new DataContractSerializer(typeof(Project), AllObjectTypes, 0x7F_FFFF, false, true, null); //max graph size is 8,388,607‬ items
@@ -816,7 +839,7 @@ namespace MultiDF.VM
     {
       NewLineChars = "\a\r\n",
       CheckCharacters = false,
-      Encoding = System.Text.Encoding.UTF8,
+      Encoding = Encoding.UTF8,
       NewLineHandling = NewLineHandling.Entitize,
     };
 
@@ -824,10 +847,15 @@ namespace MultiDF.VM
     {
       try
       {
-        StringReader s = new StringReader(xml);
+        //Make sure our input xml is up-to-date (file format has evolved over time, so we need to upgrade projects created using previous versions)
+        xml = ProjectFileUpgrade.Upgrade(xml);
+
+        StringReader s = new StringReader(xml.ToString());
 
         using (var reader = XmlReader.Create(s, new XmlReaderSettings() { CheckCharacters = false }))
         {
+          //var MyReader = new XmlReader(reader);
+
           return (Project)DSSerializer.ReadObject(reader, true);
         }
       }
@@ -839,7 +867,7 @@ namespace MultiDF.VM
 
     public string ToXML()
     {
-      System.Text.StringBuilder sb = new System.Text.StringBuilder();
+      StringBuilder sb = new StringBuilder();
 
       StringWriter writer = new StringWriter(sb);
       using (XmlWriter xmlWriter = XmlWriter.Create(writer, xmlWriterSettingsForWordDocs))
@@ -872,5 +900,75 @@ namespace MultiDF.VM
         ViewModelLocator.DocComparer.DocCompareCompleted -= DocComparer_DocCompareCompleted;
       }
     }
+
+    private RelayCommand _OpenSourceCommand;
+    public RelayCommand OpenSourceCommand
+    {
+      get
+      {
+        if (_OpenSourceCommand == null)
+        {
+          _OpenSourceCommand = new RelayCommand(() =>
+          {
+            if (!string.IsNullOrEmpty(SelectedDoc.SourcePath) && File.Exists(SelectedDoc.SourcePath))
+              ViewModelLocator.WordService.OpenDocument(SelectedDoc.SourcePath, null, null);
+            else
+              ViewModelLocator.DialogService.ShowMessage("Source document does not exist.", true);
+          },
+          () => SelectedDoc != null && !string.IsNullOrEmpty(SelectedDoc.SourcePath) && File.Exists(SelectedDoc.SourcePath));
+        }
+
+        return _OpenSourceCommand;
+      }
+    }
+    #region "XMLDoc2"
+    public Task UpdateQAs(XMLDoc xmldoc)
+    {
+      if (!string.IsNullOrEmpty(xmldoc.SourcePath) && File.Exists(xmldoc.SourcePath))
+      {
+        return Task.Run(() =>
+        {
+          ViewModelLocator.Main.UpdateProgress(true, "Importing...", 0);
+
+          var Paragraphs = ViewModelLocator.WordService.GetDocumentParagraphs(xmldoc.SourcePath, xmldoc._Token, (i, Total) =>
+          {
+            xmldoc.ProcessingProgress = (i / (float)Total) * 100;
+
+            ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.ElapsedTime));
+            ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.EstimatedRemainingTime));
+          });
+
+          if (Paragraphs != null)
+          {
+            try
+            {
+              xmldoc.QAs = ViewModelLocator.QAExtractionStrategy.ExtractQAs(Paragraphs, xmldoc._Token);
+            }
+            catch (Exception ex)
+            {
+              if (ex.Data.Contains("Paragraph"))
+              {
+                var Res = ViewModelLocator.DialogService.AskBooleanQuestion(ex.Message + Environment.NewLine + Environment.NewLine + "Do you want to open source document to fix this problem?");
+                if (Res)
+                {
+                  ViewModelLocator.WordService.OpenDocument(xmldoc.SourcePath, (int)ex.Data["Paragraph"], (int)ex.Data["Paragraph"]);
+                }
+              }
+            }
+
+            if (xmldoc.QAs != null)
+            {
+              foreach (var QA in xmldoc.QAs)
+                QA.Doc = xmldoc;
+            }
+
+            xmldoc.RaisePropertyChanged(nameof(XMLDoc.QAs));
+          }
+        });
+      }
+      else
+        return null;
+    }
+    #endregion
   }
 }

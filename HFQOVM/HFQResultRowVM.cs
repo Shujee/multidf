@@ -2,7 +2,7 @@
 using GalaSoft.MvvmLight.CommandWpf;
 using MultiDFCommon;
 
-namespace MultiDF.VM
+namespace HFQOVM
 {
   public class HFQResultRowVM : ObservableObject
   {
