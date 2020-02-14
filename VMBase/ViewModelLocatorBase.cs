@@ -1,5 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
-using MultiDFCommon;
+using Common;
 using NLog;
 using NLog.Config;
 using NLog.Targets;

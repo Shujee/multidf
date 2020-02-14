@@ -136,9 +136,9 @@
       <Project>{20431550-13a3-444d-b398-6a13d32ca47c}</Project>
       <Name>MultiDF.VM</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MultiDFCommon\MultiDFCommon.csproj">
+    <ProjectReference Include="..\Common\Common.csproj">
       <Project>{73855FCF-BA21-4447-AB46-303506516534}</Project>
-      <Name>MultiDFCommon</Name>
+      <Name>Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\ViewsBase\ViewsBase.csproj">
       <Project>{9652f8f9-8923-479c-9ffe-a0bd084baf65}</Project>

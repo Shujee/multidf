@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HFQOModel
+namespace Model
 {
   /// <summary>
   /// RESTSharp does not report upload progress during POST calls. We're going to use the good old WebClient for this purpose.

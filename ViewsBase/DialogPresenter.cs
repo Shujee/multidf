@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Interop;
-using MultiDFCommon;
+using Common;
 
 namespace ViewsBase
 {

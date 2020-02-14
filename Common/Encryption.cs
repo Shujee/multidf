@@ -2,7 +2,7 @@
 using System;
 using System.Security.Cryptography;
 
-namespace MultiDFCommon
+namespace Common
 {
   public static class Encryption
   {

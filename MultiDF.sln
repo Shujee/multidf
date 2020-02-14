@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiDFTestingShell", "Mult
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiDFKeyGen", "MultiDFKeyGen\MultiDFKeyGen.csproj", "{C0829CF7-35D6-40A3-A985-05263720B869}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiDFCommon", "MultiDFCommon\MultiDFCommon.csproj", "{73855FCF-BA21-4447-AB46-303506516534}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{73855FCF-BA21-4447-AB46-303506516534}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B55E0193-B28B-4B09-9CC6-8275C9DCE1A9}"
 	ProjectSection(SolutionItems) = preProject
@@ -22,7 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiDFTest", "MultiDFTest\MultiDFTest.csproj", "{70907141-7686-4ED2-BBDB-4EF0783AD999}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HFQOModel", "HFQOModel\HFQOModel.csproj", "{F0EC84C1-2903-4152-BF36-744C51622EE8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{F0EC84C1-2903-4152-BF36-744C51622EE8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HFQOApp", "HFQOApp\HFQOApp.csproj", "{91DD9155-5EF8-4FBE-9EA2-DB5044C3586D}"
 EndProject

@@ -21,7 +21,7 @@
 <probePath>..\..\..\packages\NLog.4.6.8\lib\net45</probePath>
 <probePath>..\..\..\packages\QuickGraph.3.6.61119.7\lib\net4</probePath>
 <probePath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7</probePath>
-<probePath>..\..\..\MultiDFCommon\bin\Release</probePath>
-<probePath>..\..\..\HFQOModel\bin\Release</probePath>
-<probePath>..\..\..\VMBase\bin\Release</probePath>
+<probePath>..\..\..\Common\obj\Release</probePath>
+<probePath>..\..\..\Model\obj\Release</probePath>
+<probePath>..\..\..\VMBase\obj\Release</probePath>
 </project>

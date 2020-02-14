@@ -125,9 +125,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MultiDFCommon\MultiDFCommon.csproj">
+    <ProjectReference Include="..\Common\Common.csproj">
       <Project>{73855fcf-ba21-4447-ab46-303506516534}</Project>
-      <Name>MultiDFCommon</Name>
+      <Name>Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

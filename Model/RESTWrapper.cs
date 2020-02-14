@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
-namespace HFQOModel
+namespace Model
 {
   public class ServerError
   {

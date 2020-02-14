@@ -19,7 +19,7 @@ namespace HFQOApp
 
     public MainWindow()
     {
-      SimpleIoc.Default.Register<MultiDFCommon.IDialogService>(() => DLG);
+      SimpleIoc.Default.Register<Common.IDialogService>(() => DLG);
       SimpleIoc.Default.Register<HFQOVM.IDialogService>(() => DLG);
 
       InitializeComponent();

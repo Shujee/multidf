@@ -1,6 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
-using HFQOModel;
-using MultiDFCommon;
+using Model;
+using Common;
 
 namespace MultiDF.VM
 {

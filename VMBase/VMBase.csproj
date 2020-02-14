@@ -85,9 +85,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MultiDFCommon\MultiDFCommon.csproj">
+    <ProjectReference Include="..\Common\Common.csproj">
       <Project>{73855FCF-BA21-4447-AB46-303506516534}</Project>
-      <Name>MultiDFCommon</Name>
+      <Name>Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

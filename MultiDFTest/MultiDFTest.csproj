@@ -96,13 +96,13 @@
       <Project>{20431550-13a3-444d-b398-6a13d32ca47c}</Project>
       <Name>MultiDF.VM</Name>
     </ProjectReference>
-    <ProjectReference Include="..\HFQOModel\HFQOModel.csproj">
+    <ProjectReference Include="..\Model\Model.csproj">
       <Project>{F0EC84C1-2903-4152-BF36-744C51622EE8}</Project>
-      <Name>HFQOModel</Name>
+      <Name>Model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MultiDFCommon\MultiDFCommon.csproj">
+    <ProjectReference Include="..\Common\Common.csproj">
       <Project>{73855FCF-BA21-4447-AB46-303506516534}</Project>
-      <Name>MultiDFCommon</Name>
+      <Name>Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\VMBase\VMBase.csproj">
       <Project>{433F61BD-9A2F-41D0-82AB-42AF8BB94DF7}</Project>

@@ -17,7 +17,7 @@ namespace MultiDF
       //Services injection
       SimpleIoc.Default.Register<IWordService>(() => this);
 
-      SimpleIoc.Default.Register<MultiDFCommon.IDialogService>(() => DLG);
+      SimpleIoc.Default.Register<Common.IDialogService>(() => DLG);
       SimpleIoc.Default.Register<MultiDF.VM.IDialogService>(() => DLG);
 
       var ExpiryDate = ViewModelLocator.Register.ExpiryDate;

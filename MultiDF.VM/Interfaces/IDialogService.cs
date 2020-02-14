@@ -2,7 +2,7 @@
 
 namespace MultiDF.VM
 {
-  public interface IDialogService : MultiDFCommon.IDialogService
+  public interface IDialogService : Common.IDialogService
   {
     void OpenRegisterWindow();
     void OpenAboutWindow();

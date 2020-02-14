@@ -164,9 +164,9 @@
       <Project>{c681f0e1-358f-4329-997a-0a8fb0249a91}</Project>
       <Name>HFQOVM</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MultiDFCommon\MultiDFCommon.csproj">
+    <ProjectReference Include="..\Common\Common.csproj">
       <Project>{73855FCF-BA21-4447-AB46-303506516534}</Project>
-      <Name>MultiDFCommon</Name>
+      <Name>Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\ViewsBase\ViewsBase.csproj">
       <Project>{9652f8f9-8923-479c-9ffe-a0bd084baf65}</Project>

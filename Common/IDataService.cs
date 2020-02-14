@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MultiDFCommon
+namespace Common
 {
   public interface IDataService
   {

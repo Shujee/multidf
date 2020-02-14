@@ -1,5 +1,5 @@
 ﻿using MultiDF.VM;
-using HFQOModel;
+using Model;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Interop;
-using MultiDFCommon;
+using Common;
 
 namespace MultiDF.Views
 {

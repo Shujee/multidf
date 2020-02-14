@@ -3866,16 +3866,16 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MultiDFCommon, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Common, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_ECA61741A972C31DF425D681128F2815"
                     {
-                    "Name" = "8:MultiDFCommon.dll"
+                    "Name" = "8:Common.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:MultiDFCommon.dll"
+            "SourcePath" = "8:Common.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1C135586D8A74001A6AAD18DCCE0ECF3"
@@ -3897,16 +3897,16 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:HFQOModel, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Model, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_EEB5FC4CCC4FA93F1961952052895724"
                     {
-                    "Name" = "8:HFQOModel.dll"
+                    "Name" = "8:Model.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:HFQOModel.dll"
+            "SourcePath" = "8:Model.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1C135586D8A74001A6AAD18DCCE0ECF3"

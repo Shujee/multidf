@@ -1,4 +1,4 @@
-﻿using MultiDFCommon;
+﻿using Common;
 using RestSharp;
 using System.Collections.Generic;
 using System.Net;
@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace HFQOModel
+namespace Model
 {
   public class HFQODataService : IDataService
   {
@@ -15,7 +15,7 @@ namespace HFQOModel
 
     public HFQODataService()
     {
-      REST = new RESTWrapper(HFQOModel.Properties.Settings.Default.ServerURL, 0);
+      REST = new RESTWrapper(Model.Properties.Settings.Default.ServerURL, 0);
     }
 
     public async Task<UserType> Login(string email, string password)

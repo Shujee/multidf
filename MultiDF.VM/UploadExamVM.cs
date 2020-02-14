@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
-using HFQOModel;
-using MultiDFCommon;
+using Model;
+using Common;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

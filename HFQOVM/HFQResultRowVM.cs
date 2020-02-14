@@ -1,6 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
-using MultiDFCommon;
+using Common;
 
 namespace HFQOVM
 {

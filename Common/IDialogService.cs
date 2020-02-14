@@ -1,4 +1,4 @@
-﻿namespace MultiDFCommon
+﻿namespace Common
 {
   public interface IDialogService
   {

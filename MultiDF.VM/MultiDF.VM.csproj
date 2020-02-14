@@ -197,13 +197,13 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MultiDFCommon\MultiDFCommon.csproj">
+    <ProjectReference Include="..\Common\Common.csproj">
       <Project>{73855FCF-BA21-4447-AB46-303506516534}</Project>
-      <Name>MultiDFCommon</Name>
+      <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\HFQOModel\HFQOModel.csproj">
+    <ProjectReference Include="..\Model\Model.csproj">
       <Project>{F0EC84C1-2903-4152-BF36-744C51622EE8}</Project>
-      <Name>HFQOModel</Name>
+      <Name>Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\VMBase\VMBase.csproj">
       <Project>{433f61bd-9a2f-41d0-82ab-42af8bb94df7}</Project>

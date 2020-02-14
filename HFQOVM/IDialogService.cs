@@ -1,6 +1,6 @@
 ﻿namespace HFQOVM
 {
-  public interface IDialogService : MultiDFCommon.IDialogService
+  public interface IDialogService : Common.IDialogService
   {
     bool ShowExamsListDialog();
   }

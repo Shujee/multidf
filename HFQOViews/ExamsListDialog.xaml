@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:HFQOVM;assembly=HFQOVM"
-        xmlns:common="clr-namespace:MultiDFCommon;assembly=MultiDFCommon"
+        xmlns:common="clr-namespace:Common;assembly=Common"
         mc:Ignorable="d"
         Title="Open Exam" 
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="None" 

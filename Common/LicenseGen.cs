@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 
-namespace MultiDFCommon
+namespace Common
 {
   public class LicenseGen
   {
