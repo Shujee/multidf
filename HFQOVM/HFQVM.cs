@@ -1,6 +1,5 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Common;
 using GalaSoft.MvvmLight.CommandWpf;
-using Common;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
