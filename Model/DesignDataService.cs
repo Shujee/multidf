@@ -38,9 +38,9 @@ namespace Model
       throw new System.NotImplementedException();
     }
 
-    public Task<UserType> Login(string email, string password)
+    public Task<User> Login(string email, string password)
     {
-      return Task.FromResult<UserType>(UserType.Uploader);
+      return Task.FromResult<User>(new User() { name = "Test User", type = UserType.Admin });
     }
 
     public Task Logout()

@@ -1,8 +1,12 @@
-﻿namespace Common
+﻿using System;
+
+namespace Common
 {
   public interface IDialogService
   {
     void ShowMessage(string msg, bool isError);
+    void ShowMessage(Exception ee);
+
     string AskStringQuestion(string msg, string default_value);
     bool AskBooleanQuestion(string msg);
     bool? AskTernaryQuestion(string msg);

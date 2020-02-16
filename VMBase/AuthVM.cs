@@ -28,11 +28,11 @@ namespace VMBase
       }
     }
 
-    private UserType _UserType;
-    public UserType UserType
+    private User _User;
+    public User User
     {
-      get => _UserType;
-      private set => Set(ref _UserType, value);
+      get => _User;
+      private set => Set(ref _User, value);
     }
 
     private bool _IsCommunicating;
@@ -66,11 +66,11 @@ namespace VMBase
               {
                 GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
-                  if (t.Result == UserType.None)
+                  if (t.Result == null)
                     ViewModelLocatorBase.DialogService.ShowMessage("Internet connection error or specified credentials are not correct.", true);
                   else
                   {
-                    UserType = t.Result;
+                    User = t.Result;
                     IsLoggedIn = true;
                   }
 

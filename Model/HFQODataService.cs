@@ -18,11 +18,11 @@ namespace Model
       REST = new RESTWrapper(Model.Properties.Settings.Default.ServerURL, 0);
     }
 
-    public async Task<UserType> Login(string email, string password)
+    public async Task<User> Login(string email, string password)
     {
       try
       {
-      var Response = await Task.Run(() => REST.ExecuteRest<LoginResponse>("login", Method.POST,
+      var Response = await Task.Run(() => REST.ExecuteRest<User>("login", Method.POST,
                  new[]
                  {
                       new Parameter(){ Name = "email", Value = email, Type = ParameterType.GetOrPost },
@@ -35,16 +35,16 @@ namespace Model
 
         //Check if credentials are correct
         if (Response == null)
-          return UserType.None;
+          return null;
         else
         {
           _BearerToken = Response.token.access_token;
-          return (UserType)Response.type;
+          return Response;
         }
       }
       catch
       {
-        return UserType.None;
+        return null;
       }
     }
 

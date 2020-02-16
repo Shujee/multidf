@@ -1,17 +1,15 @@
-﻿using DiffPlex;
-using DiffPlex.DiffBuilder;
-using MultiDF.VM;
-using Microsoft.Win32;
-using System;
+﻿using MultiDF.VM;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Windows;
-using System.Windows.Interop;
 
 namespace MultiDF.Views
 {
   public class DialogPresenter : ViewsBase.DialogPresenter, IDialogService
   {
+    public DialogPresenter(string title) : base(title)
+    {
+
+    }
+
     public void OpenRegisterWindow()
     {
       var w = new RegisterWindow();

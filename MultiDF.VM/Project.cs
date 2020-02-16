@@ -374,8 +374,8 @@ namespace MultiDF.VM
             }
           },
           () => ViewModelLocator.Auth.IsLoggedIn && 
-                (ViewModelLocator.Auth.UserType == UserType.Admin || 
-                ViewModelLocator.Auth.UserType == UserType.Uploader) 
+                (ViewModelLocator.Auth.User.type == UserType.Admin || 
+                ViewModelLocator.Auth.User.type == UserType.Uploader) 
                 && this.AllXMLDocs.Count > 0);
         }
 
@@ -921,8 +921,8 @@ namespace MultiDF.VM
         return _OpenSourceCommand;
       }
     }
-    #region "XMLDoc2"
-    public Task UpdateQAs(XMLDoc xmldoc)
+
+    private Task UpdateQAs(XMLDoc xmldoc)
     {
       if (!string.IsNullOrEmpty(xmldoc.SourcePath) && File.Exists(xmldoc.SourcePath))
       {
@@ -969,6 +969,5 @@ namespace MultiDF.VM
       else
         return null;
     }
-    #endregion
   }
 }

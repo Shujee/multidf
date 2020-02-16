@@ -2,6 +2,11 @@
 {
   public class DialogPresenter : ViewsBase.DialogPresenter, HFQOVM.IDialogService
   {
+    public DialogPresenter(string title) : base(title)
+    {
+
+    }
+
     public bool ShowExamsListDialog()
     {
       var w = new ExamsListDialog();

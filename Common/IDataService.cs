@@ -12,7 +12,7 @@ namespace Common
     /// <param name="email"></param>
     /// <param name="password"></param>
     /// <returns></returns>
-    Task<UserType> Login(string email, string password);
+    Task<User> Login(string email, string password);
 
     /// <summary>
     /// Clears locally saved authentication token.

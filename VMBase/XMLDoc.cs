@@ -158,8 +158,8 @@ namespace VMBase
       try
       {
         //fix for xml files created with previous version of MultiDF
-        xml = xml.Replace("http://schemas.datacontract.org/2004/07/MultiDF.VM", "http://schemas.datacontract.org/2004/07/VMBase");
-
+        xml = xml.Replace("http://schemas.datacontract.org/2004/07/DuplicateFinderMulti.VM", "http://schemas.datacontract.org/2004/07/VMBase");
+                           
         using (StringReader s = new StringReader(xml))
         {
           using (var reader = XmlReader.Create(s, new XmlReaderSettings() { CheckCharacters = false }))

@@ -165,8 +165,19 @@ namespace HFQOVM
                         IsBusy = true;
 
                         ViewModelLocator.Auth.IsCommunicating = true;
-                        var MF = ViewModelLocator.DataService.DownloadExam(_SelectedAccess.access_id, Environment.MachineName);
 
+                        MasterFile MF = null;
+
+                        try
+                        {
+                          MF = ViewModelLocator.DataService.DownloadExam(_SelectedAccess.access_id, Environment.MachineName);
+                        }
+                        catch (Exception ee)
+                        {
+                          ViewModelLocator.DialogService.ShowMessage(ee);
+                          return;
+                        }
+                        
                         if (MF != null)
                         {
                           var XPSBytes = Encryption.Decrypt(Convert.FromBase64String(MF.xps));
@@ -195,14 +206,10 @@ namespace HFQOVM
 
                           SelectedResultIndex = 0;
                         }
-                        else
-                        {
-                          ViewModelLocator.DialogService.ShowMessage("Could not download exams from the server.", true);
-                        }
                       }
                       catch (Exception ee)
                       {
-                        ViewModelLocator.DialogService.ShowMessage("Could not download exams from the server. The error message is: " + ee.Message, true);
+                        ViewModelLocator.DialogService.ShowMessage(ee.Message, true);
                       }
                       finally
                       {
@@ -217,7 +224,7 @@ namespace HFQOVM
               }
             });
           },
-          () => ViewModelLocator.Auth.IsLoggedIn && (ViewModelLocator.Auth.UserType == UserType.Admin || ViewModelLocator.Auth.UserType == UserType.Downloader));
+          () => ViewModelLocator.Auth.IsLoggedIn && (ViewModelLocator.Auth.User.type == UserType.Admin || ViewModelLocator.Auth.User.type == UserType.Downloader));
         }
 
         return _OpenExamCommand;
@@ -337,6 +344,8 @@ namespace HFQOVM
 
                     XPSPath = "";
                     XMLDoc = null;
+
+                    UploadResultCommand.RaiseCanExecuteChanged();
                   });
                 }
                 else
@@ -346,7 +355,7 @@ namespace HFQOVM
               });
             }
           },
-          () => ViewModelLocator.Auth.IsLoggedIn && (ViewModelLocator.Auth.UserType == UserType.Admin || ViewModelLocator.Auth.UserType == UserType.Downloader) && _SelectedAccess != null);
+          () => ViewModelLocator.Auth.IsLoggedIn && (ViewModelLocator.Auth.User.type == UserType.Admin || ViewModelLocator.Auth.User.type == UserType.Downloader) && _SelectedAccess != null && Result.Count > 0);
         }
 
         return _UploadResultCommand;

@@ -10,7 +10,7 @@ namespace MultiDF
 {
   public partial class ThisAddIn : IWordService
   {
-    private readonly DialogPresenter DLG = new DialogPresenter();
+    private readonly DialogPresenter DLG = new DialogPresenter("MultiDF Word Add-in");
 
     private void ThisAddIn_Startup(object sender, System.EventArgs e)
     {

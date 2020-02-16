@@ -202,11 +202,11 @@ namespace MultiDF.VM
 
             if (!string.IsNullOrEmpty(ProjectPath))
             {
-              if (!System.IO.File.Exists(ProjectPath))
+              if (!File.Exists(ProjectPath))
                 ViewModelLocator.DialogService.ShowMessage("Specified project file does not exist.", true);
               else
               {
-                var ProjectXML = System.IO.File.ReadAllText(ProjectPath);
+                var ProjectXML = File.ReadAllText(ProjectPath);
                 var TempSelectedProject = Project.FromXML(ProjectXML);
                 TempSelectedProject.SavePath = ProjectPath;
                 bool ProjectFileChanged = false;

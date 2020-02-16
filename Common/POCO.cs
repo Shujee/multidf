@@ -14,9 +14,10 @@
     public string Name { get; set; }
   }
 
-  public class LoginResponse
+  public class User
   {
-    public int type { get; set; }
+    public string name { get; set; }
+    public UserType type { get; set; }
     public LoginToken token { get; set; }
   }
 

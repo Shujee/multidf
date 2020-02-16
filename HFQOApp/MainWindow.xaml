@@ -115,7 +115,8 @@
 
     <view:HFQPane Grid.Row="1" Grid.Column="0" Margin="0,0,5,0 " QASelected="HFQPane_QASelected" />
     <GridSplitter Grid.Row="1" Grid.Column="0" Width="5" HorizontalAlignment="Right" ResizeBehavior="CurrentAndNext" Background="LightGray" />
-    <DocumentViewer Name="DV" Grid.Row="1" Grid.Column="1" Document="{Binding XPSPath, Mode=OneWay, Converter={StaticResource PathToFixedDocumentConverter}}" Focusable="False">
+    <DocumentViewer Name="DV" Grid.Column="1" Document="{Binding XPSPath, Mode=OneWay, Converter={StaticResource PathToFixedDocumentConverter}}" Focusable="False" Grid.Row="1"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled">
       <DocumentViewer.Resources>
         <!-- Hides the toolbar -->
         <Style TargetType="ToolBar">
@@ -123,6 +124,15 @@
         </Style>
       </DocumentViewer.Resources>
     </DocumentViewer>
+
+    <!--<Viewbox Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" RenderTransformOrigin=".5,.5" Stretch="Uniform" SizeChanged="TextBlock_SizeChanged"
+             Focusable="False" IsHitTestVisible="False">
+      <TextBlock Opacity=".3" Foreground="LightGray" FontFamily="Arial Black" TextAlignment="Center" Margin="30">
+        <Run Text="Shujaat" />
+        <LineBreak />
+        <Run Text="a@b.com" />
+      </TextBlock>
+    </Viewbox>-->
 
     <fa:ImageAwesome Icon="Refresh" Spin="True" Width="30" VerticalAlignment="Center" Margin="3,0"
                     Visibility="{Binding IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Opacity=".5"

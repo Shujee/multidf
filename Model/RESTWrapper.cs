@@ -99,7 +99,7 @@ namespace Model
             throw new Exception("An error occurred on the server side. Please contact server administrator.");
 
           case (HttpStatusCode)422:
-            var Ex = new Exception("Server returned error(s).");
+            var Ex = new Exception("The following errors occurred on the server:");
             foreach (var Err in CreateObjectFromJsonNode<Dictionary<string, string>>(Response, null, false))
             {
               Ex.Data.Add(Err.Key, Err.Value);

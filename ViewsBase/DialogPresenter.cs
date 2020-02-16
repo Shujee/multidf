@@ -10,17 +10,34 @@ namespace ViewsBase
 {
   public class DialogPresenter : IDialogService
   {
+    private readonly string _Title = "";
+
     private readonly static OpenFileDialog dlgOpen = new OpenFileDialog();
     private readonly static SaveFileDialog dlgSave = new SaveFileDialog();
 
-    public DialogPresenter()
+    public DialogPresenter(string title)
     {
-
+      _Title = title;
     }
 
     public void ShowMessage(string msg, bool isError)
     {
-        MessageBox.Show(msg, "MultiDF Word Add-in", MessageBoxButton.OK, isError? MessageBoxImage.Error : MessageBoxImage.Information);
+        MessageBox.Show(msg, _Title, MessageBoxButton.OK, isError? MessageBoxImage.Error : MessageBoxImage.Information);
+    }
+
+    public void ShowMessage(Exception ee)
+    {
+      string Msg = ee.Message;
+
+      if (ee.Data.Count > 0)
+      {
+        Msg += Environment.NewLine + Environment.NewLine;
+
+        foreach (System.Collections.DictionaryEntry err in ee.Data)
+          Msg = err.Key + ": " + err.Value;
+      }
+
+      MessageBox.Show(Msg, _Title, MessageBoxButton.OK, MessageBoxImage.Error);
     }
 
     /// <summary>
@@ -47,7 +64,7 @@ namespace ViewsBase
     /// <returns></returns>
     public bool? AskTernaryQuestion(string msg)
     {
-      var Res = MessageBox.Show(msg, "MultiDF", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
+      var Res = MessageBox.Show(msg, _Title, MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
 
       if (Res == MessageBoxResult.Yes)
         return true;
@@ -59,7 +76,7 @@ namespace ViewsBase
 
     public bool AskBooleanQuestion(string msg)
     {
-      var Res = MessageBox.Show(msg, "MultiDF", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+      var Res = MessageBox.Show(msg, _Title, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
       return Res == MessageBoxResult.Yes;
     }
 

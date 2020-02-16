@@ -59,6 +59,11 @@ namespace MultiDF.Test
       System.Diagnostics.Debug.WriteLine((isError? "ERROR" : "MSG") + ": " + msg);
     }
 
+    public void ShowMessage(Exception ee)
+    {
+      System.Diagnostics.Debug.WriteLine("ERROR: " + ee.Message);
+    }
+
     public string ShowOpen(string filter, string initDir = "", string title = "")
     {
       return @"F:\Office\Larry Gong\DuplicateFinder\Analysis\p20.xml";
