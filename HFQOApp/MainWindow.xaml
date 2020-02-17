@@ -122,6 +122,14 @@
         <Style TargetType="ToolBar">
           <Setter Property="Visibility" Value="Collapsed" />
         </Style>
+
+        <Style TargetType="ContentControl">
+          <Style.Triggers>
+            <Trigger Property="Name" Value="PART_FindToolBarHost">
+              <Setter Property="Visibility" Value="Collapsed" />
+            </Trigger>
+          </Style.Triggers>
+        </Style>
       </DocumentViewer.Resources>
     </DocumentViewer>
 
@@ -134,7 +142,7 @@
       </TextBlock>
     </Viewbox>-->
 
-    <fa:ImageAwesome Icon="Refresh" Spin="True" Width="30" VerticalAlignment="Center" Margin="3,0"
+      <fa:ImageAwesome Icon="Refresh" Spin="True" Width="30" VerticalAlignment="Center" Margin="3,0"
                     Visibility="{Binding IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Opacity=".5"
                     SpinDuration="2" Foreground="Red" Grid.Column="1" Grid.Row="1" Panel.ZIndex="1000" />
   </Grid>

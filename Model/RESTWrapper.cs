@@ -108,7 +108,10 @@ namespace Model
             throw Ex;
 
           default:
-            throw new Exception(Response.Content);
+            if (Response.ResponseStatus == ResponseStatus.Error)
+              throw Response.ErrorException;
+            else
+              throw new Exception(Response.Content);
         }
       }
     }

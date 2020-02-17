@@ -176,7 +176,13 @@ namespace Model
                               null,
                               null,
                               false,
-                              null)).ContinueWith(t => t.IsCompleted && !t.IsFaulted);
+                              null)).ContinueWith(t =>
+                              {
+                                if (t.IsFaulted)
+                                  throw t.Exception.InnerException;
+                                else
+                                  return t.IsCompleted && !t.IsFaulted;
+                              });
     }
 
     public async Task<bool> ExamNumberExists(string number)

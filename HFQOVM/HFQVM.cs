@@ -244,14 +244,21 @@ namespace HFQOVM
             {
               var R = Result[SelectedResultIndex];
 
-              if (R.A1 == null)
-                R.A1 = qa.Index;
-              else if (R.A2 == null)
-                R.A2 = qa.Index;
-              else if (R.A3 == null)
-                R.A3 = qa.Index;
+              if (Result.Any(r => r.A1 == qa.Index || r.A2 == qa.Index || r.A3 == qa.Index))
+              {
+                ViewModelLocator.DialogService.ShowMessage($"This question has already been marked previously. You cannot use it again.", false);
+              }
               else
-                ViewModelLocator.DialogService.ShowMessage("This question has already been assign 3 matches.", false);
+              {
+                if (R.A1 == null)
+                  R.A1 = qa.Index;
+                else if (R.A2 == null)
+                  R.A2 = qa.Index;
+                else if (R.A3 == null)
+                  R.A3 = qa.Index;
+                else
+                  ViewModelLocator.DialogService.ShowMessage("This question has already been assign 3 matches.", false);
+              }
             }
           },
           (qa) => true);
@@ -325,34 +332,41 @@ namespace HFQOVM
             {
               IsBusy = true;
 
-              ViewModelLocator.DataService.UploadResult(_SelectedAccess.exam_id, Environment.MachineName, Result.Select(r => r.ToHFQResultRow())).ContinueWith(t =>
+              try
               {
-                IsBusy = false;
-
-                if (!t.IsFaulted)
+                ViewModelLocator.DataService.UploadResult(_SelectedAccess.exam_id, Environment.MachineName, Result.Select(r => r.ToHFQResultRow())).ContinueWith(t =>
                 {
-                  GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                  IsBusy = false;
+
+                  if (!t.IsFaulted)
                   {
-                    ViewModelLocator.DialogService.ShowMessage("Results uploaded successfully.", false);
-                    SelectedAccess = null;
+                    GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                    {
+                      ViewModelLocator.DialogService.ShowMessage("Results uploaded successfully.", false);
+                      SelectedAccess = null;
 
-                    Result.Clear();
-                    RaisePropertyChanged(nameof(Result));
+                      Result.Clear();
+                      RaisePropertyChanged(nameof(Result));
 
-                    SelectedResultIndex = 0;
-                    SearchText = "";
+                      SelectedResultIndex = 0;
+                      SearchText = "";
 
-                    XPSPath = "";
-                    XMLDoc = null;
+                      XPSPath = "";
+                      XMLDoc = null;
 
-                    UploadResultCommand.RaiseCanExecuteChanged();
-                  });
-                }
-                else
-                {
-                  ViewModelLocator.DialogService.ShowMessage("Could not upload result to the server. Please try again later. The error message is: " + t.Exception.Message, true);
-                }
-              });
+                      UploadResultCommand.RaiseCanExecuteChanged();
+                    });
+                  }
+                  else
+                  {
+                    ViewModelLocator.DialogService.ShowMessage("Could not upload result to the server. Please try again later. The error message is: " + t.Exception.InnerException.Message, true);
+                  }
+                });
+              }
+              catch(Exception ee)
+              {
+                ViewModelLocator.DialogService.ShowMessage(ee);
+              }
             }
           },
           () => ViewModelLocator.Auth.IsLoggedIn && (ViewModelLocator.Auth.User.type == UserType.Admin || ViewModelLocator.Auth.User.type == UserType.Downloader) && _SelectedAccess != null && Result.Count > 0);

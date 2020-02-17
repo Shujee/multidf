@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using VMBase;
 
 namespace HFQOApp
@@ -32,12 +33,14 @@ namespace HFQOApp
 
       InitializeComponent();
 
+      this.Title = $"HFQApp (ver: { System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()})";
+
       DV.FitToWidth();
 
       var VM = this.DataContext as HFQOVM.HFQVM;
       VM.PropertyChanged += (sender2, e2) =>
       {
-        if (e2.PropertyName == nameof(HFQOVM.HFQVM.XPSPath))
+        if (e2.PropertyName == nameof(HFQOVM.HFQVM.XPSPath) && !string.IsNullOrEmpty(VM.XPSPath))
         {
           AddWatermark(new string[] { ViewModelLocatorBase.Auth.User.name, ViewModelLocatorBase.Auth.Email } );
         }
@@ -81,8 +84,6 @@ namespace HFQOApp
 
           var HighlightPage2 = sender as FixedPage;
 
-          TB.VerticalAlignment = VerticalAlignment.Center;
-          TB.HorizontalAlignment = HorizontalAlignment.Center;
           TB.RenderTransformOrigin = new Point(.5, .5);
           TB.Opacity = .3;
           TB.Foreground = Brushes.LightGray;
@@ -90,14 +91,20 @@ namespace HFQOApp
           TB.TextAlignment = TextAlignment.Center;
           TB.RenderTransform = new RotateTransform(-Math.Atan(HighlightPage2.ActualWidth / HighlightPage2.ActualHeight) * (180.0 / Math.PI));
 
-          Viewbox VBox = new Viewbox();
-          VBox.Child = TB;
-          VBox.Stretch = Stretch.Uniform;
-          VBox.Focusable = false;
-          VBox.Width = HighlightPage2.Width * (1 / POINT2PIXEL);
-          VBox.Height = HighlightPage2.Height * (1 / POINT2PIXEL);
+          Rectangle WatermarkRect = new Rectangle();
+          WatermarkRect.Fill = new VisualBrush(TB)
+          {
+            TileMode = TileMode.Tile,
+            Stretch = Stretch.Uniform,
+            Viewport = new Rect(0, 0, 120, 120),
+            Viewbox = new Rect(-0.1, -0.1, 1.2, 1.2),
+            ViewportUnits = BrushMappingMode.Absolute
+          };
 
-          (HighlightPage2.Children[0] as Canvas).Children.Add(VBox);
+          WatermarkRect.Width = HighlightPage2.Width * (1 / POINT2PIXEL);
+          WatermarkRect.Height = HighlightPage2.Height * (1 / POINT2PIXEL);
+
+          (HighlightPage2.Children[0] as Canvas).Children.Add(WatermarkRect);
         };
       }
     }
