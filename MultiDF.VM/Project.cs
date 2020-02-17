@@ -714,6 +714,7 @@ namespace MultiDF.VM
 
             if (ExportSavePath != null)
             {
+              //Create a clone of this project
               Project P = Project.FromXML(this.ToXML());
 
               P.Name = Path.GetFileNameWithoutExtension(ExportSavePath);
@@ -725,6 +726,7 @@ namespace MultiDF.VM
                 var DestFile = GetAvailableFileName(Doc.SourcePath, DestFolder);
                 File.Copy(Doc.SourcePath, DestFile);
                 Doc.SourcePath = Path.GetFileName(DestFile);
+                Doc.LastModified = new FileInfo(DestFile).LastWriteTime;
               }
 
               P.IsDirty = false;
