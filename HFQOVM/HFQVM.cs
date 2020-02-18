@@ -277,15 +277,20 @@ namespace HFQOVM
         {
           _GoToNextCommand = new RelayCommand(() =>
           {
-            //if current record is the last record, then GoToNext command will create a  new record
-            if (SelectedResultIndex == Result.Count - 1)
+            //if current record is the last record or there is no empty record below the current record, then GoToNext command will create a  new record
+            var NearestEmpty = Result.Skip(SelectedResultIndex + 1).FirstOrDefault(r => r.A1 == null);
+
+            if (SelectedResultIndex == Result.Count - 1 || NearestEmpty == null)
             {
-              var Row = new HFQResultRowVM() { Q = Result[SelectedResultIndex].Q + 1 };
+              var Row = new HFQResultRowVM() { Q = Result.Last().Q + 1 };
               Result.Add(Row);
               NewResultRowAdded?.Invoke(Row);
+              SelectedResultIndex = Result.Count - 1;
             }
-
-            SelectedResultIndex++;
+            else
+            {
+              SelectedResultIndex = Result.IndexOf(NearestEmpty);
+            }
           },
           () => Result != null);
         }
