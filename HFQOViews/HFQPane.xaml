@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:HFQOViews"
              xmlns:vm="clr-namespace:HFQOVM;assembly=HFQOVM"
              xmlns:viewsbase="clr-namespace:ViewsBase;assembly=ViewsBase"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="350"
              DataContext="{x:Static vm:ViewModelLocator.HFQ}"
@@ -162,6 +163,7 @@
               <ColumnDefinition Width="*" />
               <ColumnDefinition Width="Auto" />
               <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
           </Grid>
         </ItemsPanelTemplate>
@@ -223,6 +225,32 @@
           </Border>
         </Border>
       </StatusBarItem>
+
+      <StatusBarItem Grid.Column="6" DataContext="{Binding Source={x:Static vm:ViewModelLocator.Auth}}" ToolTip="{Binding IsConnected, Converter={StaticResource ConnectionStatusToStringConverter}}">
+        <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1" Margin="1,0" Grid.Column="2">
+          <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0">
+
+            <fa:ImageAwesome Width="16" Height="16" Margin="3">
+              <fa:ImageAwesome.Style>
+                <Style TargetType="fa:ImageAwesome">
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                      <Setter Property="Icon" Value="Link" />
+                      <Setter Property="Foreground" Value="Green" />
+                    </DataTrigger>
+
+                    <DataTrigger Binding="{Binding IsLoggedIn}" Value="False">
+                      <Setter Property="Icon" Value="Unlink" />
+                      <Setter Property="Foreground" Value="Red" />
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </fa:ImageAwesome.Style>
+            </fa:ImageAwesome>
+          </Border>
+        </Border>
+      </StatusBarItem>
+
     </StatusBar>
   </Grid>
 </UserControl>

@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Web;
+using System.Net.NetworkInformation;
+using System;
 
 namespace Model
 {
@@ -16,6 +18,25 @@ namespace Model
     public HFQODataService()
     {
       REST = new RESTWrapper(Model.Properties.Settings.Default.ServerURL, 0);
+    }
+
+    public bool IsAlive()
+    {
+      Uri myUri = new Uri(Model.Properties.Settings.Default.ServerURL);
+      string host = myUri.Host;
+
+      using (var ping = new Ping())
+      {
+        try
+        {
+          var reply = ping.Send(host, 3 * 1000); // 3 seconds time out
+          return reply.Status == IPStatus.Success;
+        }
+        catch
+        {
+          return false;
+        }
+      }
     }
 
     public async Task<User> Login(string email, string password)

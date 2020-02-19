@@ -46,6 +46,7 @@
       this.btnSaveProject = this.Factory.CreateRibbonButton();
       this.separator3 = this.Factory.CreateRibbonSeparator();
       this.btnExport = this.Factory.CreateRibbonButton();
+      this.btnMergeAsDOCX = this.Factory.CreateRibbonButton();
       this.btnMergeAsPDF = this.Factory.CreateRibbonButton();
       this.btnUpload = this.Factory.CreateRibbonButton();
       this.grpSourceDocs = this.Factory.CreateRibbonGroup();
@@ -63,7 +64,6 @@
       this.grpAbout = this.Factory.CreateRibbonGroup();
       this.btnRegister = this.Factory.CreateRibbonButton();
       this.btnAbout = this.Factory.CreateRibbonButton();
-      this.btnMergeAsDOCX = this.Factory.CreateRibbonButton();
       this.tabMultiDF.SuspendLayout();
       this.grpPane.SuspendLayout();
       this.grpUser.SuspendLayout();
@@ -176,6 +176,15 @@
       this.btnExport.OfficeImageId = "WindowSaveWorkspace";
       this.btnExport.ShowImage = true;
       this.btnExport.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnExport_Click);
+      // 
+      // btnMergeAsDOCX
+      // 
+      this.btnMergeAsDOCX.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+      this.btnMergeAsDOCX.Label = "Merge as DOCX";
+      this.btnMergeAsDOCX.Name = "btnMergeAsDOCX";
+      this.btnMergeAsDOCX.OfficeImageId = "ExportWord";
+      this.btnMergeAsDOCX.ShowImage = true;
+      this.btnMergeAsDOCX.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnMergeAsDOCX_Click);
       // 
       // btnMergeAsPDF
       // 
@@ -319,15 +328,6 @@
       this.btnAbout.OfficeImageId = "AccessTableContacts";
       this.btnAbout.ShowImage = true;
       this.btnAbout.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.AboutButton_Click);
-      // 
-      // btnMergeAsDOCX
-      // 
-      this.btnMergeAsDOCX.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-      this.btnMergeAsDOCX.Label = "Merge as DOCX";
-      this.btnMergeAsDOCX.Name = "btnMergeAsDOCX";
-      this.btnMergeAsDOCX.OfficeImageId = "ExportWord";
-      this.btnMergeAsDOCX.ShowImage = true;
-      this.btnMergeAsDOCX.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnMergeAsDOCX_Click);
       // 
       // MultiDFRibbon
       // 

@@ -10,10 +10,23 @@ namespace VMBase
   /// </summary>
   public class AuthVM : ViewModelBase
   {
+    private System.Timers.Timer tmrServerStatus = new System.Timers.Timer(5000);
+
     public AuthVM()
     {
       Email = Properties.Settings.Default.Email;
       Password = Properties.Settings.Default.Password;
+
+      tmrServerStatus.AutoReset = true;
+      tmrServerStatus.Elapsed += TmrServerStatus_Elapsed;
+      tmrServerStatus.Enabled = true;
+    }
+
+    private void TmrServerStatus_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    {
+      var TempIsConnected = ViewModelLocatorBase.DataService.IsAlive();
+
+      GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() => RaisePropertyChanged(nameof(IsConnected)));
     }
 
     protected bool _IsLoggedIn;
@@ -34,6 +47,8 @@ namespace VMBase
       get => _User;
       private set => Set(ref _User, value);
     }
+
+    public bool IsConnected => ViewModelLocatorBase.DataService.IsAlive();
 
     private bool _IsCommunicating;
     public bool IsCommunicating

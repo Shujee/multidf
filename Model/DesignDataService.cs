@@ -38,6 +38,11 @@ namespace Model
       throw new System.NotImplementedException();
     }
 
+    public bool IsAlive()
+    {
+      return true;
+    }
+
     public Task<User> Login(string email, string password)
     {
       return Task.FromResult<User>(new User() { name = "Test User", type = UserType.Admin });

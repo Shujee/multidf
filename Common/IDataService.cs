@@ -6,6 +6,12 @@ namespace Common
   public interface IDataService
   {
     /// <summary>
+    /// Pings HFQ server to see if it is available.
+    /// </summary>
+    /// <returns></returns>
+    bool IsAlive();
+
+    /// <summary>
     /// Tries to login to the server using specified email address and password. Returns true for this session if successful. Authentication token returned
     /// by the server is saved for subsequent server calls.
     /// </summary>

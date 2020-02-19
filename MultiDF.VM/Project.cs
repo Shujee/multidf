@@ -230,6 +230,13 @@ namespace MultiDF.VM
         {
           _MergeAsPDFCommand = new RelayCommand(() =>
           {
+            //Make sure full analysis has been completed before merging
+            if (graph.Vertices.Any(v1 => graph.Vertices.Any(v2 => !graph.ContainsEdge(v1, v2))))
+            {
+              ViewModelLocator.DialogService.ShowMessage("One or more documents in the project have not been analyzed for duplicates yet. Use Process command to complete analysis.", true);
+              return;
+            }
+
             var OutputPath = ViewModelLocator.DialogService.ShowSave("PDF Files (*.pdf)|*.pdf");
 
             if (OutputPath != null)
@@ -263,6 +270,13 @@ namespace MultiDF.VM
         {
           _MergeAsDOCXCommand = new RelayCommand(() =>
           {
+            //Make sure full analysis has been completed before merging
+            if(graph.Vertices.Any(v1 => graph.Vertices.Any(v2 => !graph.ContainsEdge(v1, v2)) ))
+            {
+              ViewModelLocator.DialogService.ShowMessage("One or more documents in the project have not been analyzed for duplicates yet. Use Process command to complete analysis.", true);
+              return;
+            }
+
             var OutputPath = ViewModelLocator.DialogService.ShowSave("Word Documents (*.docx)|*.docx");
 
             if (OutputPath != null)

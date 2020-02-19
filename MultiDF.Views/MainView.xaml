@@ -216,6 +216,7 @@
               <ColumnDefinition Width="Auto" />
               <ColumnDefinition Width="Auto" />
               <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
           </Grid>
         </ItemsPanelTemplate>
@@ -244,7 +245,6 @@
           </Border>
         </Border>
       </StatusBarItem>
-
 
       <StatusBarItem Grid.Column="3" HorizontalContentAlignment="Stretch">
         <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1">
@@ -276,24 +276,20 @@
               <Ellipse.Style>
                 <Style TargetType="Ellipse">
                   <Style.Resources>
-                    <Storyboard x:Key="ConnectingStoryBoard" RepeatBehavior="Forever">
+                    <Storyboard x:Key="CommunicatingStoryBoard" RepeatBehavior="Forever">
                       <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:1" />
                       <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:1" BeginTime="0:0:1" />
                     </Storyboard>
                   </Style.Resources>
                   <Style.Triggers>
                     <DataTrigger Binding="{Binding IsCommunicating}" Value="True">
-                      <Setter Property="ToolTip" Value="Connection Status: Communicating" />
+                      <Setter Property="ToolTip" Value="Communicating with server" />
                       <DataTrigger.EnterActions>
-                        <BeginStoryboard Name="ConnectingStoryBoardBegin" Storyboard="{StaticResource ConnectingStoryBoard}" />
+                        <BeginStoryboard Name="CommunicatingStoryBoardBegin" Storyboard="{StaticResource CommunicatingStoryBoard}" />
                       </DataTrigger.EnterActions>
                       <DataTrigger.ExitActions>
-                        <StopStoryboard BeginStoryboardName="ConnectingStoryBoardBegin" />
+                        <StopStoryboard BeginStoryboardName="CommunicatingStoryBoardBegin" />
                       </DataTrigger.ExitActions>
-                    </DataTrigger>
-
-                    <DataTrigger Binding="{Binding IsLoggedIn}" Value="False">
-                      <Setter Property="ToolTip" Value="{Binding IsLoggedIn, Converter={StaticResource ConnectionStatusToStringConverter}}" />
                     </DataTrigger>
                   </Style.Triggers>
                 </Style>
@@ -302,6 +298,31 @@
                 <DropShadowEffect Color="{Binding IsLoggedIn, Converter={StaticResource ConnectionStatusConverter}, FallbackValue=Red}" BlurRadius="7" Direction="90" ShadowDepth="0" />
               </Ellipse.Effect>
             </Ellipse>
+          </Border>
+        </Border>
+      </StatusBarItem>
+
+      <StatusBarItem Grid.Column="6" ToolTip="{Binding Source={x:Static vm:ViewModelLocator.Auth}, Path=IsConnected, Converter={StaticResource ConnectionStatusToStringConverter}}">
+        <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1" Margin="1,0" Grid.Column="2">
+          <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0">
+
+            <fa:ImageAwesome Width="16" Height="16" Margin="3">
+              <fa:ImageAwesome.Style>
+                <Style TargetType="fa:ImageAwesome">
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding Source={x:Static vm:ViewModelLocator.Auth}, Path=IsConnected}" Value="True">
+                      <Setter Property="Icon" Value="Link" />
+                      <Setter Property="Foreground" Value="Green" />
+                    </DataTrigger>
+
+                    <DataTrigger Binding="{Binding Source={x:Static vm:ViewModelLocator.Auth}, Path=IsConnected}" Value="False">
+                      <Setter Property="Icon" Value="Unlink" />
+                      <Setter Property="Foreground" Value="Red" />
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </fa:ImageAwesome.Style>
+            </fa:ImageAwesome>
           </Border>
         </Border>
       </StatusBarItem>
