@@ -17,14 +17,14 @@ namespace MultiDFKeyGen
     private void GenerateButton_Click(object sender, RoutedEventArgs e)
     {
       if (txtEmail.Text.Trim() == "" || txtCode.Text.Trim() == "")
-        MessageBox.Show("E-mail and Code must be provided.", "MultiDF KeyGen");
+        MessageBox.Show("E-mail and Code must be provided.", "KeyGen");
       else if(!ExpiryDatePicker.SelectedDate.HasValue)
-        MessageBox.Show("Expiry date must be selected.", "MultiDF KeyGen");
+        MessageBox.Show("Expiry date must be selected.", "KeyGen");
       else
       {
         try
         {
-          txtLicenseKey.Text = LicenseGen.CreateLicense(txtEmail.Text, txtCode.Text, ExpiryDatePicker.SelectedDate.Value.Date);
+          txtLicenseKey.Text = LicenseGen.CreateLicense(txtEmail.Text, txtCode.Text, DateTime.SpecifyKind(ExpiryDatePicker.SelectedDate.Value.Date, DateTimeKind.Utc));
         }
         catch (Exception ee)
         {

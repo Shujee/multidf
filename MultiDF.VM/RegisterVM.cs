@@ -1,6 +1,7 @@
 ﻿using Common;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using System;
 
 namespace MultiDF.VM
 {
@@ -42,8 +43,7 @@ namespace MultiDF.VM
             return false;
           else
           {
-            var ExpiryDate = System.DateTime.ParseExact(Expiry, "MMM-dd-yyyy", System.Globalization.CultureInfo.CurrentCulture);
-            return (ExpiryDate >= System.DateTime.Today);
+            return Expiry >= DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
           }
         }
       }
@@ -56,14 +56,7 @@ namespace MultiDF.VM
         if (string.IsNullOrEmpty(_RegEmail.Trim()) || string.IsNullOrEmpty(_LicenseKey.Trim()))
           return null;
         else
-        {
-          var Expiry = LicenseGen.ParseLicense(_LicenseKey, _RegEmail, MachineCode);
-
-          if (Expiry == null)
-            return null;
-          else
-            return System.DateTime.ParseExact(Expiry, "MMM-dd-yyyy", System.Globalization.CultureInfo.CurrentCulture);
-        }
+          return LicenseGen.ParseLicense(_LicenseKey, _RegEmail, MachineCode);
       }
     }
 
@@ -80,10 +73,10 @@ namespace MultiDF.VM
               ViewModelLocator.DialogService.ShowMessage("E-mail and License Key must be provided.", true);
             else
             {
-              string Res = LicenseGen.ParseLicense(_LicenseKey, _RegEmail, MachineCode);
+              var Expiry = LicenseGen.ParseLicense(_LicenseKey, _RegEmail, MachineCode);
               RaisePropertyChanged(nameof(IsRegistered));
 
-              if (Res != null)
+              if (Expiry != null)
               {
                 var Setting = Properties.Settings.Default;
                 Setting.RegEmail = _RegEmail.Trim();

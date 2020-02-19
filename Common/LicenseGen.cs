@@ -5,6 +5,8 @@ namespace Common
 {
   public class LicenseGen
   {
+    private const string DATE_FORMAT = "MMM-dd-yyyy";
+
     public static string GetUniqueMachineId()
     {
       try
@@ -30,17 +32,17 @@ namespace Common
     /// <returns></returns>
     public static string CreateLicense(string email, string machineCode, DateTime expiry)
     {
-      return Encryption.Encrypt(email.Trim() + ',' + expiry.ToString("MMM-dd-yyyy") + ',' + machineCode.Trim());
+      return Encryption.Encrypt(email.Trim() + ',' + expiry.ToString(DATE_FORMAT) + ',' + machineCode.Trim());
     }
 
     /// <summary>
-    /// Returns the user type by parsing provided license key, machine code and email values.
+    /// Returns license expiry date by parsing provided license key, machine code and email values.
     /// </summary>
     /// <param name="licenseKey"></param>
     /// <param name="email"></param>
     /// <param name="machineCode"></param>
     /// <returns></returns>
-    public static string ParseLicense(string licenseKey, string email, string machineCode)
+    public static DateTime? ParseLicense(string licenseKey, string email, string machineCode)
     {
       try
       {
@@ -50,7 +52,10 @@ namespace Common
         if (Chunks != null && Chunks.Length == 3)
         {
           if (Chunks[0] == email.Trim() && Chunks[2] == machineCode.Trim())
-            return Chunks[1];
+          {
+            var DT = DateTime.ParseExact(Chunks[1], DATE_FORMAT, System.Globalization.CultureInfo.CurrentCulture);
+            return DateTime.SpecifyKind(DT, DateTimeKind.Utc); //convert it to UTC-based DateTime object
+          }
           else
             return null;
         }

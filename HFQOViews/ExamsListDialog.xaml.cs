@@ -49,5 +49,10 @@ namespace HFQOViews
     {
       //(sender as ComboBox).IsDropDownOpen = true;
     }
+
+    private void RefreshButton_Click(object sender, RoutedEventArgs e)
+    {
+      (this.DataContext as HFQOVM.HFQVM).RefreshExamsList();
+    }
   }
 }

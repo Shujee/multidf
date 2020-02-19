@@ -64,6 +64,7 @@ namespace MultiDF.VM
         GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
         {
           UploadExamCommand.RaiseCanExecuteChanged();
+          MergeAsDOCXCommand.RaiseCanExecuteChanged();
           MergeAsPDFCommand.RaiseCanExecuteChanged();
         });
       };
@@ -250,6 +251,41 @@ namespace MultiDF.VM
         }
 
         return _MergeAsPDFCommand;
+      }
+    }
+    
+    private RelayCommand _MergeAsDOCXCommand;
+    public RelayCommand MergeAsDOCXCommand
+    {
+      get
+      {
+        if (_MergeAsDOCXCommand == null)
+        {
+          _MergeAsDOCXCommand = new RelayCommand(() =>
+          {
+            var OutputPath = ViewModelLocator.DialogService.ShowSave("Word Documents (*.docx)|*.docx");
+
+            if (OutputPath != null)
+            {
+              var TempDocxPath = StaticExtensions.GetTempFileName(".docx");
+              ViewModelLocator.WordService.CreateMergedDocument(this.AllXMLDocs.Select(d => d.SourcePath).ToArray(), TempDocxPath, false);
+              var WPs = ViewModelLocator.WordService.GetDocumentParagraphs(TempDocxPath, token, UpdateQAsProgressHandler, false);
+              var DelimiterParas = ViewModelLocator.QAExtractionStrategy.ExtractDelimiterParagraphs(WPs, token);
+              ViewModelLocator.WordService.FixQANumbers(TempDocxPath, DelimiterParas, false);
+              
+              //copy temporary merged document to user-specified path
+              File.Copy(TempDocxPath, OutputPath);
+
+              if (ViewModelLocator.DialogService.AskBooleanQuestion($"Successfully merged all documents into '{OutputPath}'. Do you want to open it now?"))
+              {
+                System.Diagnostics.Process.Start(OutputPath);
+              }
+            }
+          },
+          () => this.AllXMLDocs.Count > 0);
+        }
+
+        return _MergeAsDOCXCommand;
       }
     }
 
@@ -447,7 +483,7 @@ namespace MultiDF.VM
 
       var NewDoc = new XMLDoc()
       {
-        LastModified = FileInfo.LastWriteTime,
+        LastModified = FileInfo.LastWriteTimeUtc,
         Size = FileInfo.Length,
         SourcePath = Doc
       };
@@ -726,7 +762,7 @@ namespace MultiDF.VM
                 var DestFile = GetAvailableFileName(Doc.SourcePath, DestFolder);
                 File.Copy(Doc.SourcePath, DestFile);
                 Doc.SourcePath = Path.GetFileName(DestFile);
-                Doc.LastModified = new FileInfo(DestFile).LastWriteTime;
+                Doc.LastModified = new FileInfo(DestFile).LastWriteTimeUtc;
               }
 
               P.IsDirty = false;

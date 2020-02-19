@@ -63,6 +63,7 @@
       this.grpAbout = this.Factory.CreateRibbonGroup();
       this.btnRegister = this.Factory.CreateRibbonButton();
       this.btnAbout = this.Factory.CreateRibbonButton();
+      this.btnMergeAsDOCX = this.Factory.CreateRibbonButton();
       this.tabMultiDF.SuspendLayout();
       this.grpPane.SuspendLayout();
       this.grpUser.SuspendLayout();
@@ -130,6 +131,7 @@
       this.grpProject.Items.Add(this.btnSaveProject);
       this.grpProject.Items.Add(this.separator3);
       this.grpProject.Items.Add(this.btnExport);
+      this.grpProject.Items.Add(this.btnMergeAsDOCX);
       this.grpProject.Items.Add(this.btnMergeAsPDF);
       this.grpProject.Items.Add(this.btnUpload);
       this.grpProject.Label = "Project";
@@ -318,6 +320,15 @@
       this.btnAbout.ShowImage = true;
       this.btnAbout.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.AboutButton_Click);
       // 
+      // btnMergeAsDOCX
+      // 
+      this.btnMergeAsDOCX.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+      this.btnMergeAsDOCX.Label = "Merge as DOCX";
+      this.btnMergeAsDOCX.Name = "btnMergeAsDOCX";
+      this.btnMergeAsDOCX.OfficeImageId = "ExportWord";
+      this.btnMergeAsDOCX.ShowImage = true;
+      this.btnMergeAsDOCX.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnMergeAsDOCX_Click);
+      // 
       // MultiDFRibbon
       // 
       this.Name = "MultiDFRibbon";
@@ -373,6 +384,7 @@
     internal Microsoft.Office.Tools.Ribbon.RibbonSeparator separator2;
     internal Microsoft.Office.Tools.Ribbon.RibbonSeparator separator1;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup grpAbout;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnMergeAsDOCX;
     }
 
     partial class ThisRibbonCollection

@@ -56,6 +56,7 @@ namespace MultiDF
         btnStopProcess.Enabled = _SelectedProject.AbortProcessCommand.CanExecute(null);
         btnOpenResultsWindow.Enabled = _SelectedProject.OpenResultsWindowCommand.CanExecute(null);
         btnExportResults.Enabled = _SelectedProject.ExportResultsCommand.CanExecute(null);
+        btnMergeAsDOCX.Enabled = _SelectedProject.MergeAsDOCXCommand.CanExecute(null);
         btnMergeAsPDF.Enabled = _SelectedProject.MergeAsPDFCommand.CanExecute(null);
         btnUpload.Enabled = _SelectedProject.UploadExamCommand.CanExecute(null);
       }
@@ -71,6 +72,7 @@ namespace MultiDF
         btnStopProcess.Enabled = false;
         btnOpenResultsWindow.Enabled = false;
         btnExportResults.Enabled = false;
+        btnMergeAsDOCX.Enabled = false;
         btnMergeAsPDF.Enabled = false;
         btnUpload.Enabled = false;
       }
@@ -108,7 +110,7 @@ namespace MultiDF
 
       btnOpenProject.Items.Add(BrowseDDI);
     }
-      
+
     private void DDI_Click(object sender, RibbonControlEventArgs e)
     {
       //Control Tag property holds full path of the Project file.
@@ -123,10 +125,10 @@ namespace MultiDF
 
     private void Main_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-      if(e.PropertyName == nameof(MainVM.SelectedProject))
+      if (e.PropertyName == nameof(MainVM.SelectedProject))
       {
         //Detatch previous Project's event listener
-        if(_SelectedProject != null)
+        if (_SelectedProject != null)
         {
           _SelectedProject.SaveCommand.CanExecuteChanged -= (sender2, e2) => btnSaveProject.Enabled = _SelectedProject.SaveCommand.CanExecute(null);
           _SelectedProject.ExportCommand.CanExecuteChanged -= (sender2, e2) => btnExport.Enabled = _SelectedProject.ExportCommand.CanExecute(null);
@@ -138,6 +140,7 @@ namespace MultiDF
           _SelectedProject.AbortProcessCommand.CanExecuteChanged -= (sender2, e2) => btnStopProcess.Enabled = _SelectedProject.AbortProcessCommand.CanExecute(null);
           _SelectedProject.OpenResultsWindowCommand.CanExecuteChanged -= (sender2, e2) => btnOpenResultsWindow.Enabled = _SelectedProject.OpenResultsWindowCommand.CanExecute(null);
           _SelectedProject.ExportResultsCommand.CanExecuteChanged -= (sender2, e2) => btnExportResults.Enabled = _SelectedProject.ExportResultsCommand.CanExecute(null);
+          _SelectedProject.MergeAsDOCXCommand.CanExecuteChanged -= (sender2, e2) => btnMergeAsDOCX.Enabled = _SelectedProject.MergeAsDOCXCommand.CanExecute(null);
           _SelectedProject.MergeAsPDFCommand.CanExecuteChanged -= (sender2, e2) => btnMergeAsPDF.Enabled = _SelectedProject.MergeAsPDFCommand.CanExecute(null);
           _SelectedProject.UploadExamCommand.CanExecuteChanged -= (sender2, e2) => btnUpload.Enabled = _SelectedProject.UploadExamCommand.CanExecute(null);
         }
@@ -157,6 +160,7 @@ namespace MultiDF
           _SelectedProject.AbortProcessCommand.CanExecuteChanged += (sender2, e2) => btnStopProcess.Enabled = _SelectedProject.AbortProcessCommand.CanExecute(null);
           _SelectedProject.OpenResultsWindowCommand.CanExecuteChanged += (sender2, e2) => btnOpenResultsWindow.Enabled = _SelectedProject.OpenResultsWindowCommand.CanExecute(null);
           _SelectedProject.ExportResultsCommand.CanExecuteChanged += (sender2, e2) => btnExportResults.Enabled = _SelectedProject.ExportResultsCommand.CanExecute(null);
+          _SelectedProject.MergeAsDOCXCommand.CanExecuteChanged += (sender2, e2) => btnMergeAsDOCX.Enabled = _SelectedProject.MergeAsDOCXCommand.CanExecute(null);
           _SelectedProject.MergeAsPDFCommand.CanExecuteChanged += (sender2, e2) => btnMergeAsPDF.Enabled = _SelectedProject.MergeAsPDFCommand.CanExecute(null);
           _SelectedProject.UploadExamCommand.CanExecuteChanged += (sender2, e2) => btnUpload.Enabled = _SelectedProject.UploadExamCommand.CanExecute(null);
         }
@@ -245,6 +249,12 @@ namespace MultiDF
     {
       if (ViewModelLocator.Main.SelectedProject != null)
         ViewModelLocator.Main.SelectedProject.ExportCommand.Execute(null);
+    }
+
+    private void btnMergeAsDOCX_Click(object sender, RibbonControlEventArgs e)
+    {
+      if (ViewModelLocator.Main.SelectedProject != null)
+        ViewModelLocator.Main.SelectedProject.MergeAsDOCXCommand.Execute(null);
     }
 
     private void btnMergeAsPDF_Click(object sender, RibbonControlEventArgs e)

@@ -25,23 +25,10 @@ namespace HFQOVM
         {
           OpenExamCommand.RaiseCanExecuteChanged();
 
-          if(ViewModelLocator.Auth.IsLoggedIn)
+          if (ViewModelLocator.Auth.IsLoggedIn)
           {
-              UpdateProgress(true, "Fetching master files list", 0);
-            ViewModelLocator.DataService.GetExamsDL().ContinueWith(t2 => {
-              if (!t2.IsFaulted)
-              {
-                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                {
-                  UpdateProgress(true, "Ready", 0);
-                  MyExams = t2.Result;
-                  RaisePropertyChanged(nameof(MyExams));
-
-                  if (MyExams.Length > 0)
-                    SelectedAccess = MyExams[0];
-                });
-              }
-            });
+            UpdateProgress(true, "Fetching master files list", 0);
+            RefreshExamsList();
           }
           else
           {
@@ -58,6 +45,25 @@ namespace HFQOVM
           }
         }
       };
+    }
+
+    public void RefreshExamsList()
+    {
+      ViewModelLocator.DataService.GetExamsDL().ContinueWith(t2 =>
+      {
+        if (!t2.IsFaulted)
+        {
+          GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+          {
+            UpdateProgress(true, "Ready", 0);
+            MyExams = t2.Result;
+            RaisePropertyChanged(nameof(MyExams));
+
+            if (MyExams.Length > 0)
+              SelectedAccess = MyExams[0];
+          });
+        }
+      });
     }
 
     /// <summary>
@@ -78,7 +84,7 @@ namespace HFQOVM
       get => _XPSPath;
       set => Set(ref _XPSPath, value);
     }
-    
+
     private XMLDoc _XML;
     public XMLDoc XMLDoc
     {
@@ -123,13 +129,13 @@ namespace HFQOVM
         {
           _OpenExamCommand = new RelayCommand(() =>
           {
-            if(Result != null && Result.Count > 0)
+            if (Result != null && Result.Count > 0)
             {
               var SaveChanges = ViewModelLocator.DialogService.AskTernaryQuestion("Upload current result before opening new master file?");
 
               if (SaveChanges == null)
                 return;
-              else if(SaveChanges.Value)
+              else if (SaveChanges.Value)
               {
                 UploadResultCommand.Execute(null);
                 //upload results
@@ -177,7 +183,7 @@ namespace HFQOVM
                           ViewModelLocator.DialogService.ShowMessage(ee);
                           return;
                         }
-                        
+
                         if (MF != null)
                         {
                           var XPSBytes = Encryption.Decrypt(Convert.FromBase64String(MF.xps));
@@ -240,7 +246,7 @@ namespace HFQOVM
         {
           _MarkCommand = new RelayCommand<QA>((qa) =>
           {
-            if(SelectedResultIndex >= 0)
+            if (SelectedResultIndex >= 0)
             {
               var R = Result[SelectedResultIndex];
 
@@ -327,7 +333,7 @@ namespace HFQOVM
         {
           _UploadResultCommand = new RelayCommand(() =>
           {
-            if(Result.Any(r => r.A1 == null))
+            if (Result.Any(r => r.A1 == null))
             {
               ViewModelLocator.DialogService.ShowMessage("One or more entries do not have any value in A1 column. Please fix these entries before uploading result.", true);
               return;
@@ -368,7 +374,7 @@ namespace HFQOVM
                   }
                 });
               }
-              catch(Exception ee)
+              catch (Exception ee)
               {
                 ViewModelLocator.DialogService.ShowMessage(ee);
               }

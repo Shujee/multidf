@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:HFQOVM;assembly=HFQOVM"
         xmlns:common="clr-namespace:Common;assembly=Common"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
         Title="Open Exam" 
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="None" 
@@ -40,10 +41,15 @@
 
       <TextBlock Text="Select master file to open:" Margin="14,12,10,6" Grid.ColumnSpan="2" TextWrapping="Wrap" />
 
-      <ComboBox ItemsSource="{Binding MyExams}" Background="Yellow" SelectedItem="{Binding SelectedAccess}"
-      Grid.Row="1" MinWidth="200" Margin="12,12,12,0" Padding="3" Grid.ColumnSpan="2" BorderThickness="0,0,0,1" 
-      FontSize="12" BorderBrush="LightGray" GotFocus="ComboBox_GotFocus" HorizontalContentAlignment="Stretch" Style="{DynamicResource TransparentComboBoxStyle}">
-
+      <Grid Grid.Row="1" Grid.ColumnSpan="2" >
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <ComboBox ItemsSource="{Binding MyExams}" Background="Yellow" SelectedItem="{Binding SelectedAccess}"
+                  MinWidth="200" Margin="12" Padding="3" BorderThickness="0,0,0,1" 
+                  FontSize="12" BorderBrush="LightGray" GotFocus="ComboBox_GotFocus" HorizontalContentAlignment="Stretch" 
+                  Style="{DynamicResource TransparentComboBoxStyle}">
         <ComboBox.Resources>
           <Style TargetType="ToggleButton">
             <Setter Property="Background" Value="Yellow" />
@@ -92,6 +98,12 @@
           </DataTemplate>
         </ComboBox.ItemTemplate>
       </ComboBox>
+
+        <Button Background="{x:Null}" BorderBrush="{x:Null}" Click="RefreshButton_Click" Grid.Column="1" Margin="0,12" Width="24">
+        <fa:ImageAwesome Icon="Refresh" Width="16" Focusable="False" />
+        </Button>
+      </Grid>
+      
 
       <Button Content="OK" Grid.Row="2" Grid.Column="0" Width="70" Height="30" Margin="6,24,6,12" HorizontalAlignment="Right" Click="OK_Click" IsDefault="True" />
       <Button Content="Cancel" Grid.Row="2" Grid.Column="1" Width="70" Height="30" Margin="6,24,6,12" HorizontalAlignment="Left" Click="Cancel_Click" IsCancel="True" />

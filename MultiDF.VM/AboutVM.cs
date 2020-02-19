@@ -1,5 +1,6 @@
 ﻿using Common;
 using GalaSoft.MvvmLight;
+using System;
 
 namespace MultiDF.VM
 {
@@ -15,35 +16,28 @@ namespace MultiDF.VM
       {
         Status = "Not Registered";
         RegEmail = "N/A";
-        Expiry = "N/A";
+        Expiry = null;
       }
       else
       {
         var MachineCode = Encryption.Encrypt(LicenseGen.GetUniqueMachineId());
-        var E = LicenseGen.ParseLicense(Settings.LicenseKey, Settings.RegEmail, MachineCode);
+        var Expiry = LicenseGen.ParseLicense(Settings.LicenseKey, Settings.RegEmail, MachineCode);
 
-        if (E == null)
+        if (Expiry == null)
         {
           Status = "Not Registered";
           RegEmail = "N/A";
-          Expiry = "N/A";
+          this.Expiry = null;
         }
         else
         {
-          var ExpiryDate = System.DateTime.ParseExact(E, "MMM-dd-yyyy", System.Globalization.CultureInfo.CurrentCulture);
-
-          if (ExpiryDate >= System.DateTime.Today)
-          {
+          if (Expiry >= DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc))
             Status = "Registered";
-            RegEmail = Settings.RegEmail;
-            Expiry = E;
-          }
           else
-          {
             Status = "Expired";
-            RegEmail = Settings.RegEmail;
-            Expiry = E;
-          }
+
+          RegEmail = Settings.RegEmail;
+          this.Expiry = Expiry.Value;
         }
       }
     }
@@ -51,6 +45,6 @@ namespace MultiDF.VM
     public string Version { get; private set; }
     public string Status { get; private set; }
     public string RegEmail { get; private set; }
-    public string Expiry { get; private set; }
+    public DateTime? Expiry { get; private set; }
   }
 }

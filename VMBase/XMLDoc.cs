@@ -85,7 +85,7 @@ namespace VMBase
           RaisePropertyChanged(nameof(SyncInfo));
 
           FileInfo fileInfo = new FileInfo(_SourcePath);
-          return fileInfo.LastWriteTime == LastModified && fileInfo.Length == Size;
+          return fileInfo.LastWriteTimeUtc == LastModified && fileInfo.Length == Size;
         }
         else
           return false;
@@ -102,7 +102,7 @@ namespace VMBase
 
           var Info = new FileAttributesComparison
           {
-            LastModified1 = fileInfo.LastWriteTime,
+            LastModified1 = fileInfo.LastWriteTimeUtc,
             LastModified2 = LastModified,
 
             Size1 = fileInfo.Length,

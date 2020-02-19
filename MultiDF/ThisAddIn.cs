@@ -24,7 +24,7 @@ namespace MultiDF
 
       if (ExpiryDate != null)
       {
-        var ExpiryDays = ExpiryDate.Value.Subtract(System.DateTime.Now).TotalDays;
+        var ExpiryDays = ExpiryDate.Value.Subtract(System.DateTime.Now.ToUniversalTime()).TotalDays;
         if (ExpiryDays > 0 && ExpiryDays < 7)
         {
           ViewModelLocator.DialogService.ShowMessage($"MultiDF will expire in {(int)Math.Ceiling(ExpiryDays)} day(s). You should get a new license key if you want to continue using the add-in.", false);
@@ -91,7 +91,7 @@ namespace MultiDF
       using (var sw = new System.IO.StreamWriter(LogFilePath))
       {
         sw.WriteLine(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss"));
-        sw.WriteLine(DateTime.Now.ToString("--------------------"));
+        sw.WriteLine("--------------------");
         sw.WriteLine("Exception: " + e.Message);
 
         if (e.InnerException != null && !string.IsNullOrEmpty(e.InnerException.Message))
