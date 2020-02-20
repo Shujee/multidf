@@ -1738,7 +1738,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Model, Version=1.4.5.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Model, Version=1.4.7.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_2034D5F09B422C63BC7A5BCC4B4AAD15"
@@ -1955,7 +1955,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Common, Version=1.4.5.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Common, Version=1.4.7.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_2F5166F822D0C53296651AFA1703B367"
@@ -2048,7 +2048,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MultiDF.Views, Version=1.4.5.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:MultiDF.Views, Version=1.4.7.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_389BDBB468A2A405A15DC6FAB153C221"
@@ -3835,7 +3835,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MultiDF.VM, Version=1.4.5.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:MultiDF.VM, Version=1.4.7.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_DA029F7CDCE883FCAF052590400B776D"
@@ -4291,15 +4291,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MultiDF"
-        "ProductCode" = "8:{91B2DB72-4239-4D7B-A4CC-FF39807F18E3}"
-        "PackageCode" = "8:{2F52637B-D5BA-444A-9C1C-ED9279B22225}"
+        "ProductCode" = "8:{17D4A850-01F7-400D-AC72-FBD3AD76911D}"
+        "PackageCode" = "8:{CF71AE5E-3B76-4D57-B1FF-07F22D7256C7}"
         "UpgradeCode" = "8:{5A925BAF-47E5-4BF5-93C2-B0C3C245B96F}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.4.7"
+        "ProductVersion" = "8:1.4.9"
         "Manufacturer" = "8:MultiDF"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
