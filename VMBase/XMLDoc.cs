@@ -85,7 +85,21 @@ namespace VMBase
           RaisePropertyChanged(nameof(SyncInfo));
 
           FileInfo fileInfo = new FileInfo(_SourcePath);
-          return fileInfo.LastWriteTimeUtc == LastModified && fileInfo.Length == Size;
+
+          //FAT file system does not store timezone info, so fileInfo.LastWriteTime is interpretted as UTC time and shifted by timezone
+          //offset of the machine. On the other hand, our XML stores LastModified property with full timezone info and can be interpretted
+          //correctly on any machine. This makes it impossible to compare file's time to our property value. 
+          //Here we try to do a "fuzzy" comparison between these two timestamps by seeing if it difference is less than 12 hours and
+          //is an integer multiple of 30 minutes (consecutive timezones are always 30-minutes away for each other)
+
+          var TimeStampDiff = Math.Abs(Math.Round(LastModified.Subtract(fileInfo.LastWriteTime).TotalHours, 3));
+
+          return (
+                  fileInfo.LastWriteTimeUtc == LastModified.ToUniversalTime() ||
+                  (TimeStampDiff <= 12 && TimeStampDiff % 0.5 == 0)
+                 )
+                  && 
+                  fileInfo.Length == Size;
         }
         else
           return false;

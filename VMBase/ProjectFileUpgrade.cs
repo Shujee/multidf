@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -38,14 +40,18 @@ namespace VMBase
 
         var att_vmbase = new XAttribute(XNamespace.Xmlns + "vmbase", ns_VMBase);
 
-        var AllXMLDocs = X.Root.Element(ns_MultiDF + "AllXMLDocs");
+        var AllXMLDocsContainerNode = X.Root.Element(ns_MultiDF + "AllXMLDocs");
 
-        if (AllXMLDocs != null)
+        if (AllXMLDocsContainerNode != null)
         {
-          if (AllXMLDocs.Attribute(XNamespace.Xmlns + "vmbase") == null)
+          //If this is an exported project of v1.0, fix absolute paths in the xml.
+          var AllSourcePathDocsNodes = AllXMLDocsContainerNode.Elements(ns_MultiDF + "XMLDoc").Select(e => e.Element(ns_MultiDF + "SourcePath"));
+          Changed = Changed | FixAbsolutePathsInExportedProject(AllSourcePathDocsNodes, Path.GetDirectoryName(X.Root.Element(ns_MultiDF + "SavePath").Value));
+
+          if (AllXMLDocsContainerNode.Attribute(XNamespace.Xmlns + "vmbase") == null)
             X.Root.Element(ns_MultiDF + "AllXMLDocs").Add(att_vmbase);
 
-          foreach (var node in AllXMLDocs.Descendants())
+          foreach (var node in AllXMLDocsContainerNode.Descendants())
           {
             if (node.NodeType == XmlNodeType.Element && node.Name.LocalName != "string")
               node.Name = ns_VMBase + node.Name.LocalName;
@@ -97,6 +103,26 @@ namespace VMBase
       }
       else
         return xml;
+    }
+
+    /// <summary>
+    /// Checks if this is an exported project of v1.0. If so, change all absolute paths to relative paths.
+    /// </summary>
+    /// <param name="xml"></param>
+    /// <param name="projectDir"></param>
+    public static bool FixAbsolutePathsInExportedProject(IEnumerable<XElement> allSourcePaths, string projectDir)
+    {
+      if (allSourcePaths != null && allSourcePaths.All(d => Path.GetDirectoryName(d.Value) == projectDir))
+      {
+        ViewModelLocatorBase.Logger.Info("Fixing absolute paths in exported project of v1.0.");
+
+        foreach (var srcPath in allSourcePaths)
+          srcPath.Value = Path.GetFileName(srcPath.Value);
+
+        return true;
+      }
+
+      return false;
     }
 
     private static XDocument ReadXDocumentWithInvalidCharacters(Stream xml)

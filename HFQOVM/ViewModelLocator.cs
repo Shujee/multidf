@@ -30,11 +30,15 @@ namespace HFQOVM
       }
 
       SimpleIoc.Default.Unregister<HFQVM>();
+      SimpleIoc.Default.Unregister<IHardwareHelper>();
+
       
-      SimpleIoc.Default.Register<HFQVM>();
+      SimpleIoc.Default.Register<IHardwareHelper, HardwareHelper>();
     }
 
     public static HFQVM HFQ => SimpleIoc.Default.GetInstance<HFQVM>();
     public static IDialogService DialogServiceHFQ => SimpleIoc.Default.GetInstance<IDialogService>();
+    public static IHardwareHelper HardwareHelper => SimpleIoc.Default.GetInstance<IHardwareHelper>();
+    
   }
 }
