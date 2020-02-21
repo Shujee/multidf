@@ -20,17 +20,12 @@ namespace HFQOApp
     //Word's Point (1/72 inch) to Point to WPF's Pixel (1/96 inch) ratio.
     const float POINT2PIXEL = 96f / 72f;
 
-    private readonly DialogPresenter DLG = new DialogPresenter("HFQ Client App");
-
     //This list keeps track of FixedPage objects. Otherwise, they're (probably) collected by GC nad 
     //Loaded event used in the loop below is never fired.
     List<FixedPage> Pages = new List<FixedPage>();
 
     public MainWindow()
     {
-      SimpleIoc.Default.Register<Common.IDialogService>(() => DLG);
-      SimpleIoc.Default.Register<HFQOVM.IDialogService>(() => DLG);
-
       InitializeComponent();
 
       this.Title = $"HFQApp (ver: { System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()})";
