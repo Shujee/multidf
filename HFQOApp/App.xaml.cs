@@ -20,6 +20,12 @@ namespace HFQOApp
       SimpleIoc.Default.Register<Common.IDialogService>(() => DLG);
       SimpleIoc.Default.Register<HFQOVM.IDialogService>(() => DLG);
 
+      if(!ViewModelLocator.HardwareHelper.IsWindows10())
+      {
+        ViewModelLocator.DialogService.ShowMessage("This program can only be run on Windows version 10.0 or newer.", true);
+        Shutdown(1);
+        return;
+      }
       if (!ViewModelLocator.HardwareHelper.IsLaptop())
       {
         ViewModelLocator.DialogService.ShowMessage("This program can only be run on a laptop.", true);

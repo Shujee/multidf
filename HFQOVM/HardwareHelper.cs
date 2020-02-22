@@ -187,5 +187,10 @@ namespace HFQOVM
       _ = GetPwrCapabilities(out spc);
       return spc.LidPresent;
     }
+
+    public bool IsWindows10()
+    {
+      return Environment.OSVersion.Version >= new Version(10, 0);
+    }
   }
 }
