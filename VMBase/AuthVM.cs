@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.CommandWpf;
 using Common;
 using Settings = VMBase.Properties.Settings;
+using System.Threading.Tasks;
 
 namespace VMBase
 {
@@ -24,9 +25,13 @@ namespace VMBase
 
     private void TmrServerStatus_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
-      var TempIsConnected = ViewModelLocatorBase.DataService.IsAlive();
-
-      GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() => RaisePropertyChanged(nameof(IsConnected)));
+      Task.Run(() =>
+      {
+        var _ = ViewModelLocatorBase.DataService.IsAlive();
+      }).ContinueWith(t =>
+      {
+        GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() => RaisePropertyChanged(nameof(IsConnected)));
+      });
     }
 
     protected bool _IsLoggedIn;

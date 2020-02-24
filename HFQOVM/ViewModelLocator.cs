@@ -32,7 +32,7 @@ namespace HFQOVM
       SimpleIoc.Default.Unregister<HFQVM>();
       SimpleIoc.Default.Unregister<IHardwareHelper>();
 
-      
+      SimpleIoc.Default.Register<HFQVM>();
       SimpleIoc.Default.Register<IHardwareHelper, HardwareHelper>();
     }
 
