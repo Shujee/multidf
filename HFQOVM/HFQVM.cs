@@ -6,14 +6,44 @@ using System.IO;
 using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Xml;
 using VMBase;
 
 namespace HFQOVM
 {
   public class HFQVM : VMBase.MainBase
   {
+    public class HFQVMCache
+    {
+      public ObservableCollection<HFQResultRowVM> Result { get; set; }
+      public XMLDoc XMLDoc { get; set; }
+      public string XPSPath { get; set; }
+    }
+
     public event Action<HFQResultRowVM> NewResultRowAdded;
+
+    private static readonly Type[] AllObjectTypes = {
+      typeof(HFQResultRow),
+      typeof(HFQResultRowVM),
+      typeof(XMLDoc),
+      typeof(ObservableCollection<HFQResultRowVM>)
+    };
+
+    protected static readonly DataContractSerializer DSSerializer = new DataContractSerializer(typeof(HFQVMCache), AllObjectTypes, 0x7F_FFFF, false, true, null); //max graph size is 8,388,607‬ items
+
+    /// <summary>
+    /// This setting is required to prevent exceptions that are thrown by the serialization when it encounters control characters used by
+    /// Microsoft Word to denote newlines and non-breaking newlines.
+    /// </summary>
+    private static readonly XmlWriterSettings xmlWriterSettingsForWordDocs = new XmlWriterSettings()
+    {
+      NewLineChars = "\a\r\n",
+      CheckCharacters = false,
+      Encoding = Encoding.UTF8,
+      NewLineHandling = NewLineHandling.Entitize,
+    };
 
     public HFQVM()
     {
@@ -27,6 +57,16 @@ namespace HFQOVM
 
           if (ViewModelLocator.Auth.IsLoggedIn)
           {
+            if (File.Exists("result_cache.xml"))
+            {
+              var Cache = ReadFromCache();
+              Result = Cache.Result;
+              XPSPath = Cache.XPSPath;
+              XMLDoc = Cache.XMLDoc;
+
+              RaisePropertyChanged(nameof(Result));
+            }
+
             UpdateProgress(true, "Fetching master files list", 0);
             RefreshExamsList();
           }
@@ -37,6 +77,9 @@ namespace HFQOVM
             Result.Clear();
             RaisePropertyChanged(nameof(Result));
 
+            if (File.Exists("result_cache.xml"))
+              File.Delete("result_cache.xml");
+
             SelectedResultIndex = 0;
             SearchText = "";
 
@@ -45,6 +88,33 @@ namespace HFQOVM
           }
         }
       };
+    }
+
+    private HFQVMCache ReadFromCache()
+    {
+      var xml = File.ReadAllText("result_cache.xml");
+      using (StringReader s = new StringReader(xml))
+      {
+        using (var reader = XmlReader.Create(s, new XmlReaderSettings() { CheckCharacters = false }))
+        {
+          return (HFQVMCache)DSSerializer.ReadObject(reader, true);
+        }
+      }
+    }
+
+    private void WriteToCache()
+    {
+      var Result = new HFQVMCache() { Result = this.Result, XMLDoc = XMLDoc, XPSPath = XPSPath };
+
+      using (FileStream fs = new FileStream("result_cache.xml", FileMode.Create))
+      {
+        using (XmlWriter xmlWriter = XmlWriter.Create(fs, xmlWriterSettingsForWordDocs))
+        {
+          DSSerializer.WriteStartObject(xmlWriter, Result);
+          DSSerializer.WriteObjectContent(xmlWriter, Result);
+          DSSerializer.WriteEndObject(xmlWriter);
+        }
+      }
     }
 
     public void RefreshExamsList()
@@ -211,6 +281,8 @@ namespace HFQOVM
                           NewResultRowAdded?.Invoke(Row);
 
                           SelectedResultIndex = 0;
+
+                          WriteToCache();
                         }
                       }
                       catch (Exception ee)
@@ -257,11 +329,20 @@ namespace HFQOVM
               else
               {
                 if (R.A1 == null)
+                {
                   R.A1 = qa.Index;
+                  WriteToCache();
+                }
                 else if (R.A2 == null)
+                {
                   R.A2 = qa.Index;
+                  WriteToCache();
+                }
                 else if (R.A3 == null)
+                {
                   R.A3 = qa.Index;
+                  WriteToCache();
+                }
                 else
                   ViewModelLocator.DialogService.ShowMessage("This question has already been assign 3 matches.", false);
               }
@@ -292,6 +373,8 @@ namespace HFQOVM
               Result.Add(Row);
               NewResultRowAdded?.Invoke(Row);
               SelectedResultIndex = Result.Count - 1;
+
+              WriteToCache();
             }
             else
             {
@@ -358,6 +441,9 @@ namespace HFQOVM
 
                       Result.Clear();
                       RaisePropertyChanged(nameof(Result));
+
+                      if (File.Exists("result_cache.xml"))
+                        File.Delete("result_cache.xml");
 
                       SelectedResultIndex = 0;
                       SearchText = "";
