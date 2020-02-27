@@ -1,4 +1,4 @@
-﻿<Window x:Class="MultiDFKeyGen.MainWindow"
+﻿<Window x:Class="HFQAppKeyGen.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -15,7 +15,7 @@
         <ResourceDictionary Source="pack://application:,,,/ViewsBase;component/Styles.xaml" />
       </ResourceDictionary.MergedDictionaries>
 
-      <SolidColorBrush x:Key="ThemeColor" Color="#EF006B" />
+      <SolidColorBrush x:Key="ThemeColor" Color="#00AFF0" />
 
       <Style TargetType="Button" BasedOn="{StaticResource BlueButton}">
         <Setter Property="Background" Value="{StaticResource ThemeColor}" />
@@ -32,7 +32,7 @@
       <Path Width="200" Height="25" HorizontalAlignment="Center" VerticalAlignment="Top" StrokeThickness="2" Fill="White" Stroke="{StaticResource ThemeColor}"
             Data="M0,20 L15,0 H180 L195,20" Margin="-18" />
 
-      <TextBlock Text="MultiDF KeyGen" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-15" FontFamily="pack://application:,,,/#Audiowide" FontSize="18" SnapsToDevicePixels="True" Foreground="{StaticResource ThemeColor}" />
+      <TextBlock Text="HFQApp KeyGen" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-15" FontFamily="pack://application:,,,/#Audiowide" FontSize="18" SnapsToDevicePixels="True" Foreground="{StaticResource ThemeColor}" />
 
       <Grid Margin="12">
         <Grid.ColumnDefinitions>
@@ -92,7 +92,7 @@
           </ItemsControl.ItemsPanel>
         </ItemsControl>
 
-        <Label x:Name="CopiedLabel" Content="Copied to clipboard" Grid.Row="4" Grid.Column="1" Foreground="{StaticResource ThemeColor}" HorizontalAlignment="Right" Margin="3,-6,3,3" FontSize="10" 
+        <Label x:Name="CopiedLabel" Content="Copied to clipboard" Grid.Row="4" Grid.Column="1" Foreground="{" HorizontalAlignment="Right" Margin="3,-6,3,3" FontSize="10" 
                Padding="3" Visibility="Hidden" />
 
         <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="3,6">

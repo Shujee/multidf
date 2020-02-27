@@ -67,6 +67,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo_HFQ.cs">
+      <Link>SharedAssemblyInfo_HFQ.cs</Link>
+    </Compile>
     <Compile Include="HFQResultRowVM.cs" />
     <Compile Include="HFQVM.cs" />
     <Compile Include="IDialogService.cs" />

@@ -86,8 +86,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    <Compile Include="..\SharedAssemblyInfo_MultiDF.cs">
+      <Link>SharedAssemblyInfo_MultiDF.cs</Link>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -129,6 +129,10 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{73855fcf-ba21-4447-ab46-303506516534}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ViewsBase\ViewsBase.csproj">
+      <Project>{9652f8f9-8923-479c-9ffe-a0bd084baf65}</Project>
+      <Name>ViewsBase</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

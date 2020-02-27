@@ -4,7 +4,7 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("MultiDFKeyGen")]
+[assembly: AssemblyTitle("HFQAppKeyGen")]
 [assembly: AssemblyDescription("")]
 
 //In order to begin building localizable applications, set
@@ -15,7 +15,6 @@ using System.Windows;
 //the line below to match the UICulture setting in the project file.
 
 //[assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.Satellite)]
-
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located

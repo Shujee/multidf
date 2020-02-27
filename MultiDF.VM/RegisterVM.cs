@@ -37,7 +37,14 @@ namespace MultiDF.VM
           return false;
         else
         {
-          var Expiry = LicenseGen.ParseLicense(_LicenseKey, _RegEmail, MachineCode);
+          var LocalLI = new LI()
+          {
+            app = "MultiDF",
+            code = MachineCode,
+            email = _RegEmail
+          };
+
+          var Expiry = LicenseGen.ParseLicense(_LicenseKey, LocalLI);
 
           if (Expiry == null)
             return false;
@@ -56,7 +63,16 @@ namespace MultiDF.VM
         if (string.IsNullOrEmpty(_RegEmail.Trim()) || string.IsNullOrEmpty(_LicenseKey.Trim()))
           return null;
         else
-          return LicenseGen.ParseLicense(_LicenseKey, _RegEmail, MachineCode);
+        {
+          var LocalLI = new LI()
+          {
+            app = "MultiDF",
+            code = MachineCode,
+            email = _RegEmail
+          };
+
+          return LicenseGen.ParseLicense(_LicenseKey, LocalLI);
+        }
       }
     }
 
@@ -73,7 +89,14 @@ namespace MultiDF.VM
               ViewModelLocator.DialogService.ShowMessage("E-mail and License Key must be provided.", true);
             else
             {
-              var Expiry = LicenseGen.ParseLicense(_LicenseKey, _RegEmail, MachineCode);
+              var LocalLI = new LI()
+              {
+                app = "MultiDF",
+                code = MachineCode,
+                email = _RegEmail
+              };
+
+              var Expiry = LicenseGen.ParseLicense(_LicenseKey, LocalLI);
               RaisePropertyChanged(nameof(IsRegistered));
 
               if (Expiry != null)

@@ -2,7 +2,7 @@
 using System;
 using System.Windows;
 
-namespace MultiDFKeyGen
+namespace HFQAppKeyGen
 {
   /// <summary>
   /// Interaction logic for MainWindow.xaml
@@ -28,7 +28,7 @@ namespace MultiDFKeyGen
         {
           var li = new LI()
           {
-            app = "MultiDF",
+            app = "HFQApp",
             email = txtEmail.Text.Trim(),
             code = txtCode.Text.Trim(),
             expiry = DateTime.SpecifyKind(ExpiryDatePicker.SelectedDate.Value.Date, DateTimeKind.Utc)
@@ -45,7 +45,7 @@ namespace MultiDFKeyGen
 
     private void CloseButton_Click(object sender, RoutedEventArgs e)
     {
-      if (MessageBox.Show("Are you sure you want to exit?", "MultiDF KeyGen", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+      if (MessageBox.Show("Are you sure you want to exit?", "HFQApp KeyGen", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
         this.Close();
     }
 

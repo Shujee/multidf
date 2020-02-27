@@ -21,7 +21,15 @@ namespace MultiDF.VM
       else
       {
         var MachineCode = Encryption.Encrypt(LicenseGen.GetUniqueMachineId());
-        var Expiry = LicenseGen.ParseLicense(Settings.LicenseKey, Settings.RegEmail, MachineCode);
+
+        var LocalLI = new LI()
+        {
+          app = "MultiDF",
+          code = MachineCode,
+          email = Settings.RegEmail
+        };
+
+        var Expiry = LicenseGen.ParseLicense(Settings.LicenseKey, LocalLI);
 
         if (Expiry == null)
         {

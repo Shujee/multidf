@@ -194,8 +194,8 @@
     can be found.
   -->
   <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs">
-      <Link>SharedAssemblyInfo.cs</Link>
+    <Compile Include="..\SharedAssemblyInfo_MultiDF.cs">
+      <Link>SharedAssemblyInfo_MultiDF.cs</Link>
     </Compile>
     <Compile Include="MultiDFPaneUC.cs">
       <SubType>UserControl</SubType>
