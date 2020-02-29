@@ -21,6 +21,12 @@
       <viewsbase:ConnectionStatusToStringConverter x:Key="ConnectionStatusToStringConverter" />
       <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
       <CollectionViewSource x:Key="QACVS" Source="{Binding XMLDoc.QAs}" IsLiveFilteringRequested="True" Filter="CollectionViewSource_Filter" />
+
+      <Style TargetType="Button" BasedOn="{StaticResource BlueButton}">
+        <Setter Property="Width" Value="70" />
+        <Setter Property="Height" Value="Auto" />
+        <Setter Property="Padding" Value="6" />
+      </Style>
     </ResourceDictionary>
   </UserControl.Resources>
 
@@ -82,8 +88,8 @@
     </ListBox>
 
     <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="6" HorizontalAlignment="Center">
-      <Button Content="&lt; Prev" Command="{Binding GoToPreviousCommand}" />
-      <Button Content="Next &gt;" Command="{Binding GoToNextCommand}" />
+      <Button Content="&lt; Prev" Command="{Binding GoToPreviousCommand}" Margin="3" />
+      <Button Content="Next &gt;" Command="{Binding GoToNextCommand}" Margin="3" />
     </StackPanel>
 
       <Grid Background="Gray" HorizontalAlignment="Stretch" Grid.Row="3" Margin="3,3,3,0">
@@ -147,8 +153,8 @@
             <TextBlock Grid.Column="2" Text="{Binding A2, FallbackValue=156}" />
             <TextBlock Grid.Column="3" Text="{Binding A3, FallbackValue=221}" />
 
-            <Button Padding="3" Grid.Column="4" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Margin="6,3" ToolTip="Remove answer" Width="Auto" Command="{Binding RemoveLastAnswerCommand}" SnapsToDevicePixels="True">
-              <Image Source="Resources/Close-WF.png" Width="16" Height="16" Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Right" />
+            <Button Padding="0" Grid.Column="4" HorizontalAlignment="Right" Margin="6,3" ToolTip="Remove answer" Width="16" Height="16" Background="Red" Command="{Binding RemoveLastAnswerCommand}" SnapsToDevicePixels="True">
+              <fa:ImageAwesome Icon="Remove" Foreground="White" Width="8" Height="8" />
             </Button>
           </Grid>
         </DataTemplate>

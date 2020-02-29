@@ -15,5 +15,7 @@ namespace Common
     string ShowSave(string filter, string initDir = "", string title = "", string fileName = "");
 
     bool ShowLogin();
+    void OpenRegisterWindow();
+    void OpenAboutWindow();
   }
 }

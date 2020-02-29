@@ -15,6 +15,9 @@ namespace HFQOVM
   {
     static ViewModelLocator()
     {
+      App = "HFQApp";
+      AppVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
       SimpleIoc.Default.Unregister<IDataService>();
       if (GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
       {

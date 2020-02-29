@@ -18,8 +18,10 @@
   <Window.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <!--<ResourceDictionary Source="Styles.xaml" />-->
+        <ResourceDictionary Source="pack://application:,,,/ViewsBase;component/Styles.xaml" />
       </ResourceDictionary.MergedDictionaries>
+
+      <Style TargetType="Button" BasedOn="{StaticResource BlueButton}" />
     </ResourceDictionary>
   </Window.Resources>
 
@@ -105,8 +107,8 @@
       </Grid>
       
 
-      <Button Content="OK" Grid.Row="2" Grid.Column="0" Width="70" Height="30" Margin="6,24,6,12" HorizontalAlignment="Right" Click="OK_Click" IsDefault="True" />
-      <Button Content="Cancel" Grid.Row="2" Grid.Column="1" Width="70" Height="30" Margin="6,24,6,12" HorizontalAlignment="Left" Click="Cancel_Click" IsCancel="True" />
+      <Button Content="OK" Grid.Row="2" Grid.Column="0" Margin="3" HorizontalAlignment="Right" Click="OK_Click" IsDefault="True" />
+      <Button Content="Cancel" Grid.Row="2" Grid.Column="1" Margin="3" HorizontalAlignment="Left" Click="Cancel_Click" IsCancel="True" />
     </Grid>
 
   </Border>

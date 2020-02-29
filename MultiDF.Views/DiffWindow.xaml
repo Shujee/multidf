@@ -6,78 +6,89 @@
         xmlns:vm="clr-namespace:MultiDF.VM;assembly=MultiDF.VM"
         xmlns:local="clr-namespace:MultiDF.Views"
         mc:Ignorable="d"
-        Title="MultiDF Diff" Width="850"
-        WindowStartupLocation="CenterScreen" 
-        ShowInTaskbar="False"
+        WindowStartupLocation="CenterScreen" ShowInTaskbar="False" WindowStyle="None" 
+        Background="Transparent" AllowsTransparency="True"
+        ResizeMode="NoResize" Width="700" SizeToContent="Height"
         DataContext="{x:Static vm:ViewModelLocator.Diff}"
         d:DataContext="{d:DesignInstance Type=vm:DiffVM, IsDesignTimeCreatable=True}">
 
-  <Grid Margin="12">
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="*" />
-      <ColumnDefinition Width="*" />
-    </Grid.ColumnDefinitions>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
-      <RowDefinition Height="Auto" />
-    </Grid.RowDefinitions>
+  <Window.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/ViewsBase;component/Styles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
 
-    <Grid.Resources>
-      <Style TargetType="TextBlock">
-        <Setter Property="Margin" Value="3" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-      </Style>
-      <Style TargetType="TextBox">
-        <Setter Property="Margin" Value="6" />
-        <Setter Property="Padding" Value="3" />
-      </Style>
+      <Style TargetType="Button" BasedOn="{StaticResource BlueButton}" />
+    </ResourceDictionary>
+  </Window.Resources>
 
-      <Style TargetType="Button">
-        <Setter Property="Width" Value="80" />
-        <Setter Property="Height" Value="30" />
-        <Setter Property="Margin" Value="3" />
-      </Style>
+  <Border CornerRadius="15" Background="White" BorderThickness="1" BorderBrush="#00aff0" Padding="6" Margin="12">
+    <Border.Effect>
+      <DropShadowEffect BlurRadius="12" ShadowDepth="10" Color="LightGray" />
+    </Border.Effect>
 
-      <local:DiffTypeToColorConverter x:Key="DiffTypeToColorConverter" />
-      <local:SubPiecesOrTextConverter x:Key="SubPiecesOrTextConverter" />
+    <Grid Margin="12">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
 
-      <DataTemplate x:Key="DiffDataTemplate">
-        <ItemsControl ItemsSource="{Binding Converter={StaticResource SubPiecesOrTextConverter}}">
-          <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-              <WrapPanel />
-            </ItemsPanelTemplate>
-          </ItemsControl.ItemsPanel>
-          <ItemsControl.ItemTemplate>
-            <DataTemplate>
-              <TextBlock Text="{Binding Text}" Margin="0" Padding="0" TextWrapping="Wrap">
-                <TextBlock.Background>
-                  <SolidColorBrush Color="{Binding Type, Converter={StaticResource DiffTypeToColorConverter}}" />
-                </TextBlock.Background>
-              </TextBlock>
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
-      </DataTemplate>
-    </Grid.Resources>
+      <Grid.Resources>
+        <Style TargetType="TextBlock">
+          <Setter Property="Margin" Value="3" />
+          <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="TextBox">
+          <Setter Property="Margin" Value="6" />
+          <Setter Property="Padding" Value="3" />
+        </Style>
 
-    <TextBlock Text="Question" Grid.ColumnSpan="2" FontSize="16" FontWeight="Bold" />
+        <local:DiffTypeToColorConverter x:Key="DiffTypeToColorConverter" />
+        <local:SubPiecesOrTextConverter x:Key="SubPiecesOrTextConverter" />
 
-    <ListBox ItemsSource="{Binding Q1, Mode=OneWay}" Grid.Column="0" Grid.Row="1" FontFamily="Courier New" ItemTemplate="{StaticResource DiffDataTemplate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
-    <ListBox ItemsSource="{Binding Q2, Mode=OneWay}" Grid.Column="1" Grid.Row="1" FontFamily="Courier New" ItemTemplate="{StaticResource DiffDataTemplate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+        <DataTemplate x:Key="DiffDataTemplate">
+          <ItemsControl ItemsSource="{Binding Converter={StaticResource SubPiecesOrTextConverter}}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <WrapPanel />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Text}" Margin="0" Padding="0" TextWrapping="Wrap">
+                  <TextBlock.Background>
+                    <SolidColorBrush Color="{Binding Type, Converter={StaticResource DiffTypeToColorConverter}}" />
+                  </TextBlock.Background>
+                </TextBlock>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </DataTemplate>
+      </Grid.Resources>
 
-    <TextBlock Text="Answer Choices" Grid.ColumnSpan="2" Grid.Row="2" FontSize="16" FontWeight="Bold" />
+      <TextBlock Text="Question" Grid.ColumnSpan="2" FontSize="16" FontWeight="Bold" />
 
-    <ListBox ItemsSource="{Binding A1, Mode=OneWay}" Grid.Column="0" Grid.Row="3" FontFamily="Courier New" ItemTemplate="{StaticResource DiffDataTemplate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
-    <ListBox ItemsSource="{Binding A2, Mode=OneWay}" Grid.Column="1" Grid.Row="3" FontFamily="Courier New" ItemTemplate="{StaticResource DiffDataTemplate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+      <ListBox Height="300" ItemsSource="{Binding Q1, Mode=OneWay}" Grid.Column="0" Grid.Row="1" FontFamily="Courier New" ItemTemplate="{StaticResource DiffDataTemplate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+      <ListBox Height="300" ItemsSource="{Binding Q2, Mode=OneWay}" Grid.Column="1" Grid.Row="1" FontFamily="Courier New" ItemTemplate="{StaticResource DiffDataTemplate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
 
-    <StackPanel Grid.ColumnSpan="2" Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="3,6">
-      <Button x:Name="CloseButton" Content="Close" Click="CloseButton_Click" IsCancel="true" />
-    </StackPanel>
-  </Grid>
+      <TextBlock Text="Answer Choices" Grid.ColumnSpan="2" Grid.Row="2" FontSize="16" FontWeight="Bold" />
+
+      <ListBox Height="300" ItemsSource="{Binding A1, Mode=OneWay}" Grid.Column="0" Grid.Row="3" FontFamily="Courier New" ItemTemplate="{StaticResource DiffDataTemplate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+      <ListBox Height="300" ItemsSource="{Binding A2, Mode=OneWay}" Grid.Column="1" Grid.Row="3" FontFamily="Courier New" ItemTemplate="{StaticResource DiffDataTemplate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+
+      <StackPanel Grid.ColumnSpan="2" Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="3,6">
+        <Button x:Name="CloseButton" Content="Close" Click="CloseButton_Click" IsCancel="true" Margin="3,12" />
+      </StackPanel>
+    </Grid>
+
+  </Border>
 </Window>
 
   

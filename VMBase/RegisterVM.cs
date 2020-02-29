@@ -3,13 +3,13 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using System;
 
-namespace MultiDF.VM
+namespace VMBase
 {
   public class RegisterVM : ViewModelBase
   {
     public RegisterVM()
-    {      
-      _RegEmail= Properties.Settings.Default.RegEmail;
+    {
+      _RegEmail = Properties.Settings.Default.RegEmail;
       _LicenseKey = Properties.Settings.Default.LicenseKey;
     }
 
@@ -39,7 +39,7 @@ namespace MultiDF.VM
         {
           var LocalLI = new LI()
           {
-            app = "MultiDF",
+            app = ViewModelLocatorBase.App,
             code = MachineCode,
             email = _RegEmail
           };
@@ -56,7 +56,7 @@ namespace MultiDF.VM
       }
     }
 
-    public System.DateTime? ExpiryDate
+    public DateTime? ExpiryDate
     {
       get
       {
@@ -66,7 +66,7 @@ namespace MultiDF.VM
         {
           var LocalLI = new LI()
           {
-            app = "MultiDF",
+            app = ViewModelLocatorBase.App,
             code = MachineCode,
             email = _RegEmail
           };
@@ -86,18 +86,17 @@ namespace MultiDF.VM
           _RegisterCommand = new RelayCommand(() =>
           {
             if (string.IsNullOrEmpty(_RegEmail.Trim()) || string.IsNullOrEmpty( _LicenseKey.Trim()))
-              ViewModelLocator.DialogService.ShowMessage("E-mail and License Key must be provided.", true);
+              ViewModelLocatorBase.DialogService.ShowMessage("E-mail and License Key must be provided.", true);
             else
             {
               var LocalLI = new LI()
               {
-                app = "MultiDF",
+                app = ViewModelLocatorBase.App,
                 code = MachineCode,
                 email = _RegEmail
               };
 
               var Expiry = LicenseGen.ParseLicense(_LicenseKey, LocalLI);
-              RaisePropertyChanged(nameof(IsRegistered));
 
               if (Expiry != null)
               {
@@ -106,10 +105,13 @@ namespace MultiDF.VM
                 Setting.LicenseKey = _LicenseKey.Trim();
                 Setting.Save();
 
-                ViewModelLocator.DialogService.ShowMessage("Congratulations. You have successfully registered the product. You can now close this window and start using the product.", false);
+                ViewModelLocatorBase.DialogService.ShowMessage("Congratulations. You have successfully registered the product. You can now close this window and start using the product.", false);
+
+                RaisePropertyChanged(nameof(ExpiryDate));
+                RaisePropertyChanged(nameof(IsRegistered));
               }
               else
-                ViewModelLocator.DialogService.ShowMessage("License Key and/or e-mail address is incorrect. Please contact vendor.", true);
+                ViewModelLocatorBase.DialogService.ShowMessage("License Key and/or e-mail address is incorrect. Please contact vendor.", true);
             }
           },
           () => true);

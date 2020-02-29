@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace MultiDF.Views
+namespace ViewsBase
 {
   /// <summary>
   /// Interaction logic for MainWindow.xaml

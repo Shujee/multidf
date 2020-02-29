@@ -3,9 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:VMBase;assembly=VMBase"
         mc:Ignorable="d"
-        Title="MultiDF" 
-        WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False"
+        WindowStartupLocation="CenterScreen" ShowInTaskbar="False" WindowStyle="None" 
+        Background="Transparent" AllowsTransparency="True"
+        ResizeMode="NoResize" 
         Width="500" SizeToContent="Height"
         FocusManager.FocusedElement="{Binding ElementName=txtValue}">
   <Window.Resources>
@@ -13,24 +15,32 @@
       <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Styles.xaml" />
       </ResourceDictionary.MergedDictionaries>
+
+      <Style TargetType="Button" BasedOn="{StaticResource BlueButton}" />
     </ResourceDictionary>
   </Window.Resources>
-  
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
-    </Grid.RowDefinitions>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="*" />
-      <ColumnDefinition Width="*" />
-    </Grid.ColumnDefinitions>
 
-    <TextBlock x:Name="lblDescription" Text="Please provide a name for this master file:" Margin="12,12,12,6" Grid.ColumnSpan="2" TextWrapping="Wrap" />
-    <TextBox x:Name="txtValue" Grid.Row="1" MinWidth="200" Margin="12,12,12,0" Grid.ColumnSpan="2" />
+  <Border CornerRadius="15" Background="White" BorderThickness="1" BorderBrush="#00aff0" Padding="6" Margin="12">
+    <Border.Effect>
+      <DropShadowEffect BlurRadius="12" ShadowDepth="10" Color="LightGray" />
+    </Border.Effect>
 
-    <Button Content="OK" Grid.Row="2" Grid.Column="0" Margin="6,24,6,12" HorizontalAlignment="Right" Click="OK_Click" IsDefault="True" />
-    <Button Content="Cancel" Grid.Row="2" Grid.Column="1" Margin="6,24,6,12" HorizontalAlignment="Left" Click="Cancel_Click" IsCancel="True" />
-  </Grid>
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+
+      <TextBlock x:Name="lblDescription" Text="Please provide a name for this master file:" Margin="12,12,12,6" Grid.ColumnSpan="2" TextWrapping="Wrap" />
+      <TextBox x:Name="txtValue" Grid.Row="1" MinWidth="200" Margin="12,12,12,0" Grid.ColumnSpan="2" BorderThickness="0,0,0,1" />
+
+      <Button Content="OK" Grid.Row="2" Grid.Column="0" Margin="6,24,6,12" HorizontalAlignment="Right" Click="OK_Click" IsDefault="True" />
+      <Button Content="Cancel" Grid.Row="2" Grid.Column="1" Margin="6,24,6,12" HorizontalAlignment="Left" Click="Cancel_Click" IsCancel="True" />
+    </Grid>
+  </Border>
 </Window>

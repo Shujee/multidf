@@ -6,6 +6,7 @@
         xmlns:view="clr-namespace:HFQOViews;assembly=HFQOViews"
         xmlns:vm="clr-namespace:HFQOVM;assembly=HFQOVM"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:local="clr-namespace:HFQOApp"
         mc:Ignorable="d"
         Title="HFQO Client" Height="450" Width="800"
         WindowStartupLocation="CenterScreen" WindowState="Maximized"
@@ -109,6 +110,42 @@
             </fa:FontAwesome.Style>
           </fa:FontAwesome>
           <TextBlock Text="Upload" HorizontalAlignment="Center" Margin="0,6,0,0" />
+        </StackPanel>
+      </Button>
+
+      <Separator />
+
+      <Button Click="RegisterButton_Click" Style="{StaticResource ToolbarButton}">
+        <StackPanel>
+          <fa:FontAwesome Icon="Key" FontSize="24">
+            <fa:FontAwesome.Style>
+              <Style TargetType="fa:FontAwesome">
+                <Style.Triggers>
+                  <Trigger Property="IsEnabled" Value="True">
+                    <Setter Property="TextElement.Foreground" Value="Black"></Setter>
+                  </Trigger>
+                </Style.Triggers>
+              </Style>
+            </fa:FontAwesome.Style>
+          </fa:FontAwesome>
+          <TextBlock Text="Register" HorizontalAlignment="Center" Margin="0,6,0,0" />
+        </StackPanel>
+      </Button>
+
+      <Button Click="AboutButton_Click" Style="{StaticResource ToolbarButton}">
+        <StackPanel>
+          <fa:FontAwesome Icon="InfoCircle" FontSize="24">
+            <fa:FontAwesome.Style>
+              <Style TargetType="fa:FontAwesome">
+                <Style.Triggers>
+                  <Trigger Property="IsEnabled" Value="True">
+                    <Setter Property="TextElement.Foreground" Value="Black"></Setter>
+                  </Trigger>
+                </Style.Triggers>
+              </Style>
+            </fa:FontAwesome.Style>
+          </fa:FontAwesome>
+          <TextBlock Text="About" HorizontalAlignment="Center" Margin="0,6,0,0" />
         </StackPanel>
       </Button>
     </ToolBar>

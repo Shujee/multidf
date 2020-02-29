@@ -20,6 +20,7 @@
         <ResourceDictionary Source="pack://application:,,,/ViewsBase;component/Styles.xaml" />
       </ResourceDictionary.MergedDictionaries>
 
+      <Style TargetType="Button" BasedOn="{StaticResource BlueButton}" />
       <CollectionViewSource x:Key="QACVS" Source="{Binding Exams}" IsLiveFilteringRequested="True" Filter="CollectionViewSource_Filter" />
 
       <viewbase:NegationConverter x:Key="NegationConverter" />

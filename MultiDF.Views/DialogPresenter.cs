@@ -10,13 +10,6 @@ namespace MultiDF.Views
 
     }
 
-    public void OpenRegisterWindow()
-    {
-      var w = new RegisterWindow();
-      MakeChild(w);
-      w.ShowDialog();
-    }
-
     public void OpenDiffWindow(string q1, string q2, List<string> a1, List<string> a2)
     {
       var w = new DiffWindow();
@@ -40,13 +33,6 @@ namespace MultiDF.Views
       MakeChild(w); //Show this dialog as child of Microsoft Word window.
       var Result = w.ShowDialog().Value;
       return Result;
-    }
-
-    public void OpenAboutWindow()
-    {
-      var w = new AboutWindow();
-      MakeChild(w);
-      w.ShowDialog();
     }
   }
 }

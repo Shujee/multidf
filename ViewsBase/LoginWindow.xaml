@@ -72,8 +72,8 @@
     <CheckBox IsChecked="{Binding RememberMe}" Grid.Row="4" Content="Remember Me" Grid.Column="1" Margin="6,12" />
 
     <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.ColumnSpan="2" HorizontalAlignment="Center">
-      <Button Content="OK" Width="80" Height="30" Margin="5,10" Click="OK_Click" />
-      <Button Content="Cancel" Width="80" Height="30" Margin="5,10" Click="Cancel_Click" />
+      <Button Content="OK" Width="80" Height="30" Margin="5,10" Click="OK_Click" Style="{StaticResource BlueButton}" />
+        <Button Content="Cancel" Width="80" Height="30" Margin="5,10" Click="Cancel_Click" Style="{StaticResource BlueButton}" />
     </StackPanel>
   </Grid>
   </Border>

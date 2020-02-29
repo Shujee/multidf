@@ -1,6 +1,4 @@
-﻿using GalaSoft.MvvmLight.Ioc;
-using HFQOViews;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -24,6 +22,8 @@ namespace HFQOApp
     //Loaded event used in the loop below is never fired.
     List<FixedPage> Pages = new List<FixedPage>();
 
+    private HFQOVM.HFQVM VM => this.DataContext as HFQOVM.HFQVM;
+
     public MainWindow()
     {
       InitializeComponent();
@@ -32,16 +32,15 @@ namespace HFQOApp
 
       DV.FitToWidth();
 
-      var VM = this.DataContext as HFQOVM.HFQVM;
       VM.PropertyChanged += (sender2, e2) =>
       {
         if (e2.PropertyName == nameof(HFQOVM.HFQVM.XPSPath) && !string.IsNullOrEmpty(VM.XPSPath))
         {
-          AddWatermark(new string[] { ViewModelLocatorBase.Auth.User.name, ViewModelLocatorBase.Auth.Email } );
+          AddWatermark(new string[] { ViewModelLocatorBase.Auth.User.name, ViewModelLocatorBase.Auth.Email });
         }
-      };    
+      };
 
-#if(DEBUG)
+#if (DEBUG)
       //DV.Document = (FixedDocumentSequence)(new PathToFixedDocumentConverter().Convert(@"F:\Office\Larry Gong\\Analysis\Sample Question for DF Multi.xps", typeof(FixedDocumentSequence), null, null));
       //(this.DataContext as MainVM).XML = System.IO.File.ReadAllText(@"F:\Office\Larry Gong\\Analysis\Sample Question for DF Multi.xml").Deserialize<XMLDoc>();
 #endif
@@ -50,9 +49,12 @@ namespace HFQOApp
     private void HFQPane_QASelected(QA qa)
     {
       //scroll to the position of QA
-      var fds = DV.Document as FixedDocumentSequence;
-      var XPSPageHeight = fds.DocumentPaginator.PageSize.Height;
-      DV.VerticalOffset = ((qa.StartPage - 1) * XPSPageHeight + qa.StartY * POINT2PIXEL) * (DV.Zoom / 100);
+      var PH = DV.PageViews[0].DocumentPage.Size.Height;
+      var VH = DV.PageViews[0].ActualHeight;
+
+      var XPSPageHeight = DV.PageViews[0].ActualHeight + DV.VerticalPageSpacing + 2;
+      var R = (qa.StartY / PH - 0.1) * VH;
+      DV.VerticalOffset = (qa.StartPage - 1) * XPSPageHeight + R;
     }
 
     private void AddWatermark(string[] text)
@@ -102,6 +104,16 @@ namespace HFQOApp
           (HighlightPage2.Children[0] as Canvas).Children.Add(WatermarkRect);
         };
       }
+    }
+
+    private void RegisterButton_Click(object sender, RoutedEventArgs e)
+    {
+      ViewModelLocatorBase.DialogService.OpenRegisterWindow();
+    }
+
+    private void AboutButton_Click(object sender, RoutedEventArgs e)
+    {
+      ViewModelLocatorBase.DialogService.OpenAboutWindow();
     }
   }
 }

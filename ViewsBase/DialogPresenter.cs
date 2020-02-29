@@ -175,6 +175,20 @@ namespace ViewsBase
       return Result;
     }
 
+    public void OpenRegisterWindow()
+    {
+      var w = new RegisterWindow();
+      MakeChild(w);
+      w.ShowDialog();
+    }
+
+    public void OpenAboutWindow()
+    {
+      var w = new AboutWindow();
+      MakeChild(w);
+      w.ShowDialog();
+    }
+
     /// <summary>
     /// Sets Word window as parent of the specified window.
     /// </summary>

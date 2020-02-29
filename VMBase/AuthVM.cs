@@ -21,6 +21,16 @@ namespace VMBase
       tmrServerStatus.AutoReset = true;
       tmrServerStatus.Elapsed += TmrServerStatus_Elapsed;
       tmrServerStatus.Enabled = true;
+
+      ViewModelLocatorBase.Register.PropertyChanged += Register_PropertyChanged;
+    }
+
+    private void Register_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+      if(e.PropertyName == nameof(RegisterVM.IsRegistered))
+      {
+        LoginCommand.RaiseCanExecuteChanged();
+      }
     }
 
     private void TmrServerStatus_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -110,7 +120,7 @@ namespace VMBase
               });
             }
           },
-          () => !IsLoggedIn);
+          () => ViewModelLocatorBase.Register.IsRegistered && !IsLoggedIn);
         }
 
         return _LoginCommand;

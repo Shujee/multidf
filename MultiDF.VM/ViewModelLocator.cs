@@ -15,6 +15,9 @@ namespace MultiDF.VM
   {
     static ViewModelLocator()
     {
+      App = "MultiDF";
+      AppVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
       SimpleIoc.Default.Unregister<IDataService>();
       if (GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
       {
@@ -29,18 +32,14 @@ namespace MultiDF.VM
 #endif
       }
 
-      SimpleIoc.Default.Unregister<RegisterVM>();
       SimpleIoc.Default.Unregister<DiffVM>();
-      SimpleIoc.Default.Unregister<AboutVM>();
       SimpleIoc.Default.Unregister<UploadExamVM>();
       SimpleIoc.Default.Unregister<MainVM>();
       SimpleIoc.Default.Unregister<IQAExtractionStrategy>();
       SimpleIoc.Default.Unregister<IQAComparer>();
       SimpleIoc.Default.Unregister<IDocComparer>();
       
-      SimpleIoc.Default.Register<RegisterVM>();
       SimpleIoc.Default.Register<DiffVM>();
-      SimpleIoc.Default.Register<AboutVM>();
       SimpleIoc.Default.Register<UploadExamVM>();
       SimpleIoc.Default.Register<MainVM>();
       SimpleIoc.Default.Register<IQAExtractionStrategy, DefaultQAExtractionStrategy>();
@@ -54,9 +53,7 @@ namespace MultiDF.VM
 
     public static MainVM Main => SimpleIoc.Default.GetInstance<MainVM>();
 
-    public static RegisterVM Register => SimpleIoc.Default.GetInstance<RegisterVM>();
     public static UploadExamVM UploadExam => SimpleIoc.Default.GetInstanceWithoutCaching<UploadExamVM>();
-    public static AboutVM About => SimpleIoc.Default.GetInstance<AboutVM>();
 
     public static IQAExtractionStrategy QAExtractionStrategy => SimpleIoc.Default.GetInstance<IQAExtractionStrategy>();
     public static IDocComparer DocComparer => SimpleIoc.Default.GetInstance<IDocComparer>();

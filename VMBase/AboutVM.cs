@@ -2,15 +2,13 @@
 using GalaSoft.MvvmLight;
 using System;
 
-namespace MultiDF.VM
+namespace VMBase
 {
   public class AboutVM : ViewModelBase
   {
     public AboutVM()
     {
-      var Settings = VM.Properties.Settings.Default;
-
-      Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+      var Settings = VMBase.Properties.Settings.Default;
 
       if (string.IsNullOrEmpty(Settings.LicenseKey) || string.IsNullOrEmpty(Settings.RegEmail))
       {
@@ -24,7 +22,7 @@ namespace MultiDF.VM
 
         var LocalLI = new LI()
         {
-          app = "MultiDF",
+          app = ViewModelLocatorBase.App,
           code = MachineCode,
           email = Settings.RegEmail
         };
@@ -50,7 +48,6 @@ namespace MultiDF.VM
       }
     }
 
-    public string Version { get; private set; }
     public string Status { get; private set; }
     public string RegEmail { get; private set; }
     public DateTime? Expiry { get; private set; }

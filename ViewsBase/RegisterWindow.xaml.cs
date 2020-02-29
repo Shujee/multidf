@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace MultiDF.Views
+namespace ViewsBase
 {
   /// <summary>
   /// Interaction logic for MainWindow.xaml
@@ -14,14 +14,19 @@ namespace MultiDF.Views
 
     private void CopyButton_Click(object sender, RoutedEventArgs e)
     {
-      Clipboard.SetText(((VM.RegisterVM)this.DataContext).MachineCode);
-      VM.ViewModelLocator.DialogService.ShowMessage("Machine code has been copied to clipboard.", false);
+      Clipboard.SetText(((VMBase.RegisterVM)this.DataContext).MachineCode);
+      VMBase.ViewModelLocatorBase.DialogService.ShowMessage("Machine code has been copied to clipboard.", false);
     }
 
     private void CloseButton_Click(object sender, RoutedEventArgs e)
     {
       this.DialogResult = true;
       this.Close();
+    }
+
+    private void RegisterButton_Click(object sender, RoutedEventArgs e)
+    {
+      (this.DataContext as VMBase.RegisterVM).RegisterCommand.Execute(null);
     }
   }
 }

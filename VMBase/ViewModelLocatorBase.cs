@@ -32,8 +32,12 @@ namespace VMBase
       GalaSoft.MvvmLight.Threading.DispatcherHelper.Initialize();
 
       SimpleIoc.Default.Unregister<AuthVM>();
-      
+      SimpleIoc.Default.Unregister<RegisterVM>();
+      SimpleIoc.Default.Unregister<AboutVM>();
+
       SimpleIoc.Default.Register<AuthVM>();
+      SimpleIoc.Default.Register<RegisterVM>();
+      SimpleIoc.Default.Register<AboutVM>();
     }
 
     /// <summary>
@@ -42,11 +46,19 @@ namespace VMBase
     public static void Cleanup()
     {
     }
+    
+    /// <summary>
+    /// This property will be set by child classes. RegisterVM and AboutVM use this property to decipher license keys.
+    /// </summary>
+    public static string App { get; set; }
+    public static string AppVersion { get; set; }
 
     public static IDataService DataService => SimpleIoc.Default.GetInstance<IDataService>();
     public static IDialogService DialogService => SimpleIoc.Default.GetInstance<IDialogService>();
 
     public static AuthVM Auth => SimpleIoc.Default.GetInstance<AuthVM>();
+    public static RegisterVM Register => SimpleIoc.Default.GetInstance<RegisterVM>();
+    public static AboutVM About => SimpleIoc.Default.GetInstance<AboutVM>();
 
     /// <summary>
     /// This is the global logger object that can be used to write debugging information to addin's log file. The log file is named "ghwordaddin.log" and is

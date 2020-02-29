@@ -5,9 +5,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultiDF.Views"
         mc:Ignorable="d"
-        Title="MultiDF Results" Height="750" Width="900"
-        WindowStartupLocation="CenterScreen" ShowInTaskbar="False">
-  
-    <local:ResultContent AllowOneExpansionOnly="False" />
-  
+        WindowStartupLocation="CenterScreen" ShowInTaskbar="False" WindowStyle="None" 
+        Background="Transparent" AllowsTransparency="True"
+        ResizeMode="NoResize" Width="700" SizeToContent="Height">
+
+  <Window.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/ViewsBase;component/Styles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+
+      <Style TargetType="Button" BasedOn="{StaticResource BlueButton}" />
+    </ResourceDictionary>
+  </Window.Resources>
+
+  <Border CornerRadius="15" Background="White" BorderThickness="1" BorderBrush="#00aff0" Padding="6" Margin="12">
+    <Border.Effect>
+      <DropShadowEffect BlurRadius="12" ShadowDepth="10" Color="LightGray" />
+    </Border.Effect>
+
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+
+      <local:ResultContent AllowOneExpansionOnly="False" Height="600" />
+      <Button x:Name="CloseButton" Grid.Row="1" Content="Close" Margin="6." Click="CloseButton_Click" IsCancel="True" IsDefault="True" Style="{StaticResource BlueButton}" HorizontalAlignment="Right" />
+    </Grid>
+  </Border>
 </Window>
