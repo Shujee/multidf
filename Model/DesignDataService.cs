@@ -1,4 +1,5 @@
 ﻿using Common;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -71,6 +72,11 @@ namespace Model
     public Task<bool> UploadResult(int exam_id, string machine_name, string city, string country, IEnumerable<HFQResultRow> result)
     {
       throw new System.NotImplementedException();
+    }
+
+    public Task<bool> UploadSnapshot(int download_id, DateTime timestamp, string filename)
+    {
+      throw new NotImplementedException();
     }
   }
 }

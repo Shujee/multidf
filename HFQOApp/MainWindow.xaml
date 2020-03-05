@@ -96,7 +96,7 @@
         </StackPanel>
       </Button>
 
-      <Button Command="{Binding UploadResultCommand}" Style="{StaticResource ToolbarButton}">
+      <Button Click="UploadResult_Click" Style="{StaticResource ToolbarButton}">
         <StackPanel>
           <fa:FontAwesome Icon="Upload" FontSize="24">
             <fa:FontAwesome.Style>

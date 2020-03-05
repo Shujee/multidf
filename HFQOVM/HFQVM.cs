@@ -1,6 +1,7 @@
 ﻿using Common;
 using GalaSoft.MvvmLight.CommandWpf;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.IsolatedStorage;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 using VMBase;
 
@@ -20,24 +22,30 @@ namespace HFQOVM
       public ObservableCollection<HFQResultRowVM> Result { get; set; }
       public XMLDoc XMLDoc { get; set; }
       public string XPSPath { get; set; }
+      public Dictionary<string, DateTime> QueuedSnapshots { get; set; }
+      public int? DownloadId { get; set; }
     }
 
     public event Action<HFQResultRowVM> NewResultRowAdded;
 
-    private static readonly Type[] AllObjectTypes = {
+    private readonly Type[] AllObjectTypes = {
       typeof(HFQResultRow),
       typeof(HFQResultRowVM),
       typeof(XMLDoc),
-      typeof(ObservableCollection<HFQResultRowVM>)
+      typeof(ObservableCollection<HFQResultRowVM>),
+      typeof(Dictionary<string, DateTime>)
     };
 
-    protected static readonly DataContractSerializer DSSerializer = new DataContractSerializer(typeof(HFQVMCache), AllObjectTypes, 0x7F_FFFF, false, true, null); //max graph size is 8,388,607‬ items
+    private System.Timers.Timer _CameraTimer = new System.Timers.Timer(60 * 1000); //takes camera snapshots every once in a while
+    private Dictionary<string, DateTime> _QueuedSnapshots = new Dictionary<string, DateTime>();
+    private readonly DataContractSerializer HFQSerializer;
+    private int? _DownloadId = null;
 
     /// <summary>
     /// This setting is required to prevent exceptions that are thrown by the serialization when it encounters control characters used by
     /// Microsoft Word to denote newlines and non-breaking newlines.
     /// </summary>
-    private static readonly XmlWriterSettings xmlWriterSettingsForWordDocs = new XmlWriterSettings()
+    private readonly XmlWriterSettings xmlWriterSettingsForWordDocs = new XmlWriterSettings()
     {
       NewLineChars = "\a\r\n",
       CheckCharacters = false,
@@ -47,7 +55,12 @@ namespace HFQOVM
 
     public HFQVM()
     {
+      HFQSerializer = new DataContractSerializer(typeof(HFQVMCache), AllObjectTypes, 0x7F_FFFF, false, true, null); //max graph size is 8,388,607‬ items
       Result = new ObservableCollection<HFQResultRowVM>();
+
+      _CameraTimer.AutoReset = true;
+      _CameraTimer.Enabled = true;
+      _CameraTimer.Elapsed += _CameraTimer_Elapsed;
 
       ViewModelLocator.Auth.PropertyChanged += (sender, e) =>
       {
@@ -63,6 +76,8 @@ namespace HFQOVM
               Result = Cache.Result;
               XPSPath = Cache.XPSPath;
               XMLDoc = Cache.XMLDoc;
+              _DownloadId = Cache.DownloadId;
+              _QueuedSnapshots = Cache.QueuedSnapshots;
 
               RaisePropertyChanged(nameof(Result));
             }
@@ -80,14 +95,78 @@ namespace HFQOVM
             if (File.Exists("result_cache.xml"))
               File.Delete("result_cache.xml");
 
+            _DownloadId = null;
             SelectedResultIndex = 0;
             SearchText = "";
+            _QueuedSnapshots.Clear();
 
-            XPSPath = "";
+            XPSPath = null;
             XMLDoc = null;
           }
         }
       };
+    }
+
+    private void _CameraTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    {
+      //if an exam is currently open, we'll take a snapshot every once in a while.
+      if (!string.IsNullOrEmpty(this.XPSPath))
+      {
+        //if this has been a few minutes since last snapshot, we'll take another snapshot. Duration is decided randomly and can be anywhere between 1 to 10 minutes.
+        if (_QueuedSnapshots.Count == 0 || DateTime.Now.Subtract(_QueuedSnapshots.Last().Value).TotalMinutes > (new Random()).Next(1, 2))
+        {
+          var Snapshot = ViewModelLocator.CameraService.TakeCameraSnapshot();
+
+          using (var isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null))
+          {
+            DateTime Timestamp = DateTime.Now;
+            string FileName = Timestamp.ToString("yyyyMMddHHmmss") + ".jpg";
+            using (var fs = isoStore.CreateFile(FileName))
+            {
+              Snapshot.Save(fs, System.Drawing.Imaging.ImageFormat.Jpeg);
+
+              var FullFilePath = fs.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(fs).ToString();
+              _QueuedSnapshots.Add(FullFilePath, Timestamp);
+            }
+          }
+        }
+      }
+
+      if (_QueuedSnapshots.Count > 0)
+      {
+        try
+        { 
+          while (_QueuedSnapshots.Count > 0)
+          {
+            var snap = _QueuedSnapshots.First();
+            _QueuedSnapshots.Remove(snap.Key);
+            ViewModelLocator.DataService.UploadSnapshot(_DownloadId.Value, snap.Value.ToUniversalTime(), snap.Key).ContinueWith(t =>
+            {
+              if (t.Result)
+              {
+                try
+                {
+                  //and remove the image file from the disk
+                  File.Delete(snap.Key);
+
+                  //remove from queue if uploaded successfully
+                  _QueuedSnapshots.Remove(snap.Key);
+                }
+                catch (Exception ee)
+                {
+                  //if a snapshot fails, add it back to the queue.
+                  _QueuedSnapshots.Add(snap.Key, snap.Value);
+                  ViewModelLocator.Logger.Warn(ee, "Could not delete snapshot from local cache.");
+                }
+              }
+            });
+          }
+        }
+        catch (Exception ee)
+        {
+          ViewModelLocator.Logger.Error(ee, "Snapshot upload failed");
+        }
+      }
     }
 
     private HFQVMCache ReadFromCache()
@@ -97,22 +176,22 @@ namespace HFQOVM
       {
         using (var reader = XmlReader.Create(s, new XmlReaderSettings() { CheckCharacters = false }))
         {
-          return (HFQVMCache)DSSerializer.ReadObject(reader, true);
+          return (HFQVMCache)HFQSerializer.ReadObject(reader, true);
         }
       }
     }
 
     private void WriteToCache()
     {
-      var Result = new HFQVMCache() { Result = this.Result, XMLDoc = XMLDoc, XPSPath = XPSPath };
+      var TempResult = new HFQVMCache() { Result = this.Result, XMLDoc = XMLDoc, XPSPath = XPSPath, QueuedSnapshots = _QueuedSnapshots, DownloadId = _DownloadId };
 
       using (FileStream fs = new FileStream("result_cache.xml", FileMode.Create))
       {
         using (XmlWriter xmlWriter = XmlWriter.Create(fs, xmlWriterSettingsForWordDocs))
         {
-          DSSerializer.WriteStartObject(xmlWriter, Result);
-          DSSerializer.WriteObjectContent(xmlWriter, Result);
-          DSSerializer.WriteEndObject(xmlWriter);
+          HFQSerializer.WriteStartObject(xmlWriter, TempResult);
+          HFQSerializer.WriteObjectContent(xmlWriter, TempResult);
+          HFQSerializer.WriteEndObject(xmlWriter);
         }
       }
     }
@@ -258,21 +337,30 @@ namespace HFQOVM
                         {
                           var XPSBytes = Encryption.Decrypt(Convert.FromBase64String(MF.xps));
 
-                          //Store this downloaded data into an isolated storage file
-                          IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
-                          var XPSFileName = DateTime.Now.ToString("yyyyMMHHmmss") + $"_{MF.id}.xps";
                           string XPSFilePath;
-                          using (IsolatedStorageFileStream isoStream = new IsolatedStorageFileStream(XPSFileName, FileMode.CreateNew, isoStore))
+
+                          //Store this downloaded data into an isolated storage file
+                          using (var isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null))
                           {
-                            isoStream.Write(XPSBytes, 0, XPSBytes.Length);
-                            XPSFilePath = isoStream.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(isoStream).ToString();
-                            //isoStore.DeleteFile(_XPSPath);
+                            var XPSFileName = DateTime.Now.ToString("yyyyMMHHmmss") + $"_{MF.id}.gxr";
+                            using (IsolatedStorageFileStream isoStream = new IsolatedStorageFileStream(XPSFileName, FileMode.CreateNew, isoStore))
+                            {
+                              isoStream.Write(XPSBytes, 0, XPSBytes.Length);
+                              XPSFilePath = isoStream.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(isoStream).ToString();
+                              isoStream.Close();
+                            }
+
+                            isoStore.Close();
                           }
+
+                          XPSPath = XPSFilePath;
 
                           var XMLString = Encoding.UTF8.GetString(Encryption.Decrypt(Convert.FromBase64String(MF.xml)));
                           XMLDoc = XMLDoc.FromXML(XMLString);
-                          XPSPath = XPSFilePath;
 
+                          _DownloadId = MF.download_id;
+
+                          _QueuedSnapshots.Clear();
                           Result.Clear();
                           RaisePropertyChanged(nameof(Result));
 
@@ -407,16 +495,21 @@ namespace HFQOVM
     }
 
 
-    private RelayCommand _UploadResultCommand;
-    public RelayCommand UploadResultCommand
+    private RelayCommand<Action<string>> _UploadResultCommand;
+
+    /// <summary>
+    /// We need to delete XPS files after UploadResult, which cannot be done till the View layer releases lock on the XPS file. So the  View layer will pass us with the delegate
+    /// of the delete function that we'll call after UploadResult succeeds.
+    /// </summary>
+    public RelayCommand<Action<string>> UploadResultCommand
     {
       get
       {
         if (_UploadResultCommand == null)
         {
-          _UploadResultCommand = new RelayCommand(() =>
+          _UploadResultCommand = new RelayCommand<Action<string>>((deleteFunc) =>
           {
-            if (Result.Any(r => r.A1 == null))
+            if (Result.Any(r => r != Result.Last() && r.A1 == null))
             {
               ViewModelLocator.DialogService.ShowMessage("One or more entries do not have any value in A1 column. Please fix these entries before uploading result.", true);
               return;
@@ -428,6 +521,9 @@ namespace HFQOVM
 
               try
               {
+                if (Result.Last().A1 == null)
+                  Result.RemoveAt(Result.Count - 1);
+
                 ViewModelLocator.DataService.UploadResult(_SelectedAccess.exam_id, Environment.MachineName, Result.Select(r => r.ToHFQResultRow())).ContinueWith(t =>
                 {
                   IsBusy = false;
@@ -436,9 +532,9 @@ namespace HFQOVM
                   {
                     GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                     {
-                      ViewModelLocator.DialogService.ShowMessage("Results uploaded successfully.", false);
                       SelectedAccess = null;
 
+                      _QueuedSnapshots.Clear();
                       Result.Clear();
                       RaisePropertyChanged(nameof(Result));
 
@@ -447,11 +543,16 @@ namespace HFQOVM
 
                       SelectedResultIndex = 0;
                       SearchText = "";
+                      _DownloadId = null;
 
-                      XPSPath = "";
+                      deleteFunc.Invoke(XPSPath);
+
+                      XPSPath = null;
                       XMLDoc = null;
 
                       UploadResultCommand.RaiseCanExecuteChanged();
+
+                      ViewModelLocator.DialogService.ShowMessage("Results uploaded successfully.", false);
                     });
                   }
                   else
@@ -466,7 +567,7 @@ namespace HFQOVM
               }
             }
           },
-          () => ViewModelLocator.Auth.IsLoggedIn && (ViewModelLocator.Auth.User.type == UserType.Admin || ViewModelLocator.Auth.User.type == UserType.Downloader) && _SelectedAccess != null && Result.Count > 0);
+          (deleteFunc) => ViewModelLocator.Auth.IsLoggedIn && (ViewModelLocator.Auth.User.type == UserType.Admin || ViewModelLocator.Auth.User.type == UserType.Downloader) && _SelectedAccess != null && Result.Count > 0);
         }
 
         return _UploadResultCommand;

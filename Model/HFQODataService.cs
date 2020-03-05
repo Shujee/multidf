@@ -206,6 +206,30 @@ namespace Model
                               });
     }
 
+    public async Task<bool> UploadSnapshot(int download_id, DateTime timestamp, string filename)
+    {
+      return await Task.Run(() => REST.ExecuteRest<string>("/download/{download}/snapshot", Method.POST,
+                              new[]
+                              {
+                                  new Parameter(){ Name = "Authorization", Value = "Bearer " + _BearerToken, Type = ParameterType.HttpHeader},
+                                  new Parameter(){ Name = "Accept", Value = "application/json", Type = ParameterType.HttpHeader},
+                                  new Parameter(){ Name = "download", Value = download_id.ToString(), Type = ParameterType.UrlSegment},
+                                  new Parameter(){ Name = "timestamp", Value = timestamp.ToString("yyyy-MM-dd HH:mm:ss"), Type = ParameterType.GetOrPost },
+                              },
+                              null,
+                              null,
+                              false,
+                              new FileParameter[] {
+                                new FileParameter() { Name = "image_file", FileName = filename, ContentType="image/jpeg" },
+                              })).ContinueWith(t =>
+                              {
+                                if (!t.IsCompleted || t.IsFaulted)
+                                  throw t.Exception.InnerException;
+                                else
+                                  return t.IsCompleted && !t.IsFaulted;
+                              });
+    }
+
     public async Task<bool> ExamNumberExists(string number)
     {
       return await Task.Run(() => REST.ExecuteRest<bool>("exam_number_exists/{number}", Method.GET,

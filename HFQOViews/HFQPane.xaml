@@ -150,8 +150,8 @@
             </TextBlock>
 
             <TextBlock Grid.Column="1" Text="{Binding A1, FallbackValue=38}" />
-            <TextBlock Grid.Column="2" Text="{Binding A2, FallbackValue=156}" />
-            <TextBlock Grid.Column="3" Text="{Binding A3, FallbackValue=221}" />
+            <TextBlock Grid.Column="2" Text="{Binding A2, FallbackValue=156}" Foreground="Orange" />
+            <TextBlock Grid.Column="3" Text="{Binding A3, FallbackValue=221}" Foreground="Red" />
 
             <Button Padding="0" Grid.Column="4" HorizontalAlignment="Right" Margin="6,3" ToolTip="Remove answer" Width="16" Height="16" Background="Red" Command="{Binding RemoveLastAnswerCommand}" SnapsToDevicePixels="True">
               <fa:ImageAwesome Icon="Remove" Foreground="White" Width="8" Height="8" />

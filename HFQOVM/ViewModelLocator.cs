@@ -34,14 +34,22 @@ namespace HFQOVM
 
       SimpleIoc.Default.Unregister<HFQVM>();
       SimpleIoc.Default.Unregister<IHardwareHelper>();
+      SimpleIoc.Default.Unregister<ICameraService>();
+      
 
       SimpleIoc.Default.Register<HFQVM>();
       SimpleIoc.Default.Register<IHardwareHelper, HardwareHelper>();
+
+//#if(DEBUG)
+      //SimpleIoc.Default.Register<ICameraService, DummyCameraService>();
+//#else
+      SimpleIoc.Default.Register<ICameraService, CameraService>();      
+//#endif
     }
 
     public static HFQVM HFQ => SimpleIoc.Default.GetInstance<HFQVM>();
     public static IDialogService DialogServiceHFQ => SimpleIoc.Default.GetInstance<IDialogService>();
     public static IHardwareHelper HardwareHelper => SimpleIoc.Default.GetInstance<IHardwareHelper>();
-    
+    public static ICameraService CameraService => SimpleIoc.Default.GetInstance<ICameraService>();
   }
 }

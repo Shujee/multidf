@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Packaging;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -114,6 +115,30 @@ namespace HFQOApp
     private void AboutButton_Click(object sender, RoutedEventArgs e)
     {
       ViewModelLocatorBase.DialogService.OpenAboutWindow();
+    }
+
+    private void UploadResult_Click(object sender, RoutedEventArgs e)
+    {
+      VM.UploadResultCommand.Execute(new Action<string>(DeleteXPSFile));
+    }
+
+    private void DeleteXPSFile(string xpsPath)
+    {
+      //If result was uploaded successfully, delete temporary XPS file
+      var XPSuri = new Uri(xpsPath, UriKind.Absolute);
+
+      //Get the XpsPackage itself
+      var theXpsPackage = System.IO.Packaging.PackageStore.GetPackage(XPSuri);
+
+      //THIS IS THE KEY!!!! close it and make it let go of it's file locks
+      theXpsPackage.Close();
+
+      //if you don't remove the package from the PackageStore, you won't be able to
+      //re-open the same file again later (due to System.IO.Packaging's Package store/caching
+      //rather than because of any file locks)
+      PackageStore.RemovePackage(XPSuri);
+
+      System.IO.File.Delete(xpsPath);
     }
   }
 }

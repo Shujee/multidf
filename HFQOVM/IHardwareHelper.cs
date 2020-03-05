@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace HFQOVM
+﻿namespace HFQOVM
 {
   public interface IHardwareHelper
   {
@@ -8,6 +6,5 @@ namespace HFQOVM
     bool HasMultipleScreens();
     bool IsLaptop();
     bool IsVM();
-    Bitmap TakeCameraSnapshot();
   }
 }

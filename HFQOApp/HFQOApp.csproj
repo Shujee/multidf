@@ -25,8 +25,8 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>19</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationVersion>1.6.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -51,10 +51,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>93D20EEBA77EA2369115BA0E2D07C5AE59232FAC</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>7135BDAEB3CA2F05CC2351E88AE85E1D4EE0ED94</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>HFQOApp_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>HFQOApp_4_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -129,6 +129,10 @@
     </EmbeddedResource>
     <Resource Include="FontAwesome.otf" />
     <None Include="app.manifest" />
+    <None Include="HFQOApp_1_TemporaryKey.pfx" />
+    <None Include="HFQOApp_2_TemporaryKey.pfx" />
+    <None Include="HFQOApp_3_TemporaryKey.pfx" />
+    <None Include="HFQOApp_4_TemporaryKey.pfx" />
     <None Include="HFQOApp_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -174,4 +178,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties Reactor_Enabled="1" Reactor_Commands="" Reactor_Project="" Reactor_Configuration="Release" Reactor_Output="" Reactor_Deploy="0" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

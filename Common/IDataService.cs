@@ -66,5 +66,15 @@ namespace Common
     Task<bool> UploadResult(int exam_id, string machine_name, IEnumerable<HFQResultRow> result);
 
     Task<bool> ExamNumberExists(string number);
+
+    /// <summary>
+    /// Uploads a JPEG image file to the server and assoociates it with the specified download. Used to upload camera snapshots
+    /// to the server
+    /// </summary>
+    /// <param name="download_id"></param>
+    /// <param name="timestamp"></param>
+    /// <param name="filename"></param>
+    /// <returns></returns>
+    Task<bool> UploadSnapshot(int download_id, System.DateTime timestamp, string filename);
   }
 }

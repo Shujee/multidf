@@ -61,6 +61,11 @@
     public string xml { get; set; }
 
     /// <summary>
+    /// ID of the Download row associated with this session
+    /// </summary>
+    public int download_id { get; set; }
+
+    /// <summary>
     /// Number of QAs in this master file.
     /// </summary>
     public int qa_count { get; set; }
