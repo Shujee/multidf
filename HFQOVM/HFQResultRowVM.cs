@@ -33,7 +33,6 @@ namespace HFQOVM
       set
       {
         Set(ref _A1, value);
-        RemoveLastAnswerCommand.RaiseCanExecuteChanged();
       }
     }
 
@@ -44,7 +43,6 @@ namespace HFQOVM
       set
       {
         Set(ref _A2, value);
-        RemoveLastAnswerCommand.RaiseCanExecuteChanged();
       }
     }
 
@@ -55,30 +53,6 @@ namespace HFQOVM
       set
       {
         Set(ref _A3, value);
-        RemoveLastAnswerCommand.RaiseCanExecuteChanged();
-      }
-    }
-
-    private RelayCommand _RemoveLastAnswerCommand;
-    public RelayCommand RemoveLastAnswerCommand
-    {
-      get
-      {
-        if (_RemoveLastAnswerCommand == null)
-        {
-          _RemoveLastAnswerCommand = new RelayCommand(() =>
-          {
-            if (A3 != null)
-              A3 = null;
-            else if (A2 != null)
-              A2 = null;
-            else if (A1 != null)
-              A1 = null;
-          },
-          () => _A1 != null || _A2 != null || _A3 != null);
-        }
-
-        return _RemoveLastAnswerCommand;
       }
     }
 

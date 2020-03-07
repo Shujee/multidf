@@ -7,6 +7,11 @@ namespace HFQOVM
   /// </summary>
   internal class DummyCameraService : ICameraService
   {
+    public bool InitCam()
+    {
+      return true;
+    }
+
     public Bitmap TakeCameraSnapshot()
     {
       return new Bitmap(@"C:\Users\Shujaat\Pictures\loco engine.png");

@@ -41,6 +41,9 @@ namespace HFQOVM
     private readonly DataContractSerializer HFQSerializer;
     private int? _DownloadId = null;
 
+    private const int MIN_SNAPSHOT_TIME = 5; //min. time to wait before taking next camera snapshot
+    private const int MAX_SNAPSHOT_TIME = 10; //max. time to wait before taking next camera snapshot
+
     /// <summary>
     /// This setting is required to prevent exceptions that are thrown by the serialization when it encounters control characters used by
     /// Microsoft Word to denote newlines and non-breaking newlines.
@@ -113,29 +116,34 @@ namespace HFQOVM
       if (!string.IsNullOrEmpty(this.XPSPath))
       {
         //if this has been a few minutes since last snapshot, we'll take another snapshot. Duration is decided randomly and can be anywhere between 1 to 10 minutes.
-        if (_QueuedSnapshots.Count == 0 || DateTime.Now.Subtract(_QueuedSnapshots.Last().Value).TotalMinutes > (new Random()).Next(1, 2))
+        if (_QueuedSnapshots.Count == 0 || DateTime.Now.Subtract(_QueuedSnapshots.Last().Value).TotalMinutes > MIN_SNAPSHOT_TIME + (new Random()).Next(0, MAX_SNAPSHOT_TIME - MIN_SNAPSHOT_TIME))
         {
           var Snapshot = ViewModelLocator.CameraService.TakeCameraSnapshot();
 
-          using (var isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null))
+          if (Snapshot != null)
           {
-            DateTime Timestamp = DateTime.Now;
-            string FileName = Timestamp.ToString("yyyyMMddHHmmss") + ".jpg";
-            using (var fs = isoStore.CreateFile(FileName))
+            using (var isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null))
             {
-              Snapshot.Save(fs, System.Drawing.Imaging.ImageFormat.Jpeg);
+              DateTime Timestamp = DateTime.Now;
+              string FileName = Timestamp.ToString("yyyyMMddHHmmss") + ".jpg";
+              using (var fs = isoStore.CreateFile(FileName))
+              {
+                Snapshot.Save(fs, System.Drawing.Imaging.ImageFormat.Jpeg);
 
-              var FullFilePath = fs.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(fs).ToString();
-              _QueuedSnapshots.Add(FullFilePath, Timestamp);
+                var FullFilePath = fs.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(fs).ToString();
+                _QueuedSnapshots.Add(FullFilePath, Timestamp);
+              }
             }
           }
+          else
+            ViewModelLocator.Logger.Error("Could not take camera snapshot.");
         }
       }
 
       if (_QueuedSnapshots.Count > 0)
       {
         try
-        { 
+        {
           while (_QueuedSnapshots.Count > 0)
           {
             var snap = _QueuedSnapshots.First();
@@ -231,7 +239,11 @@ namespace HFQOVM
     public string XPSPath
     {
       get => _XPSPath;
-      set => Set(ref _XPSPath, value);
+      set
+      {
+        Set(ref _XPSPath, value);
+        RaisePropertyChanged(nameof(IsWatching));
+      }
     }
 
     private XMLDoc _XML;
@@ -268,6 +280,8 @@ namespace HFQOVM
         GoToNextCommand.RaiseCanExecuteChanged();
       }
     }
+
+    public bool IsWatching => !string.IsNullOrEmpty(this.XPSPath);
 
     private RelayCommand _OpenExamCommand;
     public RelayCommand OpenExamCommand
@@ -443,6 +457,31 @@ namespace HFQOVM
       }
     }
 
+    private RelayCommand<HFQResultRowVM> _RemoveLastAnswerCommand;
+    public RelayCommand<HFQResultRowVM> RemoveLastAnswerCommand
+    {
+      get
+      {
+        if (_RemoveLastAnswerCommand == null)
+        {
+          _RemoveLastAnswerCommand = new RelayCommand<HFQResultRowVM>((row) =>
+          {
+            if (row.A3 != null)
+              row.A3 = null;
+            else if (row.A2 != null)
+              row.A2 = null;
+            else if (row.A1 != null)
+              row.A1 = null;
+            else
+              Result.Remove(row);
+          },
+          (row) => true);
+        }
+
+        return _RemoveLastAnswerCommand;
+      }
+    }
+
     private RelayCommand _GoToNextCommand;
     public RelayCommand GoToNextCommand
     {
@@ -457,7 +496,7 @@ namespace HFQOVM
 
             if (SelectedResultIndex == Result.Count - 1 || NearestEmpty == null)
             {
-              var Row = new HFQResultRowVM() { Q = Result.Last().Q + 1 };
+              var Row = new HFQResultRowVM() { Q = (Result.LastOrDefault()?.Q??0) + 1 };
               Result.Add(Row);
               NewResultRowAdded?.Invoke(Row);
               SelectedResultIndex = Result.Count - 1;

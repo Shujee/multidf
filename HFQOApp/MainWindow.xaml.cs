@@ -41,6 +41,11 @@ namespace HFQOApp
         }
       };
 
+      VM.UploadResultCommand.CanExecuteChanged += (sender2, e2) =>
+      {
+        UploadButton.IsEnabled = VM.UploadResultCommand.CanExecute(null);
+      };
+
 #if (DEBUG)
       //DV.Document = (FixedDocumentSequence)(new PathToFixedDocumentConverter().Convert(@"F:\Office\Larry Gong\\Analysis\Sample Question for DF Multi.xps", typeof(FixedDocumentSequence), null, null));
       //(this.DataContext as MainVM).XML = System.IO.File.ReadAllText(@"F:\Office\Larry Gong\\Analysis\Sample Question for DF Multi.xml").Deserialize<XMLDoc>();
@@ -139,6 +144,16 @@ namespace HFQOApp
       PackageStore.RemovePackage(XPSuri);
 
       System.IO.File.Delete(xpsPath);
+    }
+
+    private void FitWidthButton_Click(object sender, RoutedEventArgs e)
+    {
+      DV.FitToWidth();
+    }
+
+    private void FitHeightButton_Click(object sender, RoutedEventArgs e)
+    {
+      DV.FitToHeight();
     }
   }
 }

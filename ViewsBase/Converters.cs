@@ -6,10 +6,10 @@ using System.Windows.Media;
 namespace ViewsBase
 {
   /// <summary>
-  /// Returns Green if input value is True, otherwise Red. Used to show DB connection status.
+  /// Returns Green if input value is True, otherwise Red. Used to show connection and login status.
   /// </summary>
   [ValueConversion(typeof(bool), typeof(Color))]
-  public class ConnectionStatusConverter : IValueConverter
+  public class GreenRedConverter : IValueConverter
   {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
@@ -26,22 +26,62 @@ namespace ViewsBase
   }
 
   /// <summary>
-  /// Returns "Connected" if the specified value is True, "Not connected" otherwise.
+  /// Returns Green if input value is True, otherwise Gray. Used to show camera snapshots active status.
   /// </summary>
-  [ValueConversion(typeof(bool), typeof(string))]
-  public class ConnectionStatusToStringConverter : IValueConverter
+  [ValueConversion(typeof(bool), typeof(Color))]
+  public class GreenGrayConverter : IValueConverter
   {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
       if ((bool)value)
-        return "Connection Status: Connected";
+        return Colors.Green;
       else
-        return "Connection Status: Not connected";
+        return Colors.Gray;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
       return ((Brush)value).Equals(Brushes.Green);
+    }
+  }
+
+  /// <summary>
+  /// Returns "Logged In" if the specified value is True, "Not logged in" otherwise.
+  /// </summary>
+  [ValueConversion(typeof(bool), typeof(string))]
+  public class LoggedInStatusConverter : IValueConverter
+  {
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      if ((bool)value)
+        return "Logged in";
+      else
+        return "Not logged in";
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      throw new NotSupportedException();
+    }
+  }
+
+  /// <summary>
+  /// Returns "Connected" if the specified value is True, "Disconnected" otherwise.
+  /// </summary>
+  [ValueConversion(typeof(bool), typeof(string))]
+  public class ConnectionStatusConverter : IValueConverter
+  {
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      if ((bool)value)
+        return "Connected";
+      else
+        return "Disconnected";
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      throw new NotSupportedException();
     }
   }
 

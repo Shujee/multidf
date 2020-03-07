@@ -4,6 +4,7 @@ namespace HFQOVM
 {
   public interface ICameraService
   {
+    bool InitCam();
     Bitmap TakeCameraSnapshot();
   }
 }

@@ -14,19 +14,32 @@ namespace HFQOVM
     private static readonly object padlock = new object();
     private bool _CamInitialized = false;
 
-    private void InitCam()
+    public bool InitCam()
     {
       webCams = new FilterInfoCollection(FilterCategory.VideoInputDevice);
-      cam = new VideoCaptureDevice(webCams[0].MonikerString);
-      cam.VideoResolution = cam.VideoCapabilities[0];
 
-      _CamInitialized = true;
+      if (webCams.Count > 0)
+      {
+        cam = new VideoCaptureDevice(webCams[0].MonikerString);
+        cam.VideoResolution = cam.VideoCapabilities[0];
+
+        _CamInitialized = true;
+      }
+      else
+      {
+        _CamInitialized = false;
+      }
+
+      return _CamInitialized;
     }
 
     public Bitmap TakeCameraSnapshot()
     {
       if (!_CamInitialized)
         InitCam();
+
+      if (!_CamInitialized)
+        return null;
 
       lock (padlock)
       {

@@ -16,6 +16,18 @@
   <Window.Resources>
     <view:PathToFixedDocumentConverter x:Key="PathToFixedDocumentConverter" />
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    <Style x:Key="ToolbarButton" TargetType="{x:Type Button}">
+      <Setter Property="Width" Value="70" />
+      <Setter Property="Height" Value="64" />
+      <Setter Property="Padding" Value="6" />
+      <Setter Property="Margin" Value="3,3,0,3" />
+      <Setter Property="BorderBrush" Value="{x:Null}" />
+      <Style.Triggers>
+        <Trigger Property="IsEnabled" Value="False">
+          <Setter Property="TextElement.Foreground" Value="Gray"/>
+        </Trigger>
+      </Style.Triggers>
+    </Style>
   </Window.Resources>
 
   <Grid>
@@ -96,7 +108,7 @@
         </StackPanel>
       </Button>
 
-      <Button Click="UploadResult_Click" Style="{StaticResource ToolbarButton}">
+      <Button x:Name="UploadButton" Click="UploadResult_Click" Style="{StaticResource ToolbarButton}">
         <StackPanel>
           <fa:FontAwesome Icon="Upload" FontSize="24">
             <fa:FontAwesome.Style>
@@ -110,6 +122,40 @@
             </fa:FontAwesome.Style>
           </fa:FontAwesome>
           <TextBlock Text="Upload" HorizontalAlignment="Center" Margin="0,6,0,0" />
+        </StackPanel>
+      </Button>
+
+      <Button x:Name="FitWidthButton" Click="FitWidthButton_Click" Style="{StaticResource ToolbarButton}" Margin="0,0,0,-5">
+        <StackPanel>
+          <fa:FontAwesome Icon="TextWidth" FontSize="24">
+            <fa:FontAwesome.Style>
+              <Style TargetType="{x:Type fa:FontAwesome}">
+                <Style.Triggers>
+                  <Trigger Property="IsEnabled" Value="True">
+                    <Setter Property="TextElement.Foreground" Value="Black"/>
+                  </Trigger>
+                </Style.Triggers>
+              </Style>
+            </fa:FontAwesome.Style>
+          </fa:FontAwesome>
+          <TextBlock Text="Full Width" HorizontalAlignment="Center" Margin="0,6,0,0" />
+        </StackPanel>
+      </Button>
+
+      <Button x:Name="FitHeightButton" Click="FitHeightButton_Click" Style="{StaticResource ToolbarButton}" Margin="0,0,0,-5">
+        <StackPanel>
+          <fa:FontAwesome Icon="TextHeight" FontSize="24">
+            <fa:FontAwesome.Style>
+              <Style TargetType="{x:Type fa:FontAwesome}">
+                <Style.Triggers>
+                  <Trigger Property="IsEnabled" Value="True">
+                    <Setter Property="TextElement.Foreground" Value="Black"/>
+                  </Trigger>
+                </Style.Triggers>
+              </Style>
+            </fa:FontAwesome.Style>
+          </fa:FontAwesome>
+          <TextBlock Text="Full Height" HorizontalAlignment="Center" Margin="0,6,0,0" />
         </StackPanel>
       </Button>
 
@@ -148,6 +194,7 @@
           <TextBlock Text="About" HorizontalAlignment="Center" Margin="0,6,0,0" />
         </StackPanel>
       </Button>
+    
     </ToolBar>
 
     <view:HFQPane Grid.Row="1" Grid.Column="0" Margin="0,0,5,0 " QASelected="HFQPane_QASelected" />
@@ -179,7 +226,7 @@
       </TextBlock>
     </Viewbox>-->
 
-      <fa:ImageAwesome Icon="Refresh" Spin="True" Width="30" VerticalAlignment="Center" Margin="3,0"
+    <fa:ImageAwesome Icon="Refresh" Spin="True" Width="30" VerticalAlignment="Center" Margin="3,0"
                     Visibility="{Binding IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Opacity=".5"
                     SpinDuration="2" Foreground="Red" Grid.Column="1" Grid.Row="1" Panel.ZIndex="1000" />
   </Grid>

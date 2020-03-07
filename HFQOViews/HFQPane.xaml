@@ -17,8 +17,12 @@
       <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/ViewsBase;component/Styles.xaml" />
       </ResourceDictionary.MergedDictionaries>
+
+      <viewsbase:GreenRedConverter x:Key="GreenRedConverter" />
+      <viewsbase:GreenGrayConverter x:Key="GreenGrayConverter" />
+      <viewsbase:LoggedInStatusConverter x:Key="LoggedInStatusConverter" />
       <viewsbase:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
-      <viewsbase:ConnectionStatusToStringConverter x:Key="ConnectionStatusToStringConverter" />
+
       <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
       <CollectionViewSource x:Key="QACVS" Source="{Binding XMLDoc.QAs}" IsLiveFilteringRequested="True" Filter="CollectionViewSource_Filter" />
 
@@ -153,7 +157,8 @@
             <TextBlock Grid.Column="2" Text="{Binding A2, FallbackValue=156}" Foreground="Orange" />
             <TextBlock Grid.Column="3" Text="{Binding A3, FallbackValue=221}" Foreground="Red" />
 
-            <Button Padding="0" Grid.Column="4" HorizontalAlignment="Right" Margin="6,3" ToolTip="Remove answer" Width="16" Height="16" Background="Red" Command="{Binding RemoveLastAnswerCommand}" SnapsToDevicePixels="True">
+            <Button Padding="0" Grid.Column="4" HorizontalAlignment="Right" Margin="6,3" ToolTip="Remove answer" Width="16" Height="16" Background="Red" SnapsToDevicePixels="True"
+                    Command="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=DataContext.RemoveLastAnswerCommand}" CommandParameter="{Binding}">
               <fa:ImageAwesome Icon="Remove" Foreground="White" Width="8" Height="8" />
             </Button>
           </Grid>
@@ -167,6 +172,7 @@
           <Grid>
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
               <ColumnDefinition Width="Auto" />
               <ColumnDefinition Width="Auto" />
               <ColumnDefinition Width="Auto" />
@@ -191,13 +197,39 @@
         </Border>
       </StatusBarItem>
 
-      <StatusBarItem Grid.Column="2" DataContext="{Binding Source={x:Static vm:ViewModelLocator.Auth}}">
+      <StatusBarItem Grid.Column="2">
+        <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1" Margin="1,0" Grid.Column="2">
+          <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0">
+
+            <fa:ImageAwesome Width="16" Height="16" Icon="Camera" HorizontalAlignment="Right" Margin="3" SnapsToDevicePixels="True">
+              <fa:ImageAwesome.Foreground>
+                <SolidColorBrush Color="{Binding IsWatching, Converter={StaticResource GreenGrayConverter}, FallbackValue=Gray}" />
+              </fa:ImageAwesome.Foreground>
+              <fa:ImageAwesome.Style>
+                <Style TargetType="fa:ImageAwesome">
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsWatching, Mode=OneWay}" Value="True">
+                      <Setter Property="ToolTip" Value="Snapshots status: Active" />
+                    </DataTrigger>
+
+                    <DataTrigger Binding="{Binding IsWatching}" Value="False">
+                      <Setter Property="ToolTip" Value="Snapshots status: Disabled" />
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </fa:ImageAwesome.Style>
+            </fa:ImageAwesome>
+          </Border>
+        </Border>
+      </StatusBarItem>
+      
+      <StatusBarItem Grid.Column="3" DataContext="{Binding Source={x:Static vm:ViewModelLocator.Auth}}">
         <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1" Margin="1,0" Grid.Column="2">
           <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0">
 
             <Ellipse Width="12" Height="12" Stroke="Gray" HorizontalAlignment="Right" Margin="3">
               <Ellipse.Fill>
-                <SolidColorBrush Color="{Binding IsLoggedIn, Converter={StaticResource ConnectionStatusConverter}, FallbackValue=Red}" />
+                <SolidColorBrush Color="{Binding IsLoggedIn, Converter={StaticResource GreenRedConverter}, FallbackValue=Red}" />
               </Ellipse.Fill>
               <Ellipse.Style>
                 <Style TargetType="Ellipse">
@@ -219,20 +251,20 @@
                     </DataTrigger>
 
                     <DataTrigger Binding="{Binding IsCommunicating}" Value="False">
-                      <Setter Property="ToolTip" Value="{Binding IsLoggedIn, Converter={StaticResource ConnectionStatusToStringConverter}}" />
+                      <Setter Property="ToolTip" Value="{Binding IsLoggedIn, Converter={StaticResource LoggedInStatusConverter}}" />
                     </DataTrigger>
                   </Style.Triggers>
                 </Style>
               </Ellipse.Style>
               <Ellipse.Effect>
-                <DropShadowEffect Color="{Binding IsLoggedIn, Converter={StaticResource ConnectionStatusConverter}, FallbackValue=Red}" BlurRadius="7" Direction="90" ShadowDepth="0" />
+                <DropShadowEffect Color="{Binding IsLoggedIn, Converter={StaticResource GreenRedConverter}, FallbackValue=Red}" BlurRadius="7" Direction="90" ShadowDepth="0" />
               </Ellipse.Effect>
             </Ellipse>
           </Border>
         </Border>
       </StatusBarItem>
 
-      <StatusBarItem Grid.Column="6" DataContext="{Binding Source={x:Static vm:ViewModelLocator.Auth}}" ToolTip="{Binding IsConnected, Converter={StaticResource ConnectionStatusToStringConverter}}">
+      <StatusBarItem Grid.Column="4" DataContext="{Binding Source={x:Static vm:ViewModelLocator.Auth}}" ToolTip="{Binding IsConnected, Converter={StaticResource ConnectionStatusConverter}}">
         <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1" Margin="1,0" Grid.Column="2">
           <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0">
 
@@ -245,7 +277,7 @@
                       <Setter Property="Foreground" Value="Green" />
                     </DataTrigger>
 
-                    <DataTrigger Binding="{Binding IsLoggedIn}" Value="False">
+                    <DataTrigger Binding="{Binding IsConnected}" Value="False">
                       <Setter Property="Icon" Value="Unlink" />
                       <Setter Property="Foreground" Value="Red" />
                     </DataTrigger>

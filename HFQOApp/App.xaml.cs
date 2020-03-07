@@ -20,7 +20,7 @@ namespace HFQOApp
       SimpleIoc.Default.Register<Common.IDialogService>(() => DLG);
       SimpleIoc.Default.Register<HFQOVM.IDialogService>(() => DLG);
 
-#if(!DEBUG)
+#if (!DEBUG)
       if (!ViewModelLocator.HardwareHelper.IsWindows10())
       {
         ViewModelLocator.DialogService.ShowMessage("This program can only be run on Windows version 10.0 or newer.", true);
@@ -45,6 +45,13 @@ namespace HFQOApp
       if (ViewModelLocator.HardwareHelper.HasMultipleScreens())
       {
         ViewModelLocator.DialogService.ShowMessage("This program cannot run because this machine has multiple monitors or projector attached to it. ", true);
+        Shutdown(1);
+        return;
+      }
+
+      if (!ViewModelLocator.CameraService.InitCam())
+      {
+        ViewModelLocator.DialogService.ShowMessage("Camera service could not be initialized. This program cannot run.", true);
         Shutdown(1);
         return;
       }

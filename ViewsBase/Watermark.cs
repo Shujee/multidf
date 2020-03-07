@@ -245,7 +245,7 @@ namespace ViewsBase
 
     #endregion
 
-    private readonly INotifyPropertyChanged _VM;
+    //private readonly INotifyPropertyChanged _VM;
 
     #region Constructor
 

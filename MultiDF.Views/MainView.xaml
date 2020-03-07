@@ -21,7 +21,6 @@
         
         <BooleanToVisibilityConverter x:Key="B2VConverter" />
         <viewbase:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
-        <viewbase:ConnectionStatusToStringConverter x:Key="ConnectionStatusToStringConverter" />
         <viewbase:PathToFileNameConverter x:Key="PathToFileNameConverter" />
         <viewbase:NonZeroToTrueConverter x:Key="NonZeroToTrueConverter" />
 
@@ -302,7 +301,7 @@
         </Border>
       </StatusBarItem>
 
-      <StatusBarItem Grid.Column="6" ToolTip="{Binding Source={x:Static vm:ViewModelLocator.Auth}, Path=IsConnected, Converter={StaticResource ConnectionStatusToStringConverter}}">
+      <StatusBarItem Grid.Column="6" ToolTip="{Binding Source={x:Static vm:ViewModelLocator.Auth}, Path=IsConnected, Converter={StaticResource ConnectionStatusConverter}}">
         <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1" Margin="1,0" Grid.Column="2">
           <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0">
 
