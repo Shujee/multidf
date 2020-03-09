@@ -18,20 +18,6 @@ namespace MultiDF.VM
       App = "MultiDF";
       AppVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-      SimpleIoc.Default.Unregister<IDataService>();
-      if (GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
-      {
-        SimpleIoc.Default.Register<IDataService, DesignDataService>();
-      }
-      else
-      {
-#if (DEBUG)
-        SimpleIoc.Default.Register<IDataService, HFQODataService>();
-#else
-        SimpleIoc.Default.Register<IDataService, HFQODataService>();
-#endif
-      }
-
       SimpleIoc.Default.Unregister<DiffVM>();
       SimpleIoc.Default.Unregister<UploadExamVM>();
       SimpleIoc.Default.Unregister<MainVM>();

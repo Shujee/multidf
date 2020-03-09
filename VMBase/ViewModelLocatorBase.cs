@@ -3,6 +3,7 @@ using Common;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
+using Model;
 
 namespace VMBase
 {
@@ -30,6 +31,20 @@ namespace VMBase
       }
 
       GalaSoft.MvvmLight.Threading.DispatcherHelper.Initialize();
+
+      SimpleIoc.Default.Unregister<IDataService>();
+      if (GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
+      {
+        SimpleIoc.Default.Register<IDataService, DesignDataService>();
+      }
+      else
+      {
+#if (DEBUG)
+        SimpleIoc.Default.Register<IDataService, HFQODataService>();
+#else
+        SimpleIoc.Default.Register<IDataService, HFQODataService>();
+#endif
+      }
 
       SimpleIoc.Default.Unregister<AuthVM>();
       SimpleIoc.Default.Unregister<RegisterVM>();

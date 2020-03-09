@@ -112,6 +112,17 @@ namespace HFQOVM
 
     private void _CameraTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
+      if(ViewModelLocator.HardwareHelper.HasMultipleScreens())
+      {
+        _CameraTimer.Stop();
+        _CameraTimer.Elapsed -= _CameraTimer_Elapsed;
+
+        ViewModelLocator.Logger.Error("Multiple monitors or projector detected. Exiting.");
+        ViewModelLocator.DialogService.ShowMessage("Multiple monitors or projector detected. The application will close now. Please fix the problem and restart the application to continue from where you left.", true);
+        ViewModelLocator.ApplicationService.Shutdown();
+        return;
+      }
+
       //if an exam is currently open, we'll take a snapshot every once in a while.
       if (!string.IsNullOrEmpty(this.XPSPath))
       {
@@ -136,7 +147,11 @@ namespace HFQOVM
             }
           }
           else
-            ViewModelLocator.Logger.Error("Could not take camera snapshot.");
+          {
+            ViewModelLocator.Logger.Error("Could not take camera snapshot. Exiting.");
+            ViewModelLocator.DialogService.ShowMessage("Could not take screenshot. The application will close now. Make sure your camera is turned on and restart the application to continue from where you left.", true);
+            ViewModelLocator.ApplicationService.Shutdown();
+          }
         }
       }
 

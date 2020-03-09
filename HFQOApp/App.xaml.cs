@@ -9,7 +9,7 @@ namespace HFQOApp
   /// <summary>
   /// Interaction logic for App.xaml
   /// </summary>
-  public partial class App : Application
+  public partial class App : Application, IApplicationService
   {
     private readonly DialogPresenter DLG = new DialogPresenter("HFQ Client App");
 
@@ -19,6 +19,8 @@ namespace HFQOApp
 
       SimpleIoc.Default.Register<Common.IDialogService>(() => DLG);
       SimpleIoc.Default.Register<HFQOVM.IDialogService>(() => DLG);
+
+      SimpleIoc.Default.Register<IApplicationService>(() => this);
 
 #if (!DEBUG)
       if (!ViewModelLocator.HardwareHelper.IsWindows10())
@@ -58,6 +60,11 @@ namespace HFQOApp
 #endif
 
       this.StartupUri = new Uri("MainWindow.xaml", UriKind.Relative);
+    }
+
+    void IApplicationService.Shutdown()
+    {
+      Dispatcher.Invoke(() => base.Shutdown(1));
     }
   }
 }

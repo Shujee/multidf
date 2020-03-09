@@ -74,6 +74,7 @@
     <Compile Include="CameraService.cs" />
     <Compile Include="HFQResultRowVM.cs" />
     <Compile Include="HFQVM.cs" />
+    <Compile Include="IApplicationService.cs" />
     <Compile Include="ICameraService.cs" />
     <Compile Include="IDialogService.cs" />
     <Compile Include="IHardwareHelper.cs" />
@@ -102,7 +103,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Reactor_Enabled="1" Reactor_Commands="" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\HFQOVM\HFQOVM.nrproj" Reactor_Configuration="Release" Reactor_Output="" Reactor_Deploy="0" />
+      <UserProperties Reactor_Deploy="0" Reactor_Output="" Reactor_Configuration="Release" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\HFQOVM\HFQOVM.nrproj" Reactor_Commands="" Reactor_Enabled="1" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

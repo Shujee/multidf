@@ -64,6 +64,7 @@
       <ListBox.ItemContainerStyle>
         <Style TargetType="ListBoxItem">
           <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+          <Setter Property="HorizontalAlignment" Value="Stretch" />
           <EventSetter Event="MouseUp" Handler="ListBoxItem_MouseUp" />
         </Style>
       </ListBox.ItemContainerStyle>
@@ -76,14 +77,18 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
               </Grid.RowDefinitions>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
 
-              <TextBlock FontWeight="Bold">
+              <TextBlock FontWeight="Bold" Grid.ColumnSpan="2">
                 Question 
                 <Run Text="{Binding Index}" />
               </TextBlock>
-              <TextBlock Grid.Row="1" Text="{Binding Question}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+              <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Question}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
 
-              <Button Content="Mark" Grid.Row="2" Margin="3,6,3,3" HorizontalAlignment="Right" Command="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=DataContext.MarkCommand}"
+              <Button Content="Mark" Grid.Row="2" Grid.Column="1" Margin="3,6,3,3" HorizontalAlignment="Right" Command="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=DataContext.MarkCommand}"
                       CommandParameter="{Binding}" />
             </Grid>
           </Border>
@@ -172,7 +177,7 @@
           <Grid>
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="*" />
-              <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="*" />
               <ColumnDefinition Width="Auto" />
               <ColumnDefinition Width="Auto" />
               <ColumnDefinition Width="Auto" />
@@ -189,10 +194,10 @@
         </Border>
       </StatusBarItem>
 
-      <StatusBarItem Grid.Column="1">
-        <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1" Margin="1,0" Grid.Column="1">
+      <StatusBarItem Grid.Column="1" HorizontalContentAlignment="Stretch">
+        <Border BorderBrush="Gainsboro" BorderThickness="0,0,1,1" Margin="1,0">
           <Border BorderBrush="DarkGray" BorderThickness="1,1,0,0">
-            <ProgressBar Value="{Binding ProgressValue, Mode=OneWay}" Maximum="100" Width="100" Height="10" Margin="3" />
+            <ProgressBar Value="{Binding ProgressValue, Mode=OneWay}" Maximum="100" Height="10" Margin="3" />
           </Border>
         </Border>
       </StatusBarItem>

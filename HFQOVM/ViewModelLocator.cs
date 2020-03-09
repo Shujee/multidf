@@ -1,6 +1,4 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
-using Model;
-using Common;
 
 namespace HFQOVM
 {
@@ -18,38 +16,24 @@ namespace HFQOVM
       App = "HFQApp";
       AppVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-      SimpleIoc.Default.Unregister<IDataService>();
-      if (GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
-      {
-        SimpleIoc.Default.Register<IDataService, DesignDataService>();
-      }
-      else
-      {
-#if (DEBUG)
-        SimpleIoc.Default.Register<IDataService, HFQODataService>();
-#else
-        SimpleIoc.Default.Register<IDataService, HFQODataService>();
-#endif
-      }
-
       SimpleIoc.Default.Unregister<HFQVM>();
       SimpleIoc.Default.Unregister<IHardwareHelper>();
       SimpleIoc.Default.Unregister<ICameraService>();
       
-
       SimpleIoc.Default.Register<HFQVM>();
       SimpleIoc.Default.Register<IHardwareHelper, HardwareHelper>();
 
-//#if(DEBUG)
-      //SimpleIoc.Default.Register<ICameraService, DummyCameraService>();
-//#else
+#if(DEBUG)
+      SimpleIoc.Default.Register<ICameraService, DummyCameraService>();
+#else
       SimpleIoc.Default.Register<ICameraService, CameraService>();      
-//#endif
+#endif
     }
 
     public static HFQVM HFQ => SimpleIoc.Default.GetInstance<HFQVM>();
     public static IDialogService DialogServiceHFQ => SimpleIoc.Default.GetInstance<IDialogService>();
     public static IHardwareHelper HardwareHelper => SimpleIoc.Default.GetInstance<IHardwareHelper>();
     public static ICameraService CameraService => SimpleIoc.Default.GetInstance<ICameraService>();
+    public static IApplicationService ApplicationService => SimpleIoc.Default.GetInstance<IApplicationService>();
   }
 }
