@@ -54,13 +54,20 @@ namespace HFQOApp
 
     private void HFQPane_QASelected(QA qa)
     {
-      //scroll to the position of QA
-      var PH = DV.PageViews[0].DocumentPage.Size.Height;
-      var VH = DV.PageViews[0].ActualHeight;
+      try
+      {
+        //scroll to the position of QA
+        var PH = DV.PageViews[0].DocumentPage.Size.Height;
+        var VH = DV.PageViews[0].ActualHeight;
 
-      var XPSPageHeight = DV.PageViews[0].ActualHeight + DV.VerticalPageSpacing + 2;
-      var R = (qa.StartY / PH - 0.1) * VH;
-      DV.VerticalOffset = (qa.StartPage - 1) * XPSPageHeight + R;
+        var XPSPageHeight = DV.PageViews[0].ActualHeight + DV.VerticalPageSpacing + 2;
+        var R = (qa.StartY / PH - 0.1) * VH;
+        DV.VerticalOffset = (qa.StartPage - 1) * XPSPageHeight + R;
+      }
+      catch (Exception ee)
+      {
+        ViewModelLocatorBase.DialogService.ShowMessage(ee.Message, true);
+      }
     }
 
     private void AddWatermark(string[] text)

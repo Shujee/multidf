@@ -23,6 +23,9 @@ namespace HFQOVM
         cam = new VideoCaptureDevice(webCams[0].MonikerString);
         cam.VideoResolution = cam.VideoCapabilities[0];
 
+        cam.NewFrame += cam_NewFrame;
+        cam.VideoSourceError += cam_VideoSourceError;
+
         _CamInitialized = true;
       }
       else
@@ -33,8 +36,23 @@ namespace HFQOVM
       return _CamInitialized;
     }
 
-    public Bitmap TakeCameraSnapshot()
+    public void StopCam()
     {
+      cam.NewFrame -= cam_NewFrame;
+      cam.VideoSourceError -= cam_VideoSourceError;
+    }
+
+    private bool _IsBusy = false;
+    public Task<Bitmap> TakeCameraSnapshot()
+    {
+      if (_IsBusy)
+      {
+        cam.SignalToStop();        
+        cam.WaitForStop();
+      }
+
+      _IsBusy = true;
+
       if (!_CamInitialized)
         InitCam();
 
@@ -43,39 +61,44 @@ namespace HFQOVM
 
       lock (padlock)
       {
-        cam.NewFrame += NewFrameTest;
-        cam.VideoSourceError += ErrorTest;
-        cam.Start();
-        int attempts = 0;
-        while (cameraWorks == null && attempts++ < 6)
+        return Task.Run(() =>
         {
-          Task.Delay(500 * attempts).Wait();
-        }
-        cam.NewFrame -= NewFrameTest;
-        cam.VideoSourceError -= ErrorTest;
-        cam.SignalToStop();
-        cam.WaitForStop();
-        bool retValue = cameraWorks ?? false;
-        if (!(cameraWorks ?? false))
+          cam.Start();
+
+          int attempts = 0;
+          while (cameraWorks == null && attempts++ < 6)
+          {
+            Task.Delay(200 * attempts).Wait();
+          }
+
+          cam.SignalToStop();
+          cam.WaitForStop();
+
+          if (!(cameraWorks ?? false))
+          {
+            cameraWorks = null;
+            return null;
+          }
+          else
+          {
+            cameraWorks = true;
+            return bmap;
+          }
+        }).ContinueWith(t =>
         {
-          cameraWorks = null;
-          return null;
-        }
-        else
-        {
-          cameraWorks = null;
-        }
-        return bmap;
+          _IsBusy = false;
+          return t.Result;
+        });
       }
     }
 
-    private void NewFrameTest(object sender, NewFrameEventArgs e)
+    private void cam_NewFrame(object sender, NewFrameEventArgs e)
     {
-      bmap = e.Frame.Clone() as Bitmap;
       cameraWorks = true;
+      bmap = e.Frame.Clone() as Bitmap;
     }
 
-    private void ErrorTest(object sender, VideoSourceErrorEventArgs e)
+    private void cam_VideoSourceError(object sender, VideoSourceErrorEventArgs e)
     {
       ViewModelLocator.Logger.Error(e.Description);
       cameraWorks = false;

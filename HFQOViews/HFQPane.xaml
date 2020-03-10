@@ -34,7 +34,7 @@
     </ResourceDictionary>
   </UserControl.Resources>
 
-  <Grid>
+  <Grid IsSharedSizeScope="True">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
@@ -101,7 +101,7 @@
       <Button Content="Next &gt;" Command="{Binding GoToNextCommand}" Margin="3" />
     </StackPanel>
 
-      <Grid Background="Gray" HorizontalAlignment="Stretch" Grid.Row="3" Margin="3,3,3,0">
+    <Grid Background="Gray" HorizontalAlignment="Stretch" Grid.Row="3" Margin="3,3,3,0">
       <Grid Margin="4,0">
       <Grid.Resources>
         <Style TargetType="TextBlock">
@@ -114,11 +114,11 @@
       </Grid.Resources>
         
         <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="150" />
-          <ColumnDefinition Width="50" />
-          <ColumnDefinition Width="50" />
-          <ColumnDefinition Width="50" />
-          <ColumnDefinition Width="*" />
+          <ColumnDefinition MinWidth="150" Width="*" SharedSizeGroup="Q" />
+          <ColumnDefinition MinWidth="40" Width="Auto" SharedSizeGroup="A1" />
+          <ColumnDefinition MinWidth="40" Width="Auto" SharedSizeGroup="A2" />
+          <ColumnDefinition MinWidth="40" Width="Auto" SharedSizeGroup="A3" />
+          <ColumnDefinition Width="*" SharedSizeGroup="RemoveButton" />
         </Grid.ColumnDefinitions>
 
         <TextBlock Text="Question" HorizontalAlignment="Left" />
@@ -147,11 +147,11 @@
             </Grid.Resources>
 
             <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="150" />
-              <ColumnDefinition Width="50" />
-              <ColumnDefinition Width="50" />
-              <ColumnDefinition Width="50" />
-              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="*" SharedSizeGroup="Q" />
+              <ColumnDefinition Width="Auto" MinWidth="40" SharedSizeGroup="A1" />
+              <ColumnDefinition Width="Auto" MinWidth="40" SharedSizeGroup="A2" />
+              <ColumnDefinition Width="Auto" MinWidth="40" SharedSizeGroup="A3" />
+              <ColumnDefinition Width="*" SharedSizeGroup="RemoveButton" />
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Column="0" HorizontalAlignment="Left">
@@ -177,7 +177,7 @@
           <Grid>
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="*" />
-              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="100" />
               <ColumnDefinition Width="Auto" />
               <ColumnDefinition Width="Auto" />
               <ColumnDefinition Width="Auto" />

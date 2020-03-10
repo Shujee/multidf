@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Threading.Tasks;
 
 namespace HFQOVM
 {
@@ -12,9 +13,13 @@ namespace HFQOVM
       return true;
     }
 
-    public Bitmap TakeCameraSnapshot()
+    public void StopCam()
     {
-      return new Bitmap(@"C:\Users\Shujaat\Pictures\loco engine.png");
+    }
+
+    public Task<Bitmap> TakeCameraSnapshot()
+    {
+      return Task.FromResult(new Bitmap(@"C:\Users\Shujaat\Pictures\loco engine.png"));
     }
   }
 }

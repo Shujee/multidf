@@ -11,7 +11,8 @@
         Title="HFQO Client" Height="450" Width="800"
         WindowStartupLocation="CenterScreen" WindowState="Maximized"
         DataContext="{x:Static vm:ViewModelLocator.HFQ}"
-        d:DataContext="{d:DesignInstance Type=vm:HFQVM, IsDesignTimeCreatable=True}">
+        d:DataContext="{d:DesignInstance Type=vm:HFQVM, IsDesignTimeCreatable=True}"
+        MinWidth="950" MinHeight="600">
 
   <Window.Resources>
     <view:PathToFixedDocumentConverter x:Key="PathToFixedDocumentConverter" />
@@ -52,8 +53,8 @@
     </Grid.RowDefinitions>
 
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="*" />
-      <ColumnDefinition Width="3*" />
+      <ColumnDefinition MinWidth="330" Width="*" />
+      <ColumnDefinition MinWidth="590" Width="3*" />
     </Grid.ColumnDefinitions>
 
     <ToolBar Grid.Row="0" Grid.ColumnSpan="2" ToolBarTray.IsLocked="True">

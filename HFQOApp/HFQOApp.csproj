@@ -26,7 +26,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>5</ApplicationRevision>
+    <ApplicationRevision>6</ApplicationRevision>
     <ApplicationVersion>1.6.2.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -52,10 +52,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>7135BDAEB3CA2F05CC2351E88AE85E1D4EE0ED94</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>9A5690DA49AF82C11FDF3C804C9B4A096653F3BA</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>HFQOApp_4_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>HFQOApp_6_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -138,6 +138,8 @@
     <None Include="HFQOApp_2_TemporaryKey.pfx" />
     <None Include="HFQOApp_3_TemporaryKey.pfx" />
     <None Include="HFQOApp_4_TemporaryKey.pfx" />
+    <None Include="HFQOApp_5_TemporaryKey.pfx" />
+    <None Include="HFQOApp_6_TemporaryKey.pfx" />
     <None Include="HFQOApp_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

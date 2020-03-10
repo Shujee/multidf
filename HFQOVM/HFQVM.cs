@@ -112,7 +112,8 @@ namespace HFQOVM
 
     private void _CameraTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
-      if(ViewModelLocator.HardwareHelper.HasMultipleScreens())
+#if(!DEBUG)
+      if (ViewModelLocator.HardwareHelper.HasMultipleScreens())
       {
         _CameraTimer.Stop();
         _CameraTimer.Elapsed -= _CameraTimer_Elapsed;
@@ -122,6 +123,7 @@ namespace HFQOVM
         ViewModelLocator.ApplicationService.Shutdown();
         return;
       }
+#endif
 
       //if an exam is currently open, we'll take a snapshot every once in a while.
       if (!string.IsNullOrEmpty(this.XPSPath))
@@ -129,31 +131,48 @@ namespace HFQOVM
         //if this has been a few minutes since last snapshot, we'll take another snapshot. Duration is decided randomly and can be anywhere between 1 to 10 minutes.
         if (_QueuedSnapshots.Count == 0 || DateTime.Now.Subtract(_QueuedSnapshots.Last().Value).TotalMinutes > MIN_SNAPSHOT_TIME + (new Random()).Next(0, MAX_SNAPSHOT_TIME - MIN_SNAPSHOT_TIME))
         {
-          var Snapshot = ViewModelLocator.CameraService.TakeCameraSnapshot();
+          var SnapshotTask = ViewModelLocator.CameraService.TakeCameraSnapshot();
 
-          if (Snapshot != null)
+          SnapshotTask.ContinueWith(t =>
           {
-            using (var isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null))
+            if (t.IsCompleted && !t.IsFaulted && t.Result != null)
             {
-              DateTime Timestamp = DateTime.Now;
-              string FileName = Timestamp.ToString("yyyyMMddHHmmss") + ".jpg";
-              using (var fs = isoStore.CreateFile(FileName))
+              using (var isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null))
               {
-                Snapshot.Save(fs, System.Drawing.Imaging.ImageFormat.Jpeg);
+                DateTime Timestamp = DateTime.Now;
+                string FileName = Timestamp.ToString("yyyyMMddHHmmss") + ".jpg";
+                using (var fs = isoStore.CreateFile(FileName))
+                {
+                  t.Result.Save(fs, System.Drawing.Imaging.ImageFormat.Jpeg);
 
-                var FullFilePath = fs.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(fs).ToString();
-                _QueuedSnapshots.Add(FullFilePath, Timestamp);
+                  var FullFilePath = fs.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(fs).ToString();
+                  _QueuedSnapshots.Add(FullFilePath, Timestamp);
+                }
               }
             }
-          }
-          else
-          {
-            ViewModelLocator.Logger.Error("Could not take camera snapshot. Exiting.");
-            ViewModelLocator.DialogService.ShowMessage("Could not take screenshot. The application will close now. Make sure your camera is turned on and restart the application to continue from where you left.", true);
-            ViewModelLocator.ApplicationService.Shutdown();
-          }
+            else
+            {
+              ViewModelLocator.Logger.Error("Could not take camera snapshot. Exiting.");
+              ViewModelLocator.DialogService.ShowMessage("Could not take screenshot. The application will close now. Make sure your camera is turned on and restart the application to continue from where you left.", true);
+              ViewModelLocator.ApplicationService.Shutdown();
+            }
+          });
         }
       }
+
+      Task.Run(() =>
+      {
+        UploadQueuedSnapshots();
+      });
+    }
+
+    private bool _IsUploadingSnapshots = false;
+    private void UploadQueuedSnapshots()
+    {
+      if (_IsUploadingSnapshots)
+        return;
+      else
+        _IsUploadingSnapshots = true;
 
       if (_QueuedSnapshots.Count > 0)
       {
@@ -189,7 +208,13 @@ namespace HFQOVM
         {
           ViewModelLocator.Logger.Error(ee, "Snapshot upload failed");
         }
+        finally
+        {
+          _IsUploadingSnapshots = false;
+        }
       }
+      else
+        _IsUploadingSnapshots = false;
     }
 
     private HFQVMCache ReadFromCache()

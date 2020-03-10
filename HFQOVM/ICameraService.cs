@@ -1,10 +1,12 @@
 ﻿using System.Drawing;
+using System.Threading.Tasks;
 
 namespace HFQOVM
 {
   public interface ICameraService
   {
     bool InitCam();
-    Bitmap TakeCameraSnapshot();
+    void StopCam();
+    Task<Bitmap> TakeCameraSnapshot();
   }
 }
