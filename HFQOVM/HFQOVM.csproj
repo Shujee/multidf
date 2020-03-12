@@ -34,6 +34,10 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <ReactorLocation>"C:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.exe"</ReactorLocation>
+    <ReactorProject>"F:\ACTIVE\DuplicateFinderMulti\HFQOVM\HFQOVM.nrproj"</ReactorProject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AForge, Version=2.2.5.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL">
       <HintPath>..\packages\AForge.2.2.5\lib\AForge.dll</HintPath>
@@ -84,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.manifest" />
+    <None Include="HFQOVM.nrproj" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -103,7 +108,10 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Reactor_Deploy="0" Reactor_Output="" Reactor_Configuration="Release" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\HFQOVM\HFQOVM.nrproj" Reactor_Commands="" Reactor_Enabled="1" />
+      <UserProperties Reactor_Deploy="1" Reactor_Output="" Reactor_Configuration="Release" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\HFQOVM\HFQOVM.nrproj" Reactor_Commands="" Reactor_Enabled="1" />
     </VisualStudio>
   </ProjectExtensions>
+  <Target Name="ReactorCall" AfterTargets="Compile">
+    <Exec Command="$(ReactorLocation) -file &quot;$(ProjectDir)$(IntermediateOutputPath)$(TargetFileName)&quot; -project $(ReactorProject) -targetfile &quot;$(ProjectDir)$(IntermediateOutputPath)$(TargetFileName)&quot;" Condition="'$(ConfigurationName)' == 'Release' " />
+  </Target>
 </Project>

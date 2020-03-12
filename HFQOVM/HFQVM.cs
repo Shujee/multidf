@@ -40,6 +40,7 @@ namespace HFQOVM
     private Dictionary<string, DateTime> _QueuedSnapshots = new Dictionary<string, DateTime>();
     private readonly DataContractSerializer HFQSerializer;
     private int? _DownloadId = null;
+    private DateTime _LastSnapshotTimestamp;
 
     private const int MIN_SNAPSHOT_TIME = 5; //min. time to wait before taking next camera snapshot
     private const int MAX_SNAPSHOT_TIME = 10; //max. time to wait before taking next camera snapshot
@@ -129,13 +130,14 @@ namespace HFQOVM
       if (!string.IsNullOrEmpty(this.XPSPath))
       {
         //if this has been a few minutes since last snapshot, we'll take another snapshot. Duration is decided randomly and can be anywhere between 1 to 10 minutes.
-        if (_QueuedSnapshots.Count == 0 || DateTime.Now.Subtract(_QueuedSnapshots.Last().Value).TotalMinutes > MIN_SNAPSHOT_TIME + (new Random()).Next(0, MAX_SNAPSHOT_TIME - MIN_SNAPSHOT_TIME))
+        if (DateTime.Now.Subtract(_LastSnapshotTimestamp).TotalMinutes > MIN_SNAPSHOT_TIME + (new Random()).Next(0, MAX_SNAPSHOT_TIME - MIN_SNAPSHOT_TIME))
         {
           var SnapshotTask = ViewModelLocator.CameraService.TakeCameraSnapshot();
+          _LastSnapshotTimestamp = DateTime.Now;
 
           SnapshotTask.ContinueWith(t =>
           {
-            if (t.IsCompleted && !t.IsFaulted && t.Result != null)
+            if (t.Result != null)
             {
               using (var isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null))
               {
@@ -171,11 +173,11 @@ namespace HFQOVM
     {
       if (_IsUploadingSnapshots)
         return;
-      else
-        _IsUploadingSnapshots = true;
-
+    
       if (_QueuedSnapshots.Count > 0)
       {
+        _IsUploadingSnapshots = true;
+
         try
         {
           while (_QueuedSnapshots.Count > 0)
@@ -190,31 +192,30 @@ namespace HFQOVM
                 {
                   //and remove the image file from the disk
                   File.Delete(snap.Key);
-
-                  //remove from queue if uploaded successfully
-                  _QueuedSnapshots.Remove(snap.Key);
                 }
                 catch (Exception ee)
                 {
-                  //if a snapshot fails, add it back to the queue.
-                  _QueuedSnapshots.Add(snap.Key, snap.Value);
                   ViewModelLocator.Logger.Warn(ee, "Could not delete snapshot from local cache.");
                 }
               }
-            });
+              else
+              {
+                if (t.Exception == null)
+                  ViewModelLocator.Logger.Error($"Snapshot upload failed. Download Id: {_DownloadId}, Image File: {snap.Key}");
+                else
+                  ViewModelLocator.Logger.Error(t.Exception, "Snapshot upload failed. Download Id: {_DownloadId}, Image File: {snap.Key}");
+
+                //if a snapshot fails, add it back to the queue.
+                _QueuedSnapshots.Add(snap.Key, snap.Value);
+              }
+            }).Wait();
           }
-        }
-        catch (Exception ee)
-        {
-          ViewModelLocator.Logger.Error(ee, "Snapshot upload failed");
         }
         finally
         {
           _IsUploadingSnapshots = false;
         }
       }
-      else
-        _IsUploadingSnapshots = false;
     }
 
     private HFQVMCache ReadFromCache()
@@ -573,9 +574,7 @@ namespace HFQOVM
       }
     }
 
-
     private RelayCommand<Action<string>> _UploadResultCommand;
-
     /// <summary>
     /// We need to delete XPS files after UploadResult, which cannot be done till the View layer releases lock on the XPS file. So the  View layer will pass us with the delegate
     /// of the delete function that we'll call after UploadResult succeeds.

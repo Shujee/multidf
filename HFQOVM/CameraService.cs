@@ -1,30 +1,37 @@
 ﻿using AForge.Video;
 using AForge.Video.DirectShow;
 using System.Drawing;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HFQOVM
 {
-  internal class CameraService : ICameraService
+  class CameraService : ICameraService
   {
-    private FilterInfoCollection webCams;
+    private int conta = 0;
+    private Bitmap lastframe;
     private VideoCaptureDevice cam;
-    private bool? cameraWorks = null;
-    private Bitmap bmap;
-    private static readonly object padlock = new object();
+    private CancellationTokenSource _CancelTokenSrc;
+    private CancellationToken _Token;
     private bool _CamInitialized = false;
 
+    /// <summary>
+    /// Call this function once at application startup.
+    /// </summary>
+    /// <returns></returns>
     public bool InitCam()
     {
-      webCams = new FilterInfoCollection(FilterCategory.VideoInputDevice);
+      var webCams = new FilterInfoCollection(FilterCategory.VideoInputDevice);
 
       if (webCams.Count > 0)
       {
         cam = new VideoCaptureDevice(webCams[0].MonikerString);
         cam.VideoResolution = cam.VideoCapabilities[0];
 
-        cam.NewFrame += cam_NewFrame;
         cam.VideoSourceError += cam_VideoSourceError;
+
+        _CancelTokenSrc = new CancellationTokenSource();
+        _Token = _CancelTokenSrc.Token;
 
         _CamInitialized = true;
       }
@@ -36,72 +43,74 @@ namespace HFQOVM
       return _CamInitialized;
     }
 
-    public void StopCam()
-    {
-      cam.NewFrame -= cam_NewFrame;
-      cam.VideoSourceError -= cam_VideoSourceError;
-    }
-
-    private bool _IsBusy = false;
     public Task<Bitmap> TakeCameraSnapshot()
     {
-      if (_IsBusy)
-      {
-        cam.SignalToStop();        
-        cam.WaitForStop();
-      }
-
-      _IsBusy = true;
-
       if (!_CamInitialized)
-        InitCam();
-
-      if (!_CamInitialized)
-        return null;
-
-      lock (padlock)
+        return Task.FromResult((Bitmap)null);
+      else
       {
+        //if (!_CancelTokenSrc.IsCancellationRequested)
+        //  _CancelTokenSrc.Cancel();
+        
         return Task.Run(() =>
         {
+          _Token.ThrowIfCancellationRequested();
+
+          // set NewFrame event handler
+          cam.NewFrame += new NewFrameEventHandler(video_NewFrame);
+
+          // start the video source
           cam.Start();
 
-          int attempts = 0;
-          while (cameraWorks == null && attempts++ < 6)
+          while (lastframe == null)
           {
-            Task.Delay(200 * attempts).Wait();
+            Task.Delay(100).Wait();
+            _Token.ThrowIfCancellationRequested();
           }
 
+          return lastframe;
+        }, _Token).ContinueWith(t =>
+        {
           cam.SignalToStop();
           cam.WaitForStop();
+          cam.Stop();
 
-          if (!(cameraWorks ?? false))
-          {
-            cameraWorks = null;
+          // detach NewFrame event handler
+          cam.NewFrame -= new NewFrameEventHandler(video_NewFrame);
+
+          lastframe = null;
+
+          if (t.IsFaulted || t.IsCanceled)
             return null;
-          }
           else
-          {
-            cameraWorks = true;
-            return bmap;
-          }
-        }).ContinueWith(t =>
-        {
-          _IsBusy = false;
-          return t.Result;
+            return t.Result;
         });
       }
     }
 
-    private void cam_NewFrame(object sender, NewFrameEventArgs e)
+    private void video_NewFrame(object sender, NewFrameEventArgs eventArgs)
     {
-      cameraWorks = true;
-      bmap = e.Frame.Clone() as Bitmap;
+      // get new frame
+      if (conta < 80)// delay to wait that the white balancing stabilizes
+      {
+        conta++;
+        return;
+      }
+
+      if (lastframe != null)
+        lastframe.Dispose();
+
+      lastframe = (Bitmap)eventArgs.Frame.Clone();
+
+      //since we are intreseted in single snapshots only, we'll detach event handler as soon as first frame is captured
+      cam.NewFrame -= new NewFrameEventHandler(video_NewFrame);
     }
 
     private void cam_VideoSourceError(object sender, VideoSourceErrorEventArgs e)
     {
       ViewModelLocator.Logger.Error(e.Description);
-      cameraWorks = false;
+      cam.NewFrame -= new NewFrameEventHandler(video_NewFrame);
+      lastframe = null;
     }
   }
 }

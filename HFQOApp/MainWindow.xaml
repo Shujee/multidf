@@ -12,7 +12,8 @@
         WindowStartupLocation="CenterScreen" WindowState="Maximized"
         DataContext="{x:Static vm:ViewModelLocator.HFQ}"
         d:DataContext="{d:DesignInstance Type=vm:HFQVM, IsDesignTimeCreatable=True}"
-        MinWidth="950" MinHeight="600">
+        MinWidth="950" MinHeight="600"
+        Icon="591labs.ico">
 
   <Window.Resources>
     <view:PathToFixedDocumentConverter x:Key="PathToFixedDocumentConverter" />

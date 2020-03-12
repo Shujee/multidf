@@ -50,14 +50,13 @@ namespace HFQOApp
         Shutdown(1);
         return;
       }
-
+#endif
       if (!ViewModelLocator.CameraService.InitCam())
       {
         ViewModelLocator.DialogService.ShowMessage("Camera service could not be initialized. This program cannot run.", true);
         Shutdown(1);
         return;
       }
-#endif
 
       this.StartupUri = new Uri("MainWindow.xaml", UriKind.Relative);
     }
