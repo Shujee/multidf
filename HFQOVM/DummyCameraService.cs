@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Threading.Tasks;
 
 namespace HFQOVM
@@ -8,6 +9,8 @@ namespace HFQOVM
   /// </summary>
   internal class DummyCameraService : ICameraService
   {
+    public event Action SnapshotCaptured;
+
     public bool InitCam()
     {
       return true;

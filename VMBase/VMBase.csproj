@@ -98,7 +98,10 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Reactor_Enabled="1" Reactor_Commands="-q" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\VMBase\VMBase.nrproj" Reactor_Configuration="Release" Reactor_Output="" Reactor_Deploy="0" />
+      <UserProperties Reactor_Deploy="1" Reactor_Output="" Reactor_Configuration="Release" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\VMBase\VMBase.nrproj" Reactor_Commands="-q" Reactor_Enabled="1" />
     </VisualStudio>
   </ProjectExtensions>
+  <Target Name="ReactorCall" AfterTargets="Compile">
+    <Exec Command="$(ReactorLocation) -file &quot;$(ProjectDir)$(IntermediateOutputPath)$(TargetFileName)&quot; -project $(ReactorProject) -targetfile &quot;$(ProjectDir)$(IntermediateOutputPath)$(TargetFileName)&quot; -q" Condition="'$(ConfigurationName)' == 'Release' " />
+  </Target>
 </Project>

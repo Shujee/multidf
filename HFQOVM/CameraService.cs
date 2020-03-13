@@ -1,6 +1,8 @@
 ﻿using AForge.Video;
 using AForge.Video.DirectShow;
+using System;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,6 +17,8 @@ namespace HFQOVM
     private CancellationToken _Token;
     private bool _CamInitialized = false;
 
+    public event Action SnapshotCaptured;
+
     /// <summary>
     /// Call this function once at application startup.
     /// </summary>
@@ -26,7 +30,8 @@ namespace HFQOVM
       if (webCams.Count > 0)
       {
         cam = new VideoCaptureDevice(webCams[0].MonikerString);
-        cam.VideoResolution = cam.VideoCapabilities[0];
+        var BestFrameSize = cam.VideoCapabilities.Max(cap => cap.FrameSize.Width * cap.FrameSize.Height);
+        cam.VideoResolution = cam.VideoCapabilities.First(cap => cap.FrameSize.Width * cap.FrameSize.Height == BestFrameSize);
 
         cam.VideoSourceError += cam_VideoSourceError;
 
@@ -101,6 +106,8 @@ namespace HFQOVM
         lastframe.Dispose();
 
       lastframe = (Bitmap)eventArgs.Frame.Clone();
+
+      SnapshotCaptured?.Invoke();
 
       //since we are intreseted in single snapshots only, we'll detach event handler as soon as first frame is captured
       cam.NewFrame -= new NewFrameEventHandler(video_NewFrame);

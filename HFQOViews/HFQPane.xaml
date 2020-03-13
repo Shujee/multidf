@@ -46,8 +46,8 @@
 
     <Grid Grid.Row="0">
       <TextBox x:Name="SearchBox" BorderThickness="1" Text="{Binding SearchText}"
-             ToolTip="Enter search terms and press ENTER" Padding="6" Margin="3" Height="40" VerticalContentAlignment="Center"
-               KeyDown="SearchBox_KeyDown">
+             ToolTip="Enter search terms and press ENTER" Margin="3" Height="40" VerticalContentAlignment="Center"
+               KeyDown="SearchBox_KeyDown" Padding="6,6,45,6">
         <viewsbase:WatermarkService.Watermark>
           <TextBlock Text="Search" />
         </viewsbase:WatermarkService.Watermark>

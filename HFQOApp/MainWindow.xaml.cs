@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HFQOVM;
+using System;
 using System.Collections.Generic;
 using System.IO.Packaging;
 using System.Linq;
@@ -50,6 +51,8 @@ namespace HFQOApp
       //DV.Document = (FixedDocumentSequence)(new PathToFixedDocumentConverter().Convert(@"F:\Office\Larry Gong\\Analysis\Sample Question for DF Multi.xps", typeof(FixedDocumentSequence), null, null));
       //(this.DataContext as MainVM).XML = System.IO.File.ReadAllText(@"F:\Office\Larry Gong\\Analysis\Sample Question for DF Multi.xml").Deserialize<XMLDoc>();
 #endif
+
+      ViewModelLocator.CameraService.SnapshotCaptured += PlayShutterSound;
     }
 
     private void HFQPane_QASelected(QA qa)
@@ -62,6 +65,9 @@ namespace HFQOApp
 
         var XPSPageHeight = DV.PageViews[0].ActualHeight + DV.VerticalPageSpacing + 2;
         var R = (qa.StartY / PH - 0.1) * VH;
+
+        if (R < 0) R = 0;
+
         DV.VerticalOffset = (qa.StartPage - 1) * XPSPageHeight + R;
       }
       catch (Exception ee)
@@ -161,6 +167,20 @@ namespace HFQOApp
     private void FitHeightButton_Click(object sender, RoutedEventArgs e)
     {
       DV.FitToHeight();
+    }
+
+    private void PlayShutterSound()
+    {
+      var sri = Application.GetResourceStream(new Uri("pack://application:,,,/HFQOApp;component/Resources/CameraShutter.wav"));
+
+      if (sri != null)
+      {
+        using (var player = new System.Media.SoundPlayer(sri.Stream))
+        {
+          player.Load();
+          player.Play();
+        }
+      }
     }
   }
 }

@@ -24,8 +24,8 @@ namespace HFQOVM
       SimpleIoc.Default.Register<IHardwareHelper, HardwareHelper>();
 
 #if(DEBUG)
-      SimpleIoc.Default.Register<ICameraService, DummyCameraService>();
-      //SimpleIoc.Default.Register<ICameraService, CameraService>();      
+      //SimpleIoc.Default.Register<ICameraService, DummyCameraService>();
+      SimpleIoc.Default.Register<ICameraService, CameraService>();      
 #else
       SimpleIoc.Default.Register<ICameraService, CameraService>();      
 #endif

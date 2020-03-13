@@ -1,12 +1,9 @@
 ﻿using Common;
 using RestSharp;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading.Tasks;
-using System.Web;
-using System.Net.NetworkInformation;
 using System;
+using System.Collections.Generic;
+using System.Net.NetworkInformation;
+using System.Threading.Tasks;
 
 namespace Model
 {

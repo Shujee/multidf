@@ -131,7 +131,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Reactor_Enabled="0" Reactor_Commands="" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\HFQOViews\HFQOViews.nrproj" Reactor_Configuration="Release" Reactor_Output="" Reactor_Deploy="1" />
+      <UserProperties Reactor_Deploy="1" Reactor_Output="" Reactor_Configuration="Release" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\HFQOViews\HFQOViews.nrproj" Reactor_Commands="" Reactor_Enabled="0" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

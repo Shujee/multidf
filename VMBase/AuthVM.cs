@@ -37,9 +37,10 @@ namespace VMBase
     {
       Task.Run(() =>
       {
-        var _ = ViewModelLocatorBase.DataService.IsAlive();
+        return ViewModelLocatorBase.DataService.IsAlive();
       }).ContinueWith(t =>
       {
+        IsConnected = t.Result;
         GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() => RaisePropertyChanged(nameof(IsConnected)));
       });
     }
@@ -62,8 +63,7 @@ namespace VMBase
       get => _User;
       private set => Set(ref _User, value);
     }
-
-    public bool IsConnected => ViewModelLocatorBase.DataService.IsAlive();
+    public bool IsConnected { get; private set; } = false;
 
     private bool _IsCommunicating;
     public bool IsCommunicating

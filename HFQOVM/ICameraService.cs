@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Threading.Tasks;
 
 namespace HFQOVM
@@ -7,5 +8,7 @@ namespace HFQOVM
   {
     bool InitCam();
     Task<Bitmap> TakeCameraSnapshot();
+
+    event Action SnapshotCaptured;
   }
 }
