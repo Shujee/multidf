@@ -1,8 +1,10 @@
-﻿namespace HFQOViews
+﻿using System.Windows;
+
+namespace HFQOViews
 {
   public class DialogPresenter : ViewsBase.DialogPresenter, HFQOVM.IDialogService
   {
-    public DialogPresenter(string title) : base(title)
+    public DialogPresenter(Window window, string title) : base(window, title)
     {
 
     }

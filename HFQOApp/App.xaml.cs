@@ -11,7 +11,7 @@ namespace HFQOApp
   /// </summary>
   public partial class App : Application, IApplicationService
   {
-    private readonly DialogPresenter DLG = new DialogPresenter("HFQ Client App");
+    private readonly DialogPresenter DLG = new DialogPresenter(null, "HFQ Client App");
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -51,7 +51,7 @@ namespace HFQOApp
         return;
       }
 #endif
-      if (!ViewModelLocator.CameraService.InitCam())
+      if (ViewModelLocator.CameraService.BestResCamera == null)
       {
         ViewModelLocator.DialogService.ShowMessage("Camera service could not be initialized. This program cannot run.", true);
         Shutdown(1);

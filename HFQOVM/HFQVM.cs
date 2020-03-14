@@ -27,6 +27,7 @@ namespace HFQOVM
     }
 
     public event Action<HFQResultRowVM> NewResultRowAdded;
+    public event Action<string> ExamUploaded; //front-end will listen to this event to remove left-over XPS file
 
     private readonly Type[] AllObjectTypes = {
       typeof(HFQResultRow),
@@ -36,7 +37,7 @@ namespace HFQOVM
       typeof(Dictionary<string, DateTime>)
     };
 
-    private System.Timers.Timer _CameraTimer = new System.Timers.Timer(60 * 1000); //takes camera snapshots every once in a while
+    private System.Timers.Timer _CameraTimer = new System.Timers.Timer(15 * 1000); //takes camera snapshots every once in a while
     private Dictionary<string, DateTime> _QueuedSnapshots = new Dictionary<string, DateTime>();
     private readonly DataContractSerializer HFQSerializer;
     private int? _DownloadId = null;
@@ -118,6 +119,7 @@ namespace HFQOVM
       {
         _CameraTimer.Stop();
         _CameraTimer.Elapsed -= _CameraTimer_Elapsed;
+        WriteToCache();
 
         ViewModelLocator.Logger.Error("Multiple monitors or projector detected. Exiting.");
         ViewModelLocator.DialogService.ShowMessage("Multiple monitors or projector detected. The application will close now. Please fix the problem and restart the application to continue from where you left.", true);
@@ -129,15 +131,14 @@ namespace HFQOVM
       //if an exam is currently open, we'll take a snapshot every once in a while.
       if (!string.IsNullOrEmpty(this.XPSPath))
       {
-        //if this has been a few minutes since last snapshot, we'll take another snapshot. Duration is decided randomly and can be anywhere between 1 to 10 minutes.
-        if (DateTime.Now.Subtract(_LastSnapshotTimestamp).TotalMinutes > MIN_SNAPSHOT_TIME + (new Random()).Next(0, MAX_SNAPSHOT_TIME - MIN_SNAPSHOT_TIME))
-        {
-          var SnapshotTask = ViewModelLocator.CameraService.TakeCameraSnapshot();
-          _LastSnapshotTimestamp = DateTime.Now;
+        var SnapshotTask = ViewModelLocator.CameraService.TakeCameraSnapshot();
 
-          SnapshotTask.ContinueWith(t =>
+        SnapshotTask.ContinueWith(t =>
+        {
+          if (t.Result != null)
           {
-            if (t.Result != null)
+            //if this has been a few minutes since last snapshot, we'll take another snapshot. Duration is decided randomly and can be anywhere between 1 to 10 minutes.
+            if (DateTime.Now.Subtract(_LastSnapshotTimestamp).TotalMinutes > MIN_SNAPSHOT_TIME + (new Random()).Next(0, MAX_SNAPSHOT_TIME - MIN_SNAPSHOT_TIME))
             {
               using (var isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null))
               {
@@ -149,23 +150,23 @@ namespace HFQOVM
 
                   var FullFilePath = fs.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(fs).ToString();
                   _QueuedSnapshots.Add(FullFilePath, Timestamp);
+                  _LastSnapshotTimestamp = DateTime.Now;
                 }
               }
             }
-            else
-            {
-              ViewModelLocator.Logger.Error("Could not take camera snapshot. Exiting.");
-              ViewModelLocator.DialogService.ShowMessage("Could not take screenshot. The application will close now. Make sure your camera is turned on and restart the application to continue from where you left.", true);
-              ViewModelLocator.ApplicationService.Shutdown();
-            }
-          });
-        }
-      }
+          }
+          else
+          {
+            _CameraTimer.Stop();
+            _CameraTimer.Elapsed -= _CameraTimer_Elapsed;
+            WriteToCache();
 
-      Task.Run(() =>
-      {
-        UploadQueuedSnapshots();
-      });
+            ViewModelLocator.Logger.Error("CameraService.TakeCameraSnapshot() returned null. Exiting.");
+            ViewModelLocator.DialogService.ShowMessage("Your camera device is not accessible. The application will close now. Make sure your camera is turned on and restart the application to continue from where you left.", true);
+            ViewModelLocator.ApplicationService.Shutdown();
+          }
+        });
+      }
     }
 
     private bool _IsUploadingSnapshots = false;
@@ -333,7 +334,7 @@ namespace HFQOVM
         {
           _OpenExamCommand = new RelayCommand(() =>
           {
-            if (Result != null && Result.Count > 0)
+            if (Result != null && Result.Count > 0 && Result.Any(r => r.A1 != null || r.A2 != null || r.A3 != null))
             {
               var SaveChanges = ViewModelLocator.DialogService.AskTernaryQuestion("Upload current result before opening new master file?");
 
@@ -341,8 +342,8 @@ namespace HFQOVM
                 return;
               else if (SaveChanges.Value)
               {
+                //upload current results before opening a new exam
                 UploadResultCommand.Execute(null);
-                //upload results
               }
             }
 
@@ -574,19 +575,25 @@ namespace HFQOVM
       }
     }
 
-    private RelayCommand<Action<string>> _UploadResultCommand;
+    private RelayCommand _UploadResultCommand;
     /// <summary>
     /// We need to delete XPS files after UploadResult, which cannot be done till the View layer releases lock on the XPS file. So the  View layer will pass us with the delegate
     /// of the delete function that we'll call after UploadResult succeeds.
     /// </summary>
-    public RelayCommand<Action<string>> UploadResultCommand
+    public RelayCommand UploadResultCommand
     {
       get
       {
         if (_UploadResultCommand == null)
         {
-          _UploadResultCommand = new RelayCommand<Action<string>>((deleteFunc) =>
+          _UploadResultCommand = new RelayCommand(() =>
           {
+            if(Result ==null || Result.Count == 0 || Result.All(r => r.A1 == null && r.A2 == null && r.A3 == null))
+            {
+              ViewModelLocator.DialogService.ShowMessage("There is nothing to upload.", true);
+              return;
+            }
+
             if (Result.Any(r => r != Result.Last() && r.A1 == null))
             {
               ViewModelLocator.DialogService.ShowMessage("One or more entries do not have any value in A1 column. Please fix these entries before uploading result.", true);
@@ -623,7 +630,8 @@ namespace HFQOVM
                       SearchText = "";
                       _DownloadId = null;
 
-                      deleteFunc.Invoke(XPSPath);
+                      //front-end will listen to this event and clean up the left-over XPS file
+                      ExamUploaded.Invoke(XPSPath);
 
                       XPSPath = null;
                       XMLDoc = null;
@@ -645,7 +653,7 @@ namespace HFQOVM
               }
             }
           },
-          (deleteFunc) => ViewModelLocator.Auth.IsLoggedIn && (ViewModelLocator.Auth.User.type == UserType.Admin || ViewModelLocator.Auth.User.type == UserType.Downloader) && _SelectedAccess != null && Result.Count > 0);
+          () => ViewModelLocator.Auth.IsLoggedIn && (ViewModelLocator.Auth.User.type == UserType.Admin || ViewModelLocator.Auth.User.type == UserType.Downloader) && _SelectedAccess != null && Result.Count > 0);
         }
 
         return _UploadResultCommand;

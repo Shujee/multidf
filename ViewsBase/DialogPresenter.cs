@@ -12,17 +12,20 @@ namespace ViewsBase
   {
     private readonly string _Title = "";
 
+    public Window Owner { get; set; }
+       
     private readonly static OpenFileDialog dlgOpen = new OpenFileDialog();
     private readonly static SaveFileDialog dlgSave = new SaveFileDialog();
 
-    public DialogPresenter(string title)
+    public DialogPresenter(Window owner, string title)
     {
+      Owner = owner;
       _Title = title;
     }
 
     public void ShowMessage(string msg, bool isError)
     {
-        MessageBox.Show(msg, _Title, MessageBoxButton.OK, isError? MessageBoxImage.Error : MessageBoxImage.Information);
+      MessageBox.Show(Owner, msg, _Title, MessageBoxButton.OK, isError ? MessageBoxImage.Error : MessageBoxImage.Information);
     }
 
     public void ShowMessage(Exception ee)
@@ -37,7 +40,7 @@ namespace ViewsBase
           Msg = err.Key + ": " + err.Value;
       }
 
-      MessageBox.Show(Msg, _Title, MessageBoxButton.OK, MessageBoxImage.Error);
+      MessageBox.Show(Owner, Msg, _Title, MessageBoxButton.OK, MessageBoxImage.Error);
     }
 
     /// <summary>
@@ -64,7 +67,7 @@ namespace ViewsBase
     /// <returns></returns>
     public bool? AskTernaryQuestion(string msg)
     {
-      var Res = MessageBox.Show(msg, _Title, MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
+      var Res = MessageBox.Show(Owner, msg, _Title, MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
 
       if (Res == MessageBoxResult.Yes)
         return true;
@@ -76,7 +79,7 @@ namespace ViewsBase
 
     public bool AskBooleanQuestion(string msg)
     {
-      var Res = MessageBox.Show(msg, _Title, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+      var Res = MessageBox.Show(Owner, msg, _Title, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
       return Res == MessageBoxResult.Yes;
     }
 
@@ -100,7 +103,7 @@ namespace ViewsBase
       if (!string.IsNullOrEmpty(initDir))
         dlgOpen.InitialDirectory = initDir;
 
-      if (dlgOpen.ShowDialog().Value)
+      if (dlgOpen.ShowDialog(Owner).Value)
         return dlgOpen.FileName;
       else
         return null;
@@ -126,7 +129,7 @@ namespace ViewsBase
       if (!string.IsNullOrEmpty(initDir))
         dlgOpen.InitialDirectory = initDir;
 
-      if (dlgOpen.ShowDialog().Value)
+      if (dlgOpen.ShowDialog(Owner).Value)
         return dlgOpen.FileNames;
       else
         return null;
@@ -157,7 +160,7 @@ namespace ViewsBase
       if (!string.IsNullOrEmpty(initDir))
         dlgSave.InitialDirectory = initDir;
 
-      if (dlgSave.ShowDialog().Value)
+      if (dlgSave.ShowDialog(Owner).Value)
         return dlgSave.FileName;
       else
         return null;

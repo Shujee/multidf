@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AForge.Video.DirectShow;
+using System;
 using System.Drawing;
 using System.Threading.Tasks;
 
@@ -6,7 +7,7 @@ namespace HFQOVM
 {
   public interface ICameraService
   {
-    bool InitCam();
+    object BestResCamera { get; }
     Task<Bitmap> TakeCameraSnapshot();
 
     event Action SnapshotCaptured;

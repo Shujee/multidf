@@ -5,7 +5,7 @@ namespace MultiDF.Views
 {
   public class DialogPresenter : ViewsBase.DialogPresenter, IDialogService
   {
-    public DialogPresenter(string title) : base(title)
+    public DialogPresenter(string title) : base(null, title)
     {
 
     }

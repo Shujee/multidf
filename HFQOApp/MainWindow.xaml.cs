@@ -30,6 +30,8 @@ namespace HFQOApp
     {
       InitializeComponent();
 
+      (ViewModelLocator.DialogService as HFQOViews.DialogPresenter).Owner = this;
+
       this.Title = $"HFQApp (ver: { System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()})";
 
       DV.FitToWidth();
@@ -46,6 +48,8 @@ namespace HFQOApp
       {
         UploadButton.IsEnabled = VM.UploadResultCommand.CanExecute(null);
       };
+
+      VM.ExamUploaded += DeleteXPSFile;
 
 #if (DEBUG)
       //DV.Document = (FixedDocumentSequence)(new PathToFixedDocumentConverter().Convert(@"F:\Office\Larry Gong\\Analysis\Sample Question for DF Multi.xps", typeof(FixedDocumentSequence), null, null));
@@ -133,11 +137,8 @@ namespace HFQOApp
     private void AboutButton_Click(object sender, RoutedEventArgs e)
     {
       ViewModelLocatorBase.DialogService.OpenAboutWindow();
-    }
 
-    private void UploadResult_Click(object sender, RoutedEventArgs e)
-    {
-      VM.UploadResultCommand.Execute(new Action<string>(DeleteXPSFile));
+      
     }
 
     private void DeleteXPSFile(string xpsPath)

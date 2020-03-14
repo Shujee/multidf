@@ -110,7 +110,7 @@
         </StackPanel>
       </Button>
 
-      <Button x:Name="UploadButton" Click="UploadResult_Click" Style="{StaticResource ToolbarButton}">
+      <Button x:Name="UploadButton" Command="{Binding UploadResultCommand}" Style="{StaticResource ToolbarButton}">
         <StackPanel>
           <fa:FontAwesome Icon="Upload" FontSize="24">
             <fa:FontAwesome.Style>

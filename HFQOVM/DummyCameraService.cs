@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AForge.Video.DirectShow;
+using System;
 using System.Drawing;
 using System.Threading.Tasks;
 
@@ -9,6 +10,8 @@ namespace HFQOVM
   /// </summary>
   internal class DummyCameraService : ICameraService
   {
+    public object BestResCamera => null;
+
     public event Action SnapshotCaptured;
 
     public bool InitCam()
@@ -16,12 +19,9 @@ namespace HFQOVM
       return true;
     }
 
-    public void StopCam()
-    {
-    }
-
     public Task<Bitmap> TakeCameraSnapshot()
     {
+      SnapshotCaptured?.Invoke();
       return Task.FromResult(new Bitmap(@"C:\Users\Shujaat\Pictures\loco engine.png"));
     }
   }

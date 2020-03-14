@@ -3,7 +3,6 @@ using AForge.Video.DirectShow;
 using System;
 using System.Drawing;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace HFQOVM
@@ -12,77 +11,66 @@ namespace HFQOVM
   {
     private int conta = 0;
     private Bitmap lastframe;
-    private VideoCaptureDevice cam;
-    private CancellationTokenSource _CancelTokenSrc;
-    private CancellationToken _Token;
-    private bool _CamInitialized = false;
 
     public event Action SnapshotCaptured;
 
-    /// <summary>
-    /// Call this function once at application startup.
-    /// </summary>
-    /// <returns></returns>
-    public bool InitCam()
+    public object BestResCamera
     {
-      var webCams = new FilterInfoCollection(FilterCategory.VideoInputDevice);
-
-      if (webCams.Count > 0)
+      get
       {
-        cam = new VideoCaptureDevice(webCams[0].MonikerString);
-        var BestFrameSize = cam.VideoCapabilities.Max(cap => cap.FrameSize.Width * cap.FrameSize.Height);
-        cam.VideoResolution = cam.VideoCapabilities.First(cap => cap.FrameSize.Width * cap.FrameSize.Height == BestFrameSize);
+        var webCams = new FilterInfoCollection(FilterCategory.VideoInputDevice);
 
-        cam.VideoSourceError += cam_VideoSourceError;
+        if (webCams.Count > 0)
+        {
+          var cam = new VideoCaptureDevice(webCams[0].MonikerString);
+          var Capabilities = cam.VideoCapabilities;
 
-        _CancelTokenSrc = new CancellationTokenSource();
-        _Token = _CancelTokenSrc.Token;
-
-        _CamInitialized = true;
+          if (Capabilities != null && Capabilities.Length > 0)
+          {
+            var BestFrameSize = Capabilities.Max(cap => cap.FrameSize.Width * cap.FrameSize.Height);
+            cam.VideoResolution = Capabilities.First(cap => cap.FrameSize.Width * cap.FrameSize.Height == BestFrameSize);
+            return cam;
+          }
+          else
+            return null;
+        }
+        else
+          return null;
       }
-      else
-      {
-        _CamInitialized = false;
-      }
-
-      return _CamInitialized;
     }
 
     public Task<Bitmap> TakeCameraSnapshot()
     {
-      if (!_CamInitialized)
+      var cam = BestResCamera as VideoCaptureDevice;
+
+      if (cam == null)
         return Task.FromResult((Bitmap)null);
       else
       {
-        //if (!_CancelTokenSrc.IsCancellationRequested)
-        //  _CancelTokenSrc.Cancel();
-        
         return Task.Run(() =>
         {
-          _Token.ThrowIfCancellationRequested();
-
           // set NewFrame event handler
           cam.NewFrame += new NewFrameEventHandler(video_NewFrame);
 
           // start the video source
           cam.Start();
 
-          while (lastframe == null)
-          {
-            Task.Delay(100).Wait();
-            _Token.ThrowIfCancellationRequested();
-          }
+          //wait for the frame to be captured (for 1 second max)
+          int counter = 0;
+          while (lastframe == null && counter++ < 15)
+            Task.Delay(500).Wait();
 
-          return lastframe;
-        }, _Token).ContinueWith(t =>
-        {
+          //stop cam
           cam.SignalToStop();
           cam.WaitForStop();
-          cam.Stop();
 
           // detach NewFrame event handler
           cam.NewFrame -= new NewFrameEventHandler(video_NewFrame);
 
+          return lastframe;
+
+        }).ContinueWith(t =>
+        {
           lastframe = null;
 
           if (t.IsFaulted || t.IsCanceled)
@@ -103,21 +91,14 @@ namespace HFQOVM
       }
 
       if (lastframe != null)
+      {
         lastframe.Dispose();
+        lastframe = null;
+      }
 
       lastframe = (Bitmap)eventArgs.Frame.Clone();
 
       SnapshotCaptured?.Invoke();
-
-      //since we are intreseted in single snapshots only, we'll detach event handler as soon as first frame is captured
-      cam.NewFrame -= new NewFrameEventHandler(video_NewFrame);
-    }
-
-    private void cam_VideoSourceError(object sender, VideoSourceErrorEventArgs e)
-    {
-      ViewModelLocator.Logger.Error(e.Description);
-      cam.NewFrame -= new NewFrameEventHandler(video_NewFrame);
-      lastframe = null;
     }
   }
 }
