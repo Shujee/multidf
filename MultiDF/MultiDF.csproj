@@ -198,7 +198,6 @@
     <Compile Include="..\SharedAssemblyInfo_MultiDF.cs">
       <Link>SharedAssemblyInfo_MultiDF.cs</Link>
     </Compile>
-    <Compile Include="ArbitraryWindow.cs" />
     <Compile Include="MultiDFPaneUC.cs">
       <SubType>UserControl</SubType>
     </Compile>

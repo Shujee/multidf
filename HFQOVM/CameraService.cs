@@ -12,8 +12,6 @@ namespace HFQOVM
     private int conta = 0;
     private Bitmap lastframe;
 
-    public event Action SnapshotCaptured;
-
     public object BestResCamera
     {
       get
@@ -97,8 +95,6 @@ namespace HFQOVM
       }
 
       lastframe = (Bitmap)eventArgs.Frame.Clone();
-
-      SnapshotCaptured?.Invoke();
     }
   }
 }

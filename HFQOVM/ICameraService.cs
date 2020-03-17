@@ -1,6 +1,4 @@
-﻿using AForge.Video.DirectShow;
-using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Threading.Tasks;
 
 namespace HFQOVM
@@ -9,7 +7,5 @@ namespace HFQOVM
   {
     object BestResCamera { get; }
     Task<Bitmap> TakeCameraSnapshot();
-
-    event Action SnapshotCaptured;
   }
 }

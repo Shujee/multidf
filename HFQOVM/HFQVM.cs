@@ -28,6 +28,7 @@ namespace HFQOVM
 
     public event Action<HFQResultRowVM> NewResultRowAdded;
     public event Action<string> ExamUploaded; //front-end will listen to this event to remove left-over XPS file
+    public event Action SnapshotCaptured; //front-end will listen to this event and make camera shutter sound
 
     private readonly Type[] AllObjectTypes = {
       typeof(HFQResultRow),
@@ -41,7 +42,7 @@ namespace HFQOVM
     private Dictionary<string, DateTime> _QueuedSnapshots = new Dictionary<string, DateTime>();
     private readonly DataContractSerializer HFQSerializer;
     private int? _DownloadId = null;
-    private DateTime _LastSnapshotTimestamp;
+    private DateTime _NextSnapshotTimestamp = DateTime.Now;
 
     private const int MIN_SNAPSHOT_TIME = 5; //min. time to wait before taking next camera snapshot
     private const int MAX_SNAPSHOT_TIME = 10; //max. time to wait before taking next camera snapshot
@@ -137,9 +138,16 @@ namespace HFQOVM
         {
           if (t.Result != null)
           {
-            //if this has been a few minutes since last snapshot, we'll take another snapshot. Duration is decided randomly and can be anywhere between 1 to 10 minutes.
-            if (DateTime.Now.Subtract(_LastSnapshotTimestamp).TotalMinutes > MIN_SNAPSHOT_TIME + (new Random()).Next(0, MAX_SNAPSHOT_TIME - MIN_SNAPSHOT_TIME))
+            //Check if it's time for us to take next snapshot
+            if (DateTime.Now >= _NextSnapshotTimestamp)
             {
+              //Compute a random time for next snapshot (between MIN and MAX const values defined at the top of this class)
+              _NextSnapshotTimestamp = DateTime.Now.AddMinutes(MIN_SNAPSHOT_TIME + (new Random()).Next(0, MAX_SNAPSHOT_TIME - MIN_SNAPSHOT_TIME));
+
+              ViewModelLocator.DialogService.ShowMessage(_NextSnapshotTimestamp.ToString(), false);
+
+              SnapshotCaptured?.Invoke();
+
               using (var isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null))
               {
                 DateTime Timestamp = DateTime.Now;
@@ -150,9 +158,10 @@ namespace HFQOVM
 
                   var FullFilePath = fs.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(fs).ToString();
                   _QueuedSnapshots.Add(FullFilePath, Timestamp);
-                  _LastSnapshotTimestamp = DateTime.Now;
                 }
               }
+
+              UploadQueuedSnapshots();
             }
           }
           else
@@ -161,7 +170,7 @@ namespace HFQOVM
             _CameraTimer.Elapsed -= _CameraTimer_Elapsed;
             WriteToCache();
 
-            ViewModelLocator.Logger.Error("CameraService.TakeCameraSnapshot() returned null. Exiting.");
+            ViewModelLocator.Logger.Error("CameraService.TakeCameraSnapshot() returned null. Exiting. Error: " + t.Exception.Message);
             ViewModelLocator.DialogService.ShowMessage("Your camera device is not accessible. The application will close now. Make sure your camera is turned on and restart the application to continue from where you left.", true);
             ViewModelLocator.ApplicationService.Shutdown();
           }

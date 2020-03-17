@@ -51,7 +51,8 @@
         <ComboBox ItemsSource="{Binding MyExams}" Background="Yellow" SelectedItem="{Binding SelectedAccess}"
                   MinWidth="200" Margin="12" Padding="3" BorderThickness="0,0,0,1" 
                   FontSize="12" BorderBrush="LightGray" GotFocus="ComboBox_GotFocus" HorizontalContentAlignment="Stretch" 
-                  Style="{DynamicResource TransparentComboBoxStyle}">
+                  Style="{DynamicResource TransparentComboBoxStyle}"
+                  PreviewMouseWheel="ComboBox_PreviewMouseWheel">
         <ComboBox.Resources>
           <Style TargetType="ToggleButton">
             <Setter Property="Background" Value="Yellow" />

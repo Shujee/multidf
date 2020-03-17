@@ -56,7 +56,8 @@ namespace HFQOApp
       //(this.DataContext as MainVM).XML = System.IO.File.ReadAllText(@"F:\Office\Larry Gong\\Analysis\Sample Question for DF Multi.xml").Deserialize<XMLDoc>();
 #endif
 
-      ViewModelLocator.CameraService.SnapshotCaptured += PlayShutterSound;
+      //Larry asked to remove this sound
+      //ViewModelLocator.HFQ.SnapshotCaptured += PlayShutterSound;
     }
 
     private void HFQPane_QASelected(QA qa)

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Interop;
 using Common;
+using GalaSoft.MvvmLight.Threading;
 
 namespace ViewsBase
 {
@@ -13,7 +14,7 @@ namespace ViewsBase
     private readonly string _Title = "";
 
     public Window Owner { get; set; }
-       
+
     private readonly static OpenFileDialog dlgOpen = new OpenFileDialog();
     private readonly static SaveFileDialog dlgSave = new SaveFileDialog();
 
@@ -25,7 +26,13 @@ namespace ViewsBase
 
     public void ShowMessage(string msg, bool isError)
     {
-      MessageBox.Show(Owner, msg, _Title, MessageBoxButton.OK, isError ? MessageBoxImage.Error : MessageBoxImage.Information);
+      DispatcherHelper.UIDispatcher.Invoke(() =>
+      {
+        if (Owner == null)
+          MessageBox.Show(msg, _Title, MessageBoxButton.OK, isError ? MessageBoxImage.Error : MessageBoxImage.Information);
+        else
+          MessageBox.Show(Owner, msg, _Title, MessageBoxButton.OK, isError ? MessageBoxImage.Error : MessageBoxImage.Information);
+      });
     }
 
     public void ShowMessage(Exception ee)
@@ -40,7 +47,13 @@ namespace ViewsBase
           Msg = err.Key + ": " + err.Value;
       }
 
-      MessageBox.Show(Owner, Msg, _Title, MessageBoxButton.OK, MessageBoxImage.Error);
+      DispatcherHelper.UIDispatcher.Invoke(() =>
+      {
+        if (Owner == null)
+          MessageBox.Show(Msg, _Title, MessageBoxButton.OK, MessageBoxImage.Error);
+        else
+          MessageBox.Show(Owner, Msg, _Title, MessageBoxButton.OK, MessageBoxImage.Error);
+      });
     }
 
     /// <summary>

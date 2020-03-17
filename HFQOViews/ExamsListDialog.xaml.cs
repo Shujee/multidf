@@ -54,5 +54,11 @@ namespace HFQOViews
     {
       (this.DataContext as HFQOVM.HFQVM).RefreshExamsList();
     }
+
+    private void ComboBox_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+    {
+      //Larry wants to disable mouse wheel effect in exams dropdown.
+      e.Handled = true;
+    }
   }
 }
