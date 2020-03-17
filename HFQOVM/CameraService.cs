@@ -47,30 +47,35 @@ namespace HFQOVM
       {
         return Task.Run(() =>
         {
-          // set NewFrame event handler
-          cam.NewFrame += new NewFrameEventHandler(video_NewFrame);
+          try
+          {
+            // set NewFrame event handler
+            cam.NewFrame += new NewFrameEventHandler(video_NewFrame);
 
-          // start the video source
-          cam.Start();
+            // start the video source
+            cam.Start();
 
-          //wait for the frame to be captured (for 1 second max)
-          int counter = 0;
-          while (lastframe == null && counter++ < 15)
-            Task.Delay(500).Wait();
+            //wait for the frame to be captured (for 1 second max)
+            lastframe = null;
+            while (lastframe == null)
+              Task.Delay(500).Wait();
 
-          //stop cam
-          cam.SignalToStop();
-          cam.WaitForStop();
+            //stop cam
+            cam.SignalToStop();
+            cam.WaitForStop();
 
-          // detach NewFrame event handler
-          cam.NewFrame -= new NewFrameEventHandler(video_NewFrame);
+            // detach NewFrame event handler
+            cam.NewFrame -= new NewFrameEventHandler(video_NewFrame);
 
-          return lastframe;
-
+            return lastframe;
+          }
+          catch (Exception ee)
+          {
+            ViewModelLocator.DialogService.ShowMessage(ee.Message, true);
+            return null;
+          }
         }).ContinueWith(t =>
         {
-          lastframe = null;
-
           if (t.IsFaulted || t.IsCanceled)
             return null;
           else

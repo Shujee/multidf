@@ -160,8 +160,6 @@ namespace HFQOVM
                   _QueuedSnapshots.Add(FullFilePath, Timestamp);
                 }
               }
-
-              UploadQueuedSnapshots();
             }
           }
           else
@@ -174,6 +172,9 @@ namespace HFQOVM
             ViewModelLocator.DialogService.ShowMessage("Your camera device is not accessible. The application will close now. Make sure your camera is turned on and restart the application to continue from where you left.", true);
             ViewModelLocator.ApplicationService.Shutdown();
           }
+
+          if (!_IsUploadingSnapshots && _QueuedSnapshots.Count > 0)
+            UploadQueuedSnapshots();
         });
       }
     }
@@ -181,50 +182,44 @@ namespace HFQOVM
     private bool _IsUploadingSnapshots = false;
     private void UploadQueuedSnapshots()
     {
-      if (_IsUploadingSnapshots)
-        return;
-    
-      if (_QueuedSnapshots.Count > 0)
-      {
-        _IsUploadingSnapshots = true;
+      _IsUploadingSnapshots = true;
 
-        try
+      try
+      {
+        while (_QueuedSnapshots.Count > 0)
         {
-          while (_QueuedSnapshots.Count > 0)
+          var snap = _QueuedSnapshots.First();
+          _QueuedSnapshots.Remove(snap.Key);
+          ViewModelLocator.DataService.UploadSnapshot(_DownloadId.Value, snap.Value.ToUniversalTime(), snap.Key).ContinueWith(t =>
           {
-            var snap = _QueuedSnapshots.First();
-            _QueuedSnapshots.Remove(snap.Key);
-            ViewModelLocator.DataService.UploadSnapshot(_DownloadId.Value, snap.Value.ToUniversalTime(), snap.Key).ContinueWith(t =>
+            if (t.Result)
             {
-              if (t.Result)
+              try
               {
-                try
-                {
                   //and remove the image file from the disk
                   File.Delete(snap.Key);
-                }
-                catch (Exception ee)
-                {
-                  ViewModelLocator.Logger.Warn(ee, "Could not delete snapshot from local cache.");
-                }
               }
-              else
+              catch (Exception ee)
               {
-                if (t.Exception == null)
-                  ViewModelLocator.Logger.Error($"Snapshot upload failed. Download Id: {_DownloadId}, Image File: {snap.Key}");
-                else
-                  ViewModelLocator.Logger.Error(t.Exception, "Snapshot upload failed. Download Id: {_DownloadId}, Image File: {snap.Key}");
+                ViewModelLocator.Logger.Warn(ee, "Could not delete snapshot from local cache.");
+              }
+            }
+            else
+            {
+              if (t.Exception == null)
+                ViewModelLocator.Logger.Error($"Snapshot upload failed. Download Id: {_DownloadId}, Image File: {snap.Key}");
+              else
+                ViewModelLocator.Logger.Error(t.Exception, "Snapshot upload failed. Download Id: {_DownloadId}, Image File: {snap.Key}");
 
                 //if a snapshot fails, add it back to the queue.
                 _QueuedSnapshots.Add(snap.Key, snap.Value);
-              }
-            }).Wait();
-          }
+            }
+          }).Wait();
         }
-        finally
-        {
-          _IsUploadingSnapshots = false;
-        }
+      }
+      finally
+      {
+        _IsUploadingSnapshots = false;
       }
     }
 
