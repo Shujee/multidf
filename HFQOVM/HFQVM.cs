@@ -24,6 +24,7 @@ namespace HFQOVM
       public string XPSPath { get; set; }
       public Dictionary<string, DateTime> QueuedSnapshots { get; set; }
       public int? DownloadId { get; set; }
+      public string ExamName { get; set; }
     }
 
     public event Action<HFQResultRowVM> NewResultRowAdded;
@@ -44,8 +45,13 @@ namespace HFQOVM
     private int? _DownloadId = null;
     private DateTime _NextSnapshotTimestamp = DateTime.Now;
 
+#if (DEBUG)
+    private const int MIN_SNAPSHOT_TIME = 1; //min. time to wait before taking next camera snapshot
+    private const int MAX_SNAPSHOT_TIME = 2; //max. time to wait before taking next camera snapshot
+#else
     private const int MIN_SNAPSHOT_TIME = 5; //min. time to wait before taking next camera snapshot
     private const int MAX_SNAPSHOT_TIME = 10; //max. time to wait before taking next camera snapshot
+#endif
 
     /// <summary>
     /// This setting is required to prevent exceptions that are thrown by the serialization when it encounters control characters used by
@@ -83,6 +89,7 @@ namespace HFQOVM
               XPSPath = Cache.XPSPath;
               XMLDoc = Cache.XMLDoc;
               _DownloadId = Cache.DownloadId;
+              ExamName = Cache.ExamName;
               _QueuedSnapshots = Cache.QueuedSnapshots;
 
               RaisePropertyChanged(nameof(Result));
@@ -102,6 +109,7 @@ namespace HFQOVM
               File.Delete("result_cache.xml");
 
             _DownloadId = null;
+            ExamName = "No Exam";
             SelectedResultIndex = 0;
             SearchText = "";
             _QueuedSnapshots.Clear();
@@ -115,7 +123,7 @@ namespace HFQOVM
 
     private void _CameraTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
-#if(!DEBUG)
+#if (!DEBUG)
       if (ViewModelLocator.HardwareHelper.HasMultipleScreens())
       {
         _CameraTimer.Stop();
@@ -144,8 +152,6 @@ namespace HFQOVM
               //Compute a random time for next snapshot (between MIN and MAX const values defined at the top of this class)
               _NextSnapshotTimestamp = DateTime.Now.AddMinutes(MIN_SNAPSHOT_TIME + (new Random()).Next(0, MAX_SNAPSHOT_TIME - MIN_SNAPSHOT_TIME));
 
-              ViewModelLocator.DialogService.ShowMessage(_NextSnapshotTimestamp.ToString(), false);
-
               SnapshotCaptured?.Invoke();
 
               using (var isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null))
@@ -158,6 +164,8 @@ namespace HFQOVM
 
                   var FullFilePath = fs.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(fs).ToString();
                   _QueuedSnapshots.Add(FullFilePath, Timestamp);
+
+                  WriteToCache();
                 }
               }
             }
@@ -192,16 +200,21 @@ namespace HFQOVM
           _QueuedSnapshots.Remove(snap.Key);
           ViewModelLocator.DataService.UploadSnapshot(_DownloadId.Value, snap.Value.ToUniversalTime(), snap.Key).ContinueWith(t =>
           {
-            if (t.Result)
+            if (t.IsCompleted && !t.IsFaulted)
             {
-              try
+              if (t.Result)
               {
+                try
+                {
                   //and remove the image file from the disk
                   File.Delete(snap.Key);
-              }
-              catch (Exception ee)
-              {
-                ViewModelLocator.Logger.Warn(ee, "Could not delete snapshot from local cache.");
+
+                  WriteToCache();
+                }
+                catch (Exception ee)
+                {
+                  ViewModelLocator.Logger.Warn(ee, "Could not delete snapshot from local cache.");
+                }
               }
             }
             else
@@ -211,8 +224,10 @@ namespace HFQOVM
               else
                 ViewModelLocator.Logger.Error(t.Exception, "Snapshot upload failed. Download Id: {_DownloadId}, Image File: {snap.Key}");
 
-                //if a snapshot fails, add it back to the queue.
-                _QueuedSnapshots.Add(snap.Key, snap.Value);
+              //if a snapshot fails, add it back to the queue.
+              _QueuedSnapshots.Add(snap.Key, snap.Value);
+
+              WriteToCache();
             }
           }).Wait();
         }
@@ -237,7 +252,15 @@ namespace HFQOVM
 
     private void WriteToCache()
     {
-      var TempResult = new HFQVMCache() { Result = this.Result, XMLDoc = XMLDoc, XPSPath = XPSPath, QueuedSnapshots = _QueuedSnapshots, DownloadId = _DownloadId };
+      var TempResult = new HFQVMCache()
+      {
+        Result = this.Result,
+        XMLDoc = XMLDoc,
+        XPSPath = XPSPath,
+        QueuedSnapshots = _QueuedSnapshots,
+        DownloadId = _DownloadId,
+        ExamName = _ExamName,
+      };
 
       using (FileStream fs = new FileStream("result_cache.xml", FileMode.Create))
       {
@@ -325,6 +348,13 @@ namespace HFQOVM
         GoToPreviousCommand.RaiseCanExecuteChanged();
         GoToNextCommand.RaiseCanExecuteChanged();
       }
+    }
+
+    private string _ExamName;
+    public string ExamName
+    {
+      get => _ExamName;
+      private set => Set(ref _ExamName, value);
     }
 
     public bool IsWatching => !string.IsNullOrEmpty(this.XPSPath);
@@ -419,6 +449,7 @@ namespace HFQOVM
                           XMLDoc = XMLDoc.FromXML(XMLString);
 
                           _DownloadId = MF.download_id;
+                          ExamName = MF.number + " - " + MF.name;
 
                           _QueuedSnapshots.Clear();
                           Result.Clear();
@@ -427,6 +458,9 @@ namespace HFQOVM
                           var Row = new HFQResultRowVM() { Q = 1 };
                           Result.Add(Row);
                           NewResultRowAdded?.Invoke(Row);
+                          
+                          _CameraTimer.Stop();
+                          _CameraTimer.Start();
 
                           SelectedResultIndex = 0;
 
@@ -633,6 +667,7 @@ namespace HFQOVM
                       SelectedResultIndex = 0;
                       SearchText = "";
                       _DownloadId = null;
+                      _ExamName = "No Exam";
 
                       //front-end will listen to this event and clean up the left-over XPS file
                       ExamUploaded.Invoke(XPSPath);

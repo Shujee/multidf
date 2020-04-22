@@ -51,7 +51,7 @@ namespace MultiDF.VM
   }
 
   /// <summary>
-  /// For custom serialization, we are inheriting the QuickGraph class
+  /// For custom serialization, we are inheriting the UndirectedGraph class
   /// </summary>
   [Serializable]
   [KnownType(typeof(XMLDoc))]

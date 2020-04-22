@@ -50,6 +50,7 @@
 
     <Grid.RowDefinitions>
       <RowDefinition Height="64" />
+      <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
 
@@ -199,9 +200,17 @@
     
     </ToolBar>
 
-    <view:HFQPane Grid.Row="1" Grid.Column="0" Margin="0,0,5,0 " QASelected="HFQPane_QASelected" />
-    <GridSplitter Grid.Row="1" Grid.Column="0" Width="5" HorizontalAlignment="Right" ResizeBehavior="CurrentAndNext" Background="LightGray" />
-    <DocumentViewer Name="DV" Grid.Column="1" Document="{Binding XPSPath, Mode=OneWay, Converter={StaticResource PathToFixedDocumentConverter}}" Focusable="False" Grid.Row="1"
+    <view:HFQPane Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" Margin="0,0,5,0 " QASelected="HFQPane_QASelected" />
+    <GridSplitter Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" Width="5" HorizontalAlignment="Right" ResizeBehavior="CurrentAndNext" Background="LightGray" />
+    <Label Grid.Row="1" Grid.Column="1" Content="{Binding ExamName, TargetNullValue='No Exam', FallbackValue='No Exam'}" HorizontalContentAlignment="Center" VerticalAlignment="Center" FontSize="24">
+      <Label.Background>
+        <RadialGradientBrush>
+          <GradientStop Offset="0" Color="White" />
+          <GradientStop Offset="1" Color="#EEF5FD" />
+        </RadialGradientBrush>
+      </Label.Background>
+    </Label>
+    <DocumentViewer Name="DV" Grid.Row="2" Grid.Column="1" Document="{Binding XPSPath, Mode=OneWay, Converter={StaticResource PathToFixedDocumentConverter}}" Focusable="False"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
       <DocumentViewer.Resources>
         <!-- Hides the toolbar -->
@@ -230,6 +239,6 @@
 
     <fa:ImageAwesome Icon="Refresh" Spin="True" Width="30" VerticalAlignment="Center" Margin="3,0"
                     Visibility="{Binding IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Opacity=".5"
-                    SpinDuration="2" Foreground="Red" Grid.Column="1" Grid.Row="1" Panel.ZIndex="1000" />
+                    SpinDuration="2" Foreground="Red" Grid.Column="1" Grid.Row="2" Panel.ZIndex="1000" />
   </Grid>
 </Window>

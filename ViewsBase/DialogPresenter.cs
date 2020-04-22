@@ -80,7 +80,12 @@ namespace ViewsBase
     /// <returns></returns>
     public bool? AskTernaryQuestion(string msg)
     {
-      var Res = MessageBox.Show(Owner, msg, _Title, MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
+      MessageBoxResult Res;
+
+      if (Owner == null)
+        Res = MessageBox.Show(msg, _Title, MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
+      else
+        Res = MessageBox.Show(Owner, msg, _Title, MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
 
       if (Res == MessageBoxResult.Yes)
         return true;
@@ -92,7 +97,13 @@ namespace ViewsBase
 
     public bool AskBooleanQuestion(string msg)
     {
-      var Res = MessageBox.Show(Owner, msg, _Title, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+      MessageBoxResult Res;
+
+      if (Owner == null)
+        Res = MessageBox.Show(msg, _Title, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+      else
+        Res = MessageBox.Show(Owner, msg, _Title, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+
       return Res == MessageBoxResult.Yes;
     }
 

@@ -14,13 +14,16 @@ namespace MultiDF.TestingShell
   /// </summary>
   public partial class MainWindow : Fluent.RibbonWindow, IWordService
   {
+    private DialogPresenter DLG = new DialogPresenter("MultiDF Testing Shell");
+
     public string ActiveDocumentPath => throw new NotImplementedException();
 
     public MainWindow()
     {
       InitializeComponent();
 
-      SimpleIoc.Default.Register<IDialogService, DialogPresenter>();
+      SimpleIoc.Default.Register<Common.IDialogService>(() => DLG);
+      SimpleIoc.Default.Register<IDialogService>(() => DLG);
     }
 
     private void AboutButton_Click(object sender, RoutedEventArgs e)
