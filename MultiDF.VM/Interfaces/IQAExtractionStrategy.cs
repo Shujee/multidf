@@ -10,7 +10,7 @@ namespace MultiDF.VM
   public interface IQAExtractionStrategy
   {
     List<QA> ExtractQAs(List<WordParagraph> paragraphs, CancellationToken tok);
-    List<WordParagraph> ExtractDelimiterParagraphs(List<WordParagraph> paragraphs, CancellationToken tok);
+    List<WordParagraph> ExtractDelimiterParagraphs(List<WordParagraph> paragraphs, CancellationToken tok, bool throwOnSequenceError);
     int? ParseQuestionNumber(string paragraphText);
   }
 }

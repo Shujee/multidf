@@ -18,6 +18,8 @@ namespace MultiDF.TestingShell
 
     public string ActiveDocumentPath => throw new NotImplementedException();
 
+    public int? SelectionStart => throw new NotImplementedException();
+
     public MainWindow()
     {
       InitializeComponent();
@@ -105,7 +107,7 @@ namespace MultiDF.TestingShell
       TXT.Text = "Q1\rA quick brown fox A quick brown fox A quick brown fox A quick brown fox\rB\rC\r\rQ2\rA quick braun fixes A quick brown fox A quick brown fox A quick brown fox\rC\rB";
     }
 
-    public void OpenDocument(string docPath, int? start, int? end)
+    public void OpenDocument(string docPath, bool openReadonly, int? start, int? end)
     {
       throw new NotImplementedException();
     }
@@ -120,7 +122,7 @@ namespace MultiDF.TestingShell
       throw new NotImplementedException();
     }
 
-    public void FixQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
+    public void FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
     {
       throw new NotImplementedException();
     }
@@ -136,6 +138,11 @@ namespace MultiDF.TestingShell
         MV.Visibility = Visibility.Collapsed;
       else
         MV.Visibility = Visibility.Visible;
+    }
+
+    int IWordService.FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
+    {
+      throw new NotImplementedException();
     }
   }
 }

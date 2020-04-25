@@ -293,6 +293,11 @@ namespace MultiDF
         ViewModelLocator.Main.SelectedProject.CheckSyncWithSourceCommand.Execute(null);
     }
 
+    private void btnFixNumbering_Click(object sender, RibbonControlEventArgs e)
+    {
+      ViewModelLocator.Main.FixNumberingCommand.Execute(null);
+    }
+
     private void btnProcess_Click(object sender, RibbonControlEventArgs e)
     {
       if (ViewModelLocator.Main.SelectedProject != null)

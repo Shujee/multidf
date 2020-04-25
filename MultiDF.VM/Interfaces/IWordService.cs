@@ -34,7 +34,7 @@ namespace MultiDF.VM
     /// <param name="docPath"></param>
     /// <param name="start"></param>
     /// <param name="end"></param>
-    void OpenDocument(string docPath, int? start, int? end);
+    void OpenDocument(string docPath, bool openReadonly, int? start, int? end);
 
     /// <summary>
     /// Assigns ordered question numbers to all QAs in the specified document.
@@ -42,7 +42,7 @@ namespace MultiDF.VM
     /// <param name="start"></param>
     /// <param name="end"></param>
     /// <param name="newText"></param>
-    void FixQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone);
+    int FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone);
 
     /// <summary>
     /// Creates a single Word document by merge content of all the specified documents.
@@ -51,6 +51,14 @@ namespace MultiDF.VM
     /// <returns></returns>
     void CreateMergedDocument(string[] docs, string outputPath, bool closeAfterCreate);
     
+    /// <summary>
+    /// Full path of the currently active Word document. Null if there is no active document.
+    /// </summary>
     string ActiveDocumentPath { get; }
+
+    /// <summary>
+    /// Current caret location in the active document. Null if there is no active document.
+    /// </summary>
+    int? SelectionStart { get; }
   }
 }

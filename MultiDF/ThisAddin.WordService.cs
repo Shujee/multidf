@@ -13,10 +13,11 @@ namespace MultiDF
     private Selection Sel => Globals.ThisAddIn.Application.Selection;
 
     public string ActiveDocumentPath => ActiveDoc?.FullName;
+    public int? SelectionStart => Sel?.Start;
 
     public void ExportDocumentToFixedFormat(ExportFixedFormat format, string docPath, string outputPath, bool closeAfterDone)
     {
-      var OpenResult = GetOrOpenDocument(docPath, false);
+      var OpenResult = GetOrOpenDocument(docPath, false, true);
 
       if (OpenResult.doc != null)
       {
@@ -45,7 +46,7 @@ namespace MultiDF
         List<WordParagraph> Result = new List<WordParagraph>();
         int ParaCount;
 
-        var OpenResult = GetOrOpenDocument(docPath, false);
+        var OpenResult = GetOrOpenDocument(docPath, false, true);
 
         int i = 0;
         ParaCount = OpenResult.doc.Paragraphs.Count;
@@ -122,9 +123,9 @@ namespace MultiDF
       }
     }
 
-    public void OpenDocument(string docPath, int? start, int? end)
+    public void OpenDocument(string docPath, bool openReadonly, int? start, int? end)
     {
-      var OpenResult = GetOrOpenDocument(docPath, true);
+      var OpenResult = GetOrOpenDocument(docPath, true, openReadonly);
 
       if (OpenResult.doc != null)
         OpenResult.doc.Activate();
@@ -146,7 +147,7 @@ namespace MultiDF
     /// </summary>
     /// <param name="docPath"></param>
     /// <returns></returns>
-    private (Document doc, bool alreadyOpen) GetOrOpenDocument(string docPath, bool visible)
+    private (Document doc, bool alreadyOpen) GetOrOpenDocument(string docPath, bool visible, bool openReadonly)
     {
       var Doc = this.Application.Documents.Cast<Document>().FirstOrDefault(d => d.FullName == docPath);
 
@@ -154,7 +155,7 @@ namespace MultiDF
       {
         try
         {
-          Doc = this.Application.Documents.Open(docPath, ReadOnly: true, AddToRecentFiles: false, Visible: visible);
+          Doc = this.Application.Documents.Open(docPath, ReadOnly: openReadonly, AddToRecentFiles: false, Visible: visible);
           return (Doc, false);
         }
         catch (Exception ee)
@@ -220,14 +221,15 @@ namespace MultiDF
     /// <param name="start"></param>
     /// <param name="end"></param>
     /// <param name="newText"></param>
-    public void FixQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
+    public int FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
     {
-      var OpenResult = GetOrOpenDocument(docPath, true);
+      var OpenResult = GetOrOpenDocument(docPath, true, false);
+
+      int ExpectedIndex = 1;
+      int FixCount = 0;
 
       if (OpenResult.doc != null)
       {
-        int ExpectedIndex = 1;
-
         //Extra characters that we insert in the loop below will affect the start and end of all subsequent paragraph ranges. 
         //The following offset will keep track of the number of characters that we have inserted so far.
         int Offset = 0;
@@ -255,6 +257,7 @@ namespace MultiDF
                 R.Delete();
 
               R.Text = ExpectedIndex.ToString();
+              FixCount++;
 
               Offset += (ExpectedIndex.ToString().Length - QIndex.ToString().Length);
             }
@@ -272,6 +275,8 @@ namespace MultiDF
       {
         OpenResult.doc.Close(false);
       }
+
+      return FixCount;
     }
   }
 }

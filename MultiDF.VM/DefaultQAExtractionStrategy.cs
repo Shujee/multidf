@@ -41,7 +41,7 @@ namespace MultiDF.VM
 
       //Document being processed contains MCQs. Each MCQ starts with Question Number on a single line, followed by Question text on the next line
       //followed by multiple answers, each on a separate line. We need to group these lines (paragraphs) such that one question and all its
-      //answers are in one group. Here we do that.
+      //answers are in one group. We call this group (question number, body, answers) a "QA". 
 
       //This loop will mark the start and end of each QA. We simply iterate through the paragraphs and try to locate a paragraph that
       //marks the beginning of a new QA. This paragraph will have question number followed by a period followed by a (hard or soft) line break.
@@ -54,7 +54,16 @@ namespace MultiDF.VM
 
       while (i < paragraphs.Count - 1)
       {
-        var QA = ExtractQA(paragraphs, ref i, ExpectedIndex);
+        var QA = ExtractNextQA(paragraphs, ref i);
+
+        //finally make sure that the question index matches the expected index. If not, give user a chance to look into the source document manually.
+        if (QA.Question != null && QA.Index != ExpectedIndex)
+        {
+          var Ex = new System.Exception($"Unexpected question index found at Question {QA.Index}. Expected index was {ExpectedIndex}. Import process will abort now.");
+          Ex.Data.Add("Paragraph", paragraphs[i].Start);
+          Ex.Data.Add("QuestionIndex", QA.Index);
+          throw Ex;
+        }
 
         if (QA != null)
           Result.Add(QA);
@@ -67,42 +76,6 @@ namespace MultiDF.VM
 
       return Result;
     }
-    
-    public List<WordParagraph> ExtractDelimiterParagraphs(List<WordParagraph> paragraphs, CancellationToken token)
-    {
-      if (paragraphs == null || paragraphs.Count == 0)
-        return null;
-
-      //Document being processed contains MCQs. Each MCQ starts with Question Number on a single line, followed by Question text on the next line
-      //followed by multiple answers, each on a separate line. We need to group these lines (paragraphs) such that one question and all its
-      //answers are in one group. Here we do that.
-
-      //This loop will mark the start and end of each QA. We simply iterate through the paragraphs and try to locate a paragraph that
-      //marks the beginning of a new QA. This paragraph will have question number followed by a period followed by a (hard or soft) line break.
-      //When we find such a paragraph, we mark it as the beginning of a new QA and continue our loop. When next QA beginning is found, we 
-      //mark the end of previous QA. The process continues till the end of list.
-
-      int i = 0;
-      int ExpectedIndex = 1; //to detect delimiter typos / input mistakes
-      List<WordParagraph> Result = new List<WordParagraph>();
-
-      while (i < paragraphs.Count - 1)
-      {
-        var WP = ExtractDelimiterParagraph(paragraphs, ref i, ref ExpectedIndex);
-
-        if (WP != null)
-          Result.Add(WP);
-
-        ExpectedIndex++;
-
-        if (token.IsCancellationRequested)
-          return null;
-
-        ViewModelLocator.Main.UpdateProgress(false, null, (((float)i + 1) / paragraphs.Count) * 100);
-      }
-
-      return Result;
-    }
 
     /// <summary>
     /// Extracts next Question-Answer block from the supplied list of paragraphs.
@@ -110,7 +83,7 @@ namespace MultiDF.VM
     /// <param name="paragraphs"></param>
     /// <param name="i"></param>
     /// <returns></returns>
-    private QA ExtractQA(List<WordParagraph> paragraphs, ref int i, int expectedIndex)
+    private QA ExtractNextQA(List<WordParagraph> paragraphs, ref int i)
     {
       QA QA = new QA();
 
@@ -158,17 +131,17 @@ namespace MultiDF.VM
 
         state = QAExtractionState.Question;
 
-                //subsequent paragraphs constitute question body, choices section and answer till we find the next paragraph that is a delimiter
-                //note: sometimes choices section or question body may contain paragraphs that match the delimiter regex. To handle that situation, we distinguish genuine delimiters 
-                //by looking at their Type property, which must NOT be NumberedListTableheader, Tableheader or TableRow for delimiters.
-                while (i < paragraphs.Count && 
-                    (
-                    paragraphs[i].Type == ParagraphType.NumberedList || 
-                    paragraphs[i].Type == ParagraphType.TableHeader || 
-                    paragraphs[i].Type == ParagraphType.TableRow || 
-                    !RE_QNumberWithHardReturn.IsMatch(paragraphs[i].Text)
-                    )
-              )
+        //subsequent paragraphs constitute question body, choices section and answer till we find the next paragraph that is a delimiter
+        //note: sometimes choices section or question body may contain paragraphs that match the delimiter regex. To handle that situation, we distinguish genuine delimiters 
+        //by looking at their Type property, which must NOT be NumberedListTableheader, Tableheader or TableRow for delimiters.
+        while (i < paragraphs.Count &&
+            (
+            paragraphs[i].Type == ParagraphType.NumberedList ||
+            paragraphs[i].Type == ParagraphType.TableHeader ||
+            paragraphs[i].Type == ParagraphType.TableRow ||
+            !RE_QNumberWithHardReturn.IsMatch(paragraphs[i].Text)
+            )
+      )
         {
           string NormalizedText = paragraphs[i].Text.ToLower().Trim(TrimChars);
 
@@ -240,22 +213,80 @@ namespace MultiDF.VM
       QA.EndPage = paragraphs[i - 1].EndPage;
       QA.EndY = paragraphs[i - 1].EndY;
 
-      //finally make sure that the question index matches the expected index. If not, give user a chance to look into the source document manually.
-      if (QA.Question != null && QA.Index != expectedIndex)
-      {
-        var Ex = new System.Exception($"Unexpected question index found at Question {QA.Index}. Expected index was {expectedIndex}. Import process will abort now.");
-        Ex.Data.Add("Paragraph", paragraphs[i].Start);
-        Ex.Data.Add("QuestionIndex", QA.Index);
-        throw Ex;
-      }
-
       if (string.IsNullOrWhiteSpace(QA.Question)) //couldn't even find the question body? return null (this can happen if there are empty lines after the last question)
         return null;
       else
         return QA;
     }
 
-    private WordParagraph ExtractDelimiterParagraph(List<WordParagraph> paragraphs, ref int i, ref int expectedIndex)
+    /// <summary>
+    /// Returns all paragraphs that contain QA Delimiters.
+    /// </summary>
+    /// <param name="paragraphs"></param>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    public List<WordParagraph> ExtractDelimiterParagraphs(List<WordParagraph> paragraphs, CancellationToken token, bool throwOnSequenceError)
+    {
+      if (paragraphs == null || paragraphs.Count == 0)
+        return null;
+
+      //Document being processed contains MCQs. Each MCQ starts with Question Number on a single line, followed by Question text on the next line
+      //followed by multiple answers, each on a separate line. We need to group these lines (paragraphs) such that one question and all its
+      //answers are in one group. Here we do that.
+
+      //This loop will mark the start and end of each QA. We simply iterate through the paragraphs and try to locate a paragraph that
+      //marks the beginning of a new QA. This paragraph will have question number followed by a period followed by a (hard or soft) line break.
+      //When we find such a paragraph, we mark it as the beginning of a new QA and continue our loop. When next QA beginning is found, we 
+      //mark the end of previous QA. The process continues till the end of list.
+
+      int i = 0;
+      int ExpectedIndex = 1; //to detect delimiter typos / input mistakes
+      List<WordParagraph> Result = new List<WordParagraph>();
+
+      while (i < paragraphs.Count - 1)
+      {
+        var DelimiterParagraph = FindNextDelimiterParagraph(paragraphs, ref i);
+
+        //finally make sure that the question index matches the expected index. If not, give user a chance to look into the source document manually.
+        if (DelimiterParagraph.Value != null && DelimiterParagraph.Key != ExpectedIndex)
+        {
+          //Since we have merged multiple documents, we could encounter restarted numbering at any point. If this QA's index is 1 instead of previous plus one, we know
+          //that the content of next document has started and we'll reset our expected index.
+          if (DelimiterParagraph.Key == 1)
+            ExpectedIndex = 1;
+          else
+          {
+            if (throwOnSequenceError)
+            {
+              var Ex = new System.Exception($"Unexpected question index found at Question {DelimiterParagraph.Key}. Expected index was {ExpectedIndex}. Import process will abort now.");
+              Ex.Data.Add("Paragraph", paragraphs[i].Start);
+              Ex.Data.Add("QuestionIndex", DelimiterParagraph.Key);
+              throw Ex;
+            }
+          }
+        }
+
+        if (DelimiterParagraph.Value != null)
+          Result.Add(DelimiterParagraph.Value);
+
+        ExpectedIndex++;
+
+        if (token.IsCancellationRequested)
+          return null;
+
+        ViewModelLocator.Main.UpdateProgress(false, null, (((float)i + 1) / paragraphs.Count) * 100);
+      }
+
+      return Result;
+    }
+
+    /// <summary>
+    /// Returns the nearest delimiter paragraph and moves i (current record pointer) to the end of that QA.
+    /// </summary>
+    /// <param name="paragraphs"></param>
+    /// <param name="i"></param>
+    /// <returns></returns>
+    private KeyValuePair<int, WordParagraph> FindNextDelimiterParagraph(List<WordParagraph> paragraphs, ref int i)
     {
       WordParagraph P = null;
       int Index = -1;
@@ -303,15 +334,14 @@ namespace MultiDF.VM
 
         //subsequent paragraphs constitute question body, choices section and answer till we find the next paragraph that is a delimiter
         //note: sometimes choices section or question body may contain paragraphs that match the delimiter regex. To handle that situation, we distinguish genuine delimiters 
-        //by looking at their Type property, which must NOT be NumberedListTableheader, Tableheader or TableRow for delimiters.
+        //by looking at their Type property, which for delimiters must NOT be NumberedListTableheader, Tableheader or TableRow.
         while (i < paragraphs.Count &&
             (
             paragraphs[i].Type == ParagraphType.NumberedList ||
             paragraphs[i].Type == ParagraphType.TableHeader ||
             paragraphs[i].Type == ParagraphType.TableRow ||
             !RE_QNumberWithHardReturn.IsMatch(paragraphs[i].Text)
-            )
-      )
+            ))
         {
           string NormalizedText = paragraphs[i].Text.ToLower().Trim(TrimChars);
 
@@ -361,23 +391,7 @@ namespace MultiDF.VM
         }
       }
 
-      //finally make sure that the question index matches the expected index. If not, give user a chance to look into the source document manually.
-      if (P != null && Index != expectedIndex)
-      {
-        //Since we have merged multiple documents, we could encounter restarted numbering at any point. If this QA's index is 1 instead of previous plus one, we know
-        //that the content of next document has started and we'll reset our expected index.
-        if (Index == 1)
-          expectedIndex = 1;
-        else
-        {
-          var Ex = new System.Exception($"Unexpected question index found at Question {Index}. Expected index was {expectedIndex}. Import process will abort now.");
-          Ex.Data.Add("Paragraph", paragraphs[i].Start);
-          Ex.Data.Add("QuestionIndex", Index);
-          throw Ex;
-        }
-      }
-
-      return P;
+      return new KeyValuePair<int, WordParagraph>(Index, P);
     }
   }
 }

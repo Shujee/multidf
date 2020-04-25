@@ -33,7 +33,7 @@ namespace MultiDF.Views
       var DC = (DFResultRow)(((Hyperlink)sender).DataContext);
       var Q = DC.Q1;
 
-      ViewModelLocator.WordService.OpenDocument(Q.Doc.SourcePath, Q.Start, Q.End);
+      ViewModelLocator.WordService.OpenDocument(Q.Doc.SourcePath, false, Q.Start, Q.End);
     }
 
     private void Hyperlink_RequestNavigate2(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
@@ -41,7 +41,7 @@ namespace MultiDF.Views
       var DC = (DFResultRow)(((Hyperlink)sender).DataContext);
       var Q = DC.Q2;
 
-      ViewModelLocator.WordService.OpenDocument(Q.Doc.SourcePath, Q.Start, Q.End);
+      ViewModelLocator.WordService.OpenDocument(Q.Doc.SourcePath, false, Q.Start, Q.End);
     }
 
     private void TreeViewItem_Expanded(object sender, System.Windows.RoutedEventArgs e)

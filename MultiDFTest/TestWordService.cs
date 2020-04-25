@@ -20,6 +20,8 @@ namespace MultiDF.Test
 
     public string ActiveDocumentPath => (App.Documents.Count > 0 ? App.ActiveDocument.FullName : null);
 
+    public int? SelectionStart => throw new NotImplementedException();
+
     public void CreateMergedDocument(string[] docs, string outputPath)
     {
       throw new NotImplementedException();
@@ -35,7 +37,7 @@ namespace MultiDF.Test
       throw new NotImplementedException();
     }
 
-    public void FixQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
+    public void FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
     {
       throw new NotImplementedException();
     }
@@ -99,7 +101,12 @@ namespace MultiDF.Test
       throw new NotImplementedException();
     }
 
-    public void OpenDocument(string docPath, int? start, int? end)
+    public void OpenDocument(string docPath, bool openReadonly, int? start, int? end)
+    {
+      throw new NotImplementedException();
+    }
+
+    int IWordService.FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
     {
       throw new NotImplementedException();
     }

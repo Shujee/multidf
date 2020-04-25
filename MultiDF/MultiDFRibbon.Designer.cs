@@ -64,6 +64,7 @@
       this.grpAbout = this.Factory.CreateRibbonGroup();
       this.btnRegister = this.Factory.CreateRibbonButton();
       this.btnAbout = this.Factory.CreateRibbonButton();
+      this.btnFixNumbering = this.Factory.CreateRibbonButton();
       this.tabMultiDF.SuspendLayout();
       this.grpPane.SuspendLayout();
       this.grpUser.SuspendLayout();
@@ -211,6 +212,7 @@
       this.grpSourceDocs.Items.Add(this.separator2);
       this.grpSourceDocs.Items.Add(this.btnUpdateQAs);
       this.grpSourceDocs.Items.Add(this.btnCheckSyncWithSource);
+      this.grpSourceDocs.Items.Add(this.btnFixNumbering);
       this.grpSourceDocs.Label = "Source Documents";
       this.grpSourceDocs.Name = "grpSourceDocs";
       // 
@@ -329,6 +331,15 @@
       this.btnAbout.ShowImage = true;
       this.btnAbout.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.AboutButton_Click);
       // 
+      // btnFixNumbering
+      // 
+      this.btnFixNumbering.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+      this.btnFixNumbering.Label = "Fix Numbering";
+      this.btnFixNumbering.Name = "btnFixNumbering";
+      this.btnFixNumbering.OfficeImageId = "FormattingUnique";
+      this.btnFixNumbering.ShowImage = true;
+      this.btnFixNumbering.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnFixNumbering_Click);
+      // 
       // MultiDFRibbon
       // 
       this.Name = "MultiDFRibbon";
@@ -385,6 +396,7 @@
     internal Microsoft.Office.Tools.Ribbon.RibbonSeparator separator1;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup grpAbout;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnMergeAsDOCX;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnFixNumbering;
     }
 
     partial class ThisRibbonCollection

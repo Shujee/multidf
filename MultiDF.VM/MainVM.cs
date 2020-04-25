@@ -1,9 +1,10 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
+﻿using GalaSoft.MvvmLight.CommandWpf;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using VMBase;
 
 namespace MultiDF.VM
@@ -217,7 +218,7 @@ namespace MultiDF.VM
                   //If both of these conditions are true, then update SourcePath to fully qualified path using project path.
                   if (!string.IsNullOrEmpty(Doc.SourcePath) && Path.GetFileName(Doc.SourcePath) == Doc.SourcePath)
                   {
-                    if (File.Exists(Path.Combine(Path.GetDirectoryName( ProjectPath), Doc.SourcePath)))
+                    if (File.Exists(Path.Combine(Path.GetDirectoryName(ProjectPath), Doc.SourcePath)))
                     {
                       Doc.SourcePath = Path.Combine(Path.GetDirectoryName(ProjectPath), Doc.SourcePath);
                       ProjectFileChanged = true;
@@ -263,6 +264,165 @@ namespace MultiDF.VM
         return _OpenCommand;
       }
     }
+
+    ////If user chooses manually fixing, we need to store delimeters information to allow GoToNextDelimiterCommand to work.
+    //private string _FixNumberingDoc = null;
+    //private List<WordParagraph> _FixNumberingParas = null;
+
+    private RelayCommand _FixNumberingCommand;
+    public RelayCommand FixNumberingCommand
+    {
+      get
+      {
+        if (_FixNumberingCommand == null)
+        {
+          _FixNumberingCommand = new RelayCommand(() =>
+          {
+            var Doc = ViewModelLocator.DialogService.ShowOpen("Word documents (*.doc, *.docx, *.docm)|*.doc;*.docx;*.docm");
+
+            if (Doc != null)
+            {
+              Task.Run(() =>
+              {
+                ViewModelLocator.Main.UpdateProgress(true, "Analyzing...", 0);
+
+                CancellationTokenSource tokenSource = new CancellationTokenSource();
+
+                var Paragraphs = ViewModelLocator.WordService.GetDocumentParagraphs(Doc, tokenSource.Token, (i, Total) =>
+                {
+                  ViewModelLocator.Main.UpdateProgress(false, "Extracting content...", (i / (float)Total) * 100);
+
+                  ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.ElapsedTime));
+                  ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.EstimatedRemainingTime));
+                }, true);
+
+                if (Paragraphs != null)
+                {
+                  try
+                  {
+                    ViewModelLocator.Main.UpdateProgress(false, "Locating QA delimeters", 40);
+
+                    var DelimeterParas = ViewModelLocator.QAExtractionStrategy.ExtractDelimiterParagraphs(Paragraphs, tokenSource.Token, false);
+
+                    ViewModelLocator.Main.UpdateProgress(false, "Comparing sequence numbers", 60);
+
+                    //Report how many of the QAs have wrong sequence numbers. Our definition of "wrong" is "any QA whose sequence number is not N + 1, where N is the sequence number of previous QA".
+                    //This dictionary will store out-of-sequence paragraphs and with their expected sequence number.
+                    Dictionary<WordParagraph, int> OutOfSeqParas = new Dictionary<WordParagraph, int>();
+
+                    //First QA should have sequence number 1
+                    int? PrevSeqNumber = ViewModelLocator.QAExtractionStrategy.ParseQuestionNumber(DelimeterParas[0].Text);
+                    if (PrevSeqNumber == null || PrevSeqNumber != 1)
+                      OutOfSeqParas.Add(DelimeterParas[0], 1);
+
+                    for (int i = 1; i < DelimeterParas.Count; i++)
+                    {
+                      int? SeqNumber = ViewModelLocator.QAExtractionStrategy.ParseQuestionNumber(DelimeterParas[i].Text);
+
+                      if (SeqNumber == null || SeqNumber != PrevSeqNumber.Value + 1)
+                        OutOfSeqParas.Add(DelimeterParas[i], PrevSeqNumber.Value + 1);
+
+                      PrevSeqNumber = SeqNumber;
+                    }
+
+                    ViewModelLocator.Main.UpdateProgress(false, "Done", 100);
+
+                    if (OutOfSeqParas.Count == 0)
+                    {
+                      ViewModelLocator.DialogService.ShowMessage("This document does not appear to have any sequencing problems.", false);
+                    }
+                    else
+                    {
+                      var Res = ViewModelLocator.DialogService.AskTernaryQuestion($"{OutOfSeqParas.Count} sequencing problem(s) detected in the document. Do you want to fix them automatically? Click No to open the document and fix the problems manually.");
+
+                      if (Res != null)
+                      {
+                        if (Res.Value) //User clicked Yes, fix all automatically.
+                        {
+                          int FixCount = ViewModelLocator.WordService.FixAllQANumbers(Doc, DelimeterParas, true);
+                          ViewModelLocator.DialogService.ShowMessage($"Operation completed. {FixCount} fixes were made in the document.", false);
+                        }
+                        else
+                        {
+                          //_FixNumberingDoc = Doc;
+                          //_FixNumberingParas = DelimeterParas;
+
+                          ViewModelLocator.WordService.OpenDocument(Doc, false, null, null);
+
+                          ViewModelLocator.DialogService.ShowMessage("Following QA sequences are not numbered correctly: " + Environment.NewLine + Environment.NewLine +
+                            string.Join(Environment.NewLine, OutOfSeqParas.Select(p => $"Page {p.Key.StartPage} \t Q#{p.Value}")), false);
+
+                          //GoToNextIncorrectDelimeterCommand.RaiseCanExecuteChanged();
+                        }
+                      }
+                    }
+                  }
+                  catch (Exception ex)
+                  {
+                    if (ex.Data.Contains("Paragraph"))
+                    {
+                      var Res = ViewModelLocator.DialogService.AskBooleanQuestion(ex.Message + Environment.NewLine + Environment.NewLine + "Do you want to open source document to fix this problem?");
+                    }
+                  }
+                }
+              });
+            }
+          },
+          () => true);
+        }
+
+        return _FixNumberingCommand;
+      }
+    }
+
+
+
+    //private RelayCommand _GoToNextIncorrectDelimeterCommand;
+    //public RelayCommand GoToNextIncorrectDelimeterCommand
+    //{
+    //  get
+    //  {
+    //    if (_GoToNextIncorrectDelimeterCommand == null)
+    //    {
+    //      _GoToNextIncorrectDelimeterCommand = new RelayCommand(() =>
+    //      {
+    //        //Get current cursor location
+    //        var Start = ViewModelLocator.WordService.SelectionStart;
+
+    //        if (Start != null)
+    //        {
+    //          //Get the first problem delimeter that occurs after the current caret location
+    //          var FirstProblemPara = _FixNumberingParas.FirstOrDefault(p => p.Start >= Start);
+
+    //          if (FirstProblemPara!=null)
+    //          {
+    //            //This document should already be open. We are only intrested in moving the cursor forward.
+    //            ViewModelLocator.WordService.OpenDocument(_FixNumberingDoc, FirstProblemPara.Start, FirstProblemPara.End);
+
+    //            if(ViewModelLocator.DialogService.AskBooleanQuestion("Fix this sequence automatically?"))
+    //            {
+    //              ViewModelLocator.WordService.se
+    //            }
+    //          }
+    //          else
+    //          {
+    //            ViewModelLocator.DialogService.ShowMessage("No sequence problem found after the cursor location.", false);
+    //          }
+    //        }
+    //        else
+    //        {
+    //          ViewModelLocator.DialogService.ShowMessage("There is no active document.", true);
+    //        }
+    //      },
+    //      () => ViewModelLocator.WordService.ActiveDocumentPath != null && _FixNumberingDoc == ViewModelLocator.WordService.ActiveDocumentPath && _FixNumberingParas != null);
+    //    }
+
+    //    return _GoToNextIncorrectDelimeterCommand;
+    //  }
+    //}
+
+
+
 
     internal void UpdateMRU(string newFile)
     {

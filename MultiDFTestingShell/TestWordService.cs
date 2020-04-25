@@ -21,6 +21,8 @@ namespace MultiDF.TestingShell
 
     public string ActiveDocumentPath => (App.Documents.Count > 0 ? App.ActiveDocument.FullName : null);
 
+    public int? SelectionStart => throw new NotImplementedException();
+
     /// <summary>
     /// Creates a single Word document by merge content of all the specified documents. This function also updates QA numbering to make it continuous.
     /// </summary>
@@ -170,7 +172,7 @@ namespace MultiDF.TestingShell
         Sel.Start = App.ActiveDocument.Paragraphs[para].Range.Start;
     }
 
-    public void OpenDocument(string docPath, int? start, int? end)
+    public void OpenDocument(string docPath, bool openReadonly, int? start, int? end)
     {
       var Doc = App.Documents.Cast<Document>().FirstOrDefault(d => d.FullName == docPath);
 
@@ -184,7 +186,12 @@ namespace MultiDF.TestingShell
         Sel.End = end.Value;
     }
 
-    public void FixQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
+    public void FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
+    {
+      throw new NotImplementedException();
+    }
+
+    int IWordService.FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
     {
       throw new NotImplementedException();
     }

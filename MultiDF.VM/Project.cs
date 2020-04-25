@@ -230,29 +230,8 @@ namespace MultiDF.VM
         {
           _MergeAsPDFCommand = new RelayCommand(() =>
           {
-            //Make sure full analysis has been completed before merging
-            if (graph.Vertices.Any(v1 => graph.Vertices.Any(v2 => !graph.ContainsEdge(v1, v2))))
-            {
-              ViewModelLocator.DialogService.ShowMessage("One or more documents in the project have not been analyzed for duplicates yet. Use Process command to complete analysis.", true);
-              return;
-            }
-
-            var OutputPath = ViewModelLocator.DialogService.ShowSave("PDF Files (*.pdf)|*.pdf");
-
-            if (OutputPath != null)
-            {
-              var TempDocxPath = StaticExtensions.GetTempFileName(".docx");
-              ViewModelLocator.WordService.CreateMergedDocument(this.AllXMLDocs.Select(d => d.SourcePath).ToArray(), TempDocxPath, false);
-              var WPs = ViewModelLocator.WordService.GetDocumentParagraphs(TempDocxPath, token, UpdateQAsProgressHandler, false);
-              var DelimiterParas = ViewModelLocator.QAExtractionStrategy.ExtractDelimiterParagraphs(WPs, token);
-              ViewModelLocator.WordService.FixQANumbers(TempDocxPath, DelimiterParas, false);
-              ViewModelLocator.WordService.ExportDocumentToFixedFormat(ExportFixedFormat.PDF, TempDocxPath, OutputPath, true);
-
-              if (ViewModelLocator.DialogService.AskBooleanQuestion($"Successfully merged all documents into '{OutputPath}'. Do you want to open it now?"))
-              {
-                System.Diagnostics.Process.Start(OutputPath);
-              }
-            }
+            //Merge the project source files into a single document and save it to user-specified path
+            MergeInternal("PDF Files (*.pdf)|*.pdf", (mergedDocPath, savePath) => ViewModelLocator.WordService.ExportDocumentToFixedFormat(ExportFixedFormat.PDF, mergedDocPath, savePath, true));
           },
           () => this.AllXMLDocs.Count > 0);
         }
@@ -270,36 +249,47 @@ namespace MultiDF.VM
         {
           _MergeAsDOCXCommand = new RelayCommand(() =>
           {
-            //Make sure full analysis has been completed before merging
-            if(graph.Vertices.Any(v1 => graph.Vertices.Any(v2 => !graph.ContainsEdge(v1, v2)) ))
-            {
-              ViewModelLocator.DialogService.ShowMessage("One or more documents in the project have not been analyzed for duplicates yet. Use Process command to complete analysis.", true);
-              return;
-            }
-
-            var OutputPath = ViewModelLocator.DialogService.ShowSave("Word Documents (*.docx)|*.docx");
-
-            if (OutputPath != null)
-            {
-              var TempDocxPath = StaticExtensions.GetTempFileName(".docx");
-              ViewModelLocator.WordService.CreateMergedDocument(this.AllXMLDocs.Select(d => d.SourcePath).ToArray(), TempDocxPath, false);
-              var WPs = ViewModelLocator.WordService.GetDocumentParagraphs(TempDocxPath, token, UpdateQAsProgressHandler, false);
-              var DelimiterParas = ViewModelLocator.QAExtractionStrategy.ExtractDelimiterParagraphs(WPs, token);
-              ViewModelLocator.WordService.FixQANumbers(TempDocxPath, DelimiterParas, false);
-              
-              //copy temporary merged document to user-specified path
-              File.Copy(TempDocxPath, OutputPath);
-
-              if (ViewModelLocator.DialogService.AskBooleanQuestion($"Successfully merged all documents into '{OutputPath}'. Do you want to open it now?"))
-              {
-                System.Diagnostics.Process.Start(OutputPath);
-              }
-            }
+            //Merge the project source files into a single document and save it to user-specified path
+            MergeInternal("Word Documents (*.docx)|*.docx", (mergedDocPath, savePath) => File.Copy(mergedDocPath, savePath));
           },
           () => this.AllXMLDocs.Count > 0);
         }
 
         return _MergeAsDOCXCommand;
+      }
+    }
+
+    /// <summary>
+    /// Merges all source documents of the current project into a single new document, fixes QA numbering and then invokes caller specified function
+    /// to save/export this new document.
+    /// </summary>
+    /// <param name="dialogFilter"></param>
+    /// <param name="callback"></param>
+    private void MergeInternal(string dialogFilter, Action<string, string> callback)
+    {
+      //Make sure full analysis has been completed before merging
+      if (graph.Vertices.Any(v1 => graph.Vertices.Any(v2 => !graph.ContainsEdge(v1, v2))))
+      {
+        ViewModelLocator.DialogService.ShowMessage("One or more documents in the project have not been analyzed for duplicates yet. Use Process command to complete analysis.", true);
+        return;
+      }
+
+      var OutputPath = ViewModelLocator.DialogService.ShowSave(dialogFilter);
+
+      if (OutputPath != null)
+      {
+        var TempDocxPath = StaticExtensions.GetTempFileName(".docx");
+        ViewModelLocator.WordService.CreateMergedDocument(this.AllXMLDocs.Select(d => d.SourcePath).ToArray(), TempDocxPath, false);
+        var WPs = ViewModelLocator.WordService.GetDocumentParagraphs(TempDocxPath, token, UpdateQAsProgressHandler, false);
+        var DelimiterParas = ViewModelLocator.QAExtractionStrategy.ExtractDelimiterParagraphs(WPs, token, true);
+        ViewModelLocator.WordService.FixAllQANumbers(TempDocxPath, DelimiterParas, false);
+
+        callback(TempDocxPath, OutputPath);
+
+        if (ViewModelLocator.DialogService.AskBooleanQuestion($"Successfully merged all documents into '{OutputPath}'. Do you want to open it now?"))
+        {
+          System.Diagnostics.Process.Start(OutputPath);
+        }
       }
     }
 
@@ -334,11 +324,11 @@ namespace MultiDF.VM
                 var WPs = ViewModelLocator.WordService.GetDocumentParagraphs(TempDocxPath, token, UpdateQAsProgressHandler, false);
 
                 ViewModelLocator.Main.UpdateProgress(false, "Marking delimiters", 0);
-                var DelimiterParas = ViewModelLocator.QAExtractionStrategy.ExtractDelimiterParagraphs(WPs, token);
+                var DelimiterParas = ViewModelLocator.QAExtractionStrategy.ExtractDelimiterParagraphs(WPs, token, true);
                 ViewModelLocator.Main.UpdateProgress(false, null, 100);
 
                 ViewModelLocator.Main.UpdateProgress(false, "Re-numbering merged QAs", 0);
-                ViewModelLocator.WordService.FixQANumbers(TempDocxPath, DelimiterParas, false);
+                ViewModelLocator.WordService.FixAllQANumbers(TempDocxPath, DelimiterParas, false);
                 ViewModelLocator.Main.UpdateProgress(false, null, 100);
 
                 return TempDocxPath;
@@ -963,7 +953,7 @@ namespace MultiDF.VM
           _OpenSourceCommand = new RelayCommand(() =>
           {
             if (!string.IsNullOrEmpty(SelectedDoc.SourcePath) && File.Exists(SelectedDoc.SourcePath))
-              ViewModelLocator.WordService.OpenDocument(SelectedDoc.SourcePath, null, null);
+              ViewModelLocator.WordService.OpenDocument(SelectedDoc.SourcePath, false, null, null);
             else
               ViewModelLocator.DialogService.ShowMessage("Source document does not exist.", true);
           },
@@ -1003,7 +993,7 @@ namespace MultiDF.VM
                 var Res = ViewModelLocator.DialogService.AskBooleanQuestion(ex.Message + Environment.NewLine + Environment.NewLine + "Do you want to open source document to fix this problem?");
                 if (Res)
                 {
-                  ViewModelLocator.WordService.OpenDocument(xmldoc.SourcePath, (int)ex.Data["Paragraph"], (int)ex.Data["Paragraph"]);
+                  ViewModelLocator.WordService.OpenDocument(xmldoc.SourcePath, false, (int)ex.Data["Paragraph"], (int)ex.Data["Paragraph"]);
                 }
               }
             }

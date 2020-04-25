@@ -9,6 +9,8 @@ namespace MultiDF.Views
   {
     public string ActiveDocumentPath => throw new NotImplementedException();
 
+    public int? SelectionStart => throw new NotImplementedException();
+
     public void CreateMergedDocument(string[] docs, string outputPath, bool closeAfterCreate)
     {
       throw new NotImplementedException();
@@ -19,7 +21,7 @@ namespace MultiDF.Views
       throw new NotImplementedException();
     }
 
-    public void FixQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
+    public int FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
     {
       throw new NotImplementedException();
     }
@@ -48,7 +50,7 @@ namespace MultiDF.Views
       throw new NotImplementedException();
     }
 
-    public void OpenDocument(string docPath, int? start, int? end)
+    public void OpenDocument(string docPath, bool openReadonly, int? start, int? end)
     {
       throw new NotImplementedException();
     }
