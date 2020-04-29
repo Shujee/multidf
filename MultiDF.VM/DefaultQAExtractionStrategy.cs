@@ -16,7 +16,7 @@ namespace MultiDF.VM
     }
 
     //This RegEx will find Question Number paragraphs
-    private readonly Regex RE_QNumberWithHardReturn = new Regex(@"^\f?(?<ExtraSpaceAtStart>[\t\r\n ]+)?(((?<Index>\d+)\s*(?<FinalDot>\.)?)|((?<HasQ>[Q])\s*(?<Index>\d+)\s*(?<FinalDot>\.?)))\s*[\r\n\x0B]", RegexOptions.ExplicitCapture);
+    private readonly Regex RE_QNumberWithHardReturn = new Regex(@"^\f?(?<ExtraSpaceAtStart>[\t\r\n ]+)?(((?<Index>\d+)\s*(?<FinalDot>\.)?)|((?<HasQ>[Q])\s*(?<Index>\d+)\s*(?<FinalDot>\.?)))\s*[\r\n\x0B](?<Body>.*)", RegexOptions.ExplicitCapture);
     private readonly char[] TrimChars = new char[] { '\r', '\n', '\a', ' ', '\t', '\f' };
 
     /// <summary>
@@ -56,9 +56,20 @@ namespace MultiDF.VM
       {
         var QA = ExtractNextQA(paragraphs, ref i);
 
-        //finally make sure that the question index matches the expected index. If not, give user a chance to look into the source document manually.
-        if (QA.Question != null && QA.Index != ExpectedIndex)
+        if(QA == null ||  string.IsNullOrEmpty(QA.Question))
         {
+          //if we get a null before we reach the end of paragraphs list, there is a problem in the source document.
+          if (i < paragraphs.Count)
+          {
+            var Ex = new System.Exception($"Missing question at Index {ExpectedIndex}. Import process will abort now.");
+            Ex.Data.Add("Paragraph", paragraphs[i].Start);
+            Ex.Data.Add("QuestionIndex", ExpectedIndex);
+            throw Ex;
+          }
+        }
+        else if (QA.Index != ExpectedIndex)
+        {
+          //If the extracted index is not the same as expected one, abort the process
           var Ex = new System.Exception($"Unexpected question index found at Question {QA.Index}. Expected index was {ExpectedIndex}. Import process will abort now.");
           Ex.Data.Add("Paragraph", paragraphs[i].Start);
           Ex.Data.Add("QuestionIndex", QA.Index);
@@ -121,6 +132,14 @@ namespace MultiDF.VM
             Ex.Data.Add("QuestionIndex", QA.Index);
             throw Ex;
           }
+        }
+
+        //This handles the rare situation where source document might have a soft return (SHIFT + ENTER) immediately after the QA index. Soft returns look just like
+        //normal (hard) returns, but Word doesn't treat it as the beginning of a new paragraph and thus returns the text of next (visual) paragraph concatenated 
+        //after the QA index number. We extract that part in a group named "Body" using our regular expression.
+        if (!string.IsNullOrEmpty(Match.Groups["Body"].Value))
+        {
+          QA.Question = Match.Groups["Body"].Value;
         }
 
         i++;
