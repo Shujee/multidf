@@ -299,12 +299,51 @@ namespace MultiDF.VM
       return Result;
     }
 
-    /// <summary>
-    /// Returns the nearest delimiter paragraph and moves i (current record pointer) to the end of that QA.
-    /// </summary>
-    /// <param name="paragraphs"></param>
-    /// <param name="i"></param>
-    /// <returns></returns>
+    public WordParagraph ExtractNearestIncorrectDelimiterParagraphs(List<WordParagraph> paragraphs, int startIndex)
+    {
+      if (paragraphs == null || paragraphs.Count == 0)
+        return null;
+
+      int i = startIndex;
+
+      //Extract current paragraph's index number. We expect caller to call this function while the cursor is in QA Index number paragraph.
+      KeyValuePair<int, WordParagraph> CurPara;
+      try
+      {
+        CurPara = FindNextDelimiterParagraph(paragraphs, ref i);
+
+        if (CurPara.Key == -1)
+          return null;
+      }
+      catch (System.Exception)
+      {
+        return null;
+      }
+
+      int ExpectedIndex = CurPara.Key + 1;
+
+      while (i < paragraphs.Count - 1)
+      {
+        var DelimiterParagraph = FindNextDelimiterParagraph(paragraphs, ref i);
+
+        //finally make sure that the question index matches the expected index. If not, give user a chance to look into the source document manually.
+        if (DelimiterParagraph.Value != null && DelimiterParagraph.Key != ExpectedIndex)
+          return DelimiterParagraph.Value;
+
+        ExpectedIndex++;
+
+        ViewModelLocator.Main.UpdateProgress(false, null, (((float)i + 1) / paragraphs.Count) * 100);
+      }
+
+      return null;
+    }
+
+      /// <summary>
+      /// Returns the nearest delimiter paragraph and moves i (current record pointer) to the end of that QA.
+      /// </summary>
+      /// <param name="paragraphs"></param>
+      /// <param name="i"></param>
+      /// <returns></returns>
     private KeyValuePair<int, WordParagraph> FindNextDelimiterParagraph(List<WordParagraph> paragraphs, ref int i)
     {
       WordParagraph P = null;
@@ -410,7 +449,11 @@ namespace MultiDF.VM
         }
       }
 
-      return new KeyValuePair<int, WordParagraph>(Index, P);
+
+      if (i < paragraphs.Count && RE_QNumberWithHardReturn.IsMatch(paragraphs[i].Text))
+        return new KeyValuePair<int, WordParagraph>(Index, P);
+      else
+        return new KeyValuePair<int, WordParagraph>(-1, null);
     }
   }
 }

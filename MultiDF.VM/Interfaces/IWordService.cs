@@ -42,7 +42,7 @@ namespace MultiDF.VM
     /// <param name="start"></param>
     /// <param name="end"></param>
     /// <param name="newText"></param>
-    int FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone);
+    Dictionary<int, int> FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone);
 
     /// <summary>
     /// Creates a single Word document by merge content of all the specified documents.
@@ -60,5 +60,10 @@ namespace MultiDF.VM
     /// Current caret location in the active document. Null if there is no active document.
     /// </summary>
     int? SelectionStart { get; }
+
+    /// <summary>
+    /// Returns the index of the paragraph where the caret is currently located.
+    /// </summary>
+    int? CurrentParagraphNumber { get; }
   }
 }

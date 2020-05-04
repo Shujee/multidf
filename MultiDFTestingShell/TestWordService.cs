@@ -23,6 +23,8 @@ namespace MultiDF.TestingShell
 
     public int? SelectionStart => throw new NotImplementedException();
 
+    public int? CurrentParagraphNumber => throw new NotImplementedException();
+
     /// <summary>
     /// Creates a single Word document by merge content of all the specified documents. This function also updates QA numbering to make it continuous.
     /// </summary>
@@ -186,12 +188,7 @@ namespace MultiDF.TestingShell
         Sel.End = end.Value;
     }
 
-    public void FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
-    {
-      throw new NotImplementedException();
-    }
-
-    int IWordService.FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
+    public Dictionary<int,int> FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
     {
       throw new NotImplementedException();
     }

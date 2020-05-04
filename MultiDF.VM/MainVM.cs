@@ -265,10 +265,6 @@ namespace MultiDF.VM
       }
     }
 
-    ////If user chooses manually fixing, we need to store delimeters information to allow GoToNextDelimiterCommand to work.
-    //private string _FixNumberingDoc = null;
-    //private List<WordParagraph> _FixNumberingParas = null;
-
     private RelayCommand _FixNumberingCommand;
     public RelayCommand FixNumberingCommand
     {
@@ -339,8 +335,10 @@ namespace MultiDF.VM
                       {
                         if (Res.Value) //User clicked Yes, fix all automatically.
                         {
-                          int FixCount = ViewModelLocator.WordService.FixAllQANumbers(Doc, DelimeterParas, true);
-                          ViewModelLocator.DialogService.ShowMessage($"Operation completed. {FixCount} fixes were made in the document.", false);
+                          var Fixes = ViewModelLocator.WordService.FixAllQANumbers(Doc, DelimeterParas, true);
+                          ViewModelLocator.DialogService.ShowMessage("Operation completed. The following QA numbers were fixed: " + Environment.NewLine + Environment.NewLine +
+                                                                      string.Join(Environment.NewLine, Fixes.Select(kv => $"QA No. {kv.Key} => {kv.Value}")), 
+                                                                      false);
                         }
                         else
                         {
@@ -374,55 +372,88 @@ namespace MultiDF.VM
         return _FixNumberingCommand;
       }
     }
+    
+    //GoToNextIncorrectDelimeterCommand below needs to extract all paragraphs from the active document. Since extraction is a lengthy
+    //process, we'll cache extraction results once upon the first call and then use those results in subsequent GoToNextIncorrectDelimeterCommand calls.
+    private string NextIncorrectDelimiter_DocPath;
+    private List<WordParagraph> NextIncorrectDelimiter_AllParagraphs;
 
+    private RelayCommand _GoToNextIncorrectDelimeterCommand;
+    public RelayCommand GoToNextIncorrectDelimeterCommand
+    {
+      get
+      {
+        if (_GoToNextIncorrectDelimeterCommand == null)
+        {
+          _GoToNextIncorrectDelimeterCommand = new RelayCommand(() =>
+          {
+            if (ViewModelLocator.WordService.ActiveDocumentPath == null)
+              ViewModelLocator.DialogService.ShowMessage("There is no active document.", true);
+            else
+            {
+              if (NextIncorrectDelimiter_DocPath != ViewModelLocator.WordService.ActiveDocumentPath)
+              {
+                CancellationTokenSource tokenSource = new CancellationTokenSource();
 
+                if (ViewModelLocator.DialogService.AskBooleanQuestion("MultiDF will now extract paragraphs data from the active document. This is a one-time process and can take some time for large documents. Subsequent calls to this command will use extracted data and will not perform extraction again. Continue?"))
+                {
+                  NextIncorrectDelimiter_DocPath = ViewModelLocator.WordService.ActiveDocumentPath;
+                  NextIncorrectDelimiter_AllParagraphs = ViewModelLocator.WordService.GetDocumentParagraphs(ViewModelLocator.WordService.ActiveDocumentPath, tokenSource.Token, (i, Total) =>
+                  {
+                    ViewModelLocator.Main.UpdateProgress(false, "Extracting content...", (i / (float)Total) * 100);
 
-    //private RelayCommand _GoToNextIncorrectDelimeterCommand;
-    //public RelayCommand GoToNextIncorrectDelimeterCommand
-    //{
-    //  get
-    //  {
-    //    if (_GoToNextIncorrectDelimeterCommand == null)
-    //    {
-    //      _GoToNextIncorrectDelimeterCommand = new RelayCommand(() =>
-    //      {
-    //        //Get current cursor location
-    //        var Start = ViewModelLocator.WordService.SelectionStart;
+                    ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.ElapsedTime));
+                    ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.EstimatedRemainingTime));
+                  }, true);
+                }
+                else
+                  return;
+              }
 
-    //        if (Start != null)
-    //        {
-    //          //Get the first problem delimeter that occurs after the current caret location
-    //          var FirstProblemPara = _FixNumberingParas.FirstOrDefault(p => p.Start >= Start);
+              GoToNextIncorrectDelimiter();
+            }
+          },
+          () => ViewModelLocator.WordService.ActiveDocumentPath != null);
+        }
 
-    //          if (FirstProblemPara!=null)
-    //          {
-    //            //This document should already be open. We are only intrested in moving the cursor forward.
-    //            ViewModelLocator.WordService.OpenDocument(_FixNumberingDoc, FirstProblemPara.Start, FirstProblemPara.End);
+        return _GoToNextIncorrectDelimeterCommand;
+      }
+    }
 
-    //            if(ViewModelLocator.DialogService.AskBooleanQuestion("Fix this sequence automatically?"))
-    //            {
-    //              ViewModelLocator.WordService.se
-    //            }
-    //          }
-    //          else
-    //          {
-    //            ViewModelLocator.DialogService.ShowMessage("No sequence problem found after the cursor location.", false);
-    //          }
-    //        }
-    //        else
-    //        {
-    //          ViewModelLocator.DialogService.ShowMessage("There is no active document.", true);
-    //        }
-    //      },
-    //      () => ViewModelLocator.WordService.ActiveDocumentPath != null && _FixNumberingDoc == ViewModelLocator.WordService.ActiveDocumentPath && _FixNumberingParas != null);
-    //    }
+    private void GoToNextIncorrectDelimiter()
+    {
+      if (NextIncorrectDelimiter_AllParagraphs != null)
+      {
+        //Get paragraph number from current cursor location
+        var CurParaNumber = ViewModelLocator.WordService.CurrentParagraphNumber;
 
-    //    return _GoToNextIncorrectDelimeterCommand;
-    //  }
-    //}
+        if (CurParaNumber != null)
+        {
+          WordParagraph NextErr = null;
 
+          try
+          {
+            NextErr = ViewModelLocator.QAExtractionStrategy.ExtractNearestIncorrectDelimiterParagraphs(NextIncorrectDelimiter_AllParagraphs, CurParaNumber.Value);
+          }
+          catch (Exception ee)
+          {
+            ViewModelLocator.DialogService.ShowMessage(ee.Message, false);
+            NextIncorrectDelimiter_AllParagraphs = null;
+            NextIncorrectDelimiter_DocPath = null;
+            return;
+          }
 
-
+          if(NextErr != null)
+            ViewModelLocator.WordService.OpenDocument(NextIncorrectDelimiter_DocPath, false, NextErr.Start, NextErr.Start);
+          else
+            ViewModelLocator.DialogService.ShowMessage("Cannot find any sequence number problems below cursor position.", false);
+        }
+        else
+          ViewModelLocator.DialogService.ShowMessage("Cannot determine current paragraph number.", true);
+      }
+      else
+        ViewModelLocator.DialogService.ShowMessage("No paragraphs were extracted from the active document.", true);
+    }
 
     internal void UpdateMRU(string newFile)
     {

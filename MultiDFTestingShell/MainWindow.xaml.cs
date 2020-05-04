@@ -20,6 +20,8 @@ namespace MultiDF.TestingShell
 
     public int? SelectionStart => throw new NotImplementedException();
 
+    public int? CurrentParagraphNumber => throw new NotImplementedException();
+
     public MainWindow()
     {
       InitializeComponent();
@@ -140,7 +142,7 @@ namespace MultiDF.TestingShell
         MV.Visibility = Visibility.Visible;
     }
 
-    int IWordService.FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
+    Dictionary<int, int> IWordService.FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
     {
       throw new NotImplementedException();
     }

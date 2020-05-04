@@ -321,5 +321,10 @@ namespace MultiDF
       if (ViewModelLocator.Main.SelectedProject != null)
         ViewModelLocator.Main.SelectedProject.ExportResultsCommand.Execute(null);
     }
+
+    private void btnGoToNextIncorrectDelimiter_Click(object sender, RibbonControlEventArgs e)
+    {
+      ViewModelLocator.Main.GoToNextIncorrectDelimeterCommand.Execute(null);
+    }
   }
 }

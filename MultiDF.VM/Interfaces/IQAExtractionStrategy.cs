@@ -11,6 +11,7 @@ namespace MultiDF.VM
   {
     List<QA> ExtractQAs(List<WordParagraph> paragraphs, CancellationToken tok);
     List<WordParagraph> ExtractDelimiterParagraphs(List<WordParagraph> paragraphs, CancellationToken tok, bool throwOnSequenceError);
+    WordParagraph ExtractNearestIncorrectDelimiterParagraphs(List<WordParagraph> paragraphs, int startIndex);
     int? ParseQuestionNumber(string paragraphText);
   }
 }

@@ -15,6 +15,28 @@ namespace MultiDF
     public string ActiveDocumentPath => ActiveDoc?.FullName;
     public int? SelectionStart => Sel?.Start;
 
+    /// <summary>
+    /// Returns the index of the paragraph where the caret is currently located.
+    /// </summary>
+    public int? CurrentParagraphNumber
+    {
+      get
+      {
+        if (ActiveDoc == null || Sel == null)
+          return null;
+        else
+        {
+          if (Sel.Start == 0)
+            return 1;
+          else
+          {
+            Range R = ActiveDoc.Range(1, Sel.Start);
+            return R.Paragraphs.Count;
+          }
+        }
+      }
+    }
+
     public void ExportDocumentToFixedFormat(ExportFixedFormat format, string docPath, string outputPath, bool closeAfterDone)
     {
       var OpenResult = GetOrOpenDocument(docPath, false, true);
@@ -216,17 +238,17 @@ namespace MultiDF
     }
 
     /// <summary>
-    /// Assigns ordered question numbers to all QAs in the specified document.
+    /// Assigns ordered question numbers to all QAs in the specified document. Returns a Dictionary containing all corrected question numbers (old and new value of each QA number).
     /// </summary>
     /// <param name="start"></param>
     /// <param name="end"></param>
     /// <param name="newText"></param>
-    public int FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
+    public Dictionary<int, int> FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
     {
       var OpenResult = GetOrOpenDocument(docPath, true, false);
 
       int ExpectedIndex = 1;
-      int FixCount = 0;
+      Dictionary<int ,  int> Fixes =  new Dictionary<int, int>();
 
       if (OpenResult.doc != null)
       {
@@ -257,7 +279,7 @@ namespace MultiDF
                 R.Delete();
 
               R.Text = ExpectedIndex.ToString();
-              FixCount++;
+              Fixes.Add(QIndex.Value, ExpectedIndex);
 
               Offset += (ExpectedIndex.ToString().Length - QIndex.ToString().Length);
             }
@@ -276,7 +298,7 @@ namespace MultiDF
         OpenResult.doc.Close(false);
       }
 
-      return FixCount;
+      return Fixes;
     }
   }
 }

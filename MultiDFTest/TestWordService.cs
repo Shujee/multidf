@@ -22,6 +22,8 @@ namespace MultiDF.Test
 
     public int? SelectionStart => throw new NotImplementedException();
 
+    public int? CurrentParagraphNumber => throw new NotImplementedException();
+
     public void CreateMergedDocument(string[] docs, string outputPath)
     {
       throw new NotImplementedException();
@@ -106,7 +108,7 @@ namespace MultiDF.Test
       throw new NotImplementedException();
     }
 
-    int IWordService.FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
+    Dictionary<int, int> IWordService.FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
     {
       throw new NotImplementedException();
     }

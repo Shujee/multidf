@@ -55,6 +55,8 @@
       this.separator2 = this.Factory.CreateRibbonSeparator();
       this.btnUpdateQAs = this.Factory.CreateRibbonButton();
       this.btnCheckSyncWithSource = this.Factory.CreateRibbonButton();
+      this.btnFixNumbering = this.Factory.CreateRibbonButton();
+      this.btnGoToNextIncorrectDelimiter = this.Factory.CreateRibbonButton();
       this.grpAnalysis = this.Factory.CreateRibbonGroup();
       this.btnProcess = this.Factory.CreateRibbonButton();
       this.btnStopProcess = this.Factory.CreateRibbonButton();
@@ -64,7 +66,6 @@
       this.grpAbout = this.Factory.CreateRibbonGroup();
       this.btnRegister = this.Factory.CreateRibbonButton();
       this.btnAbout = this.Factory.CreateRibbonButton();
-      this.btnFixNumbering = this.Factory.CreateRibbonButton();
       this.tabMultiDF.SuspendLayout();
       this.grpPane.SuspendLayout();
       this.grpUser.SuspendLayout();
@@ -213,6 +214,7 @@
       this.grpSourceDocs.Items.Add(this.btnUpdateQAs);
       this.grpSourceDocs.Items.Add(this.btnCheckSyncWithSource);
       this.grpSourceDocs.Items.Add(this.btnFixNumbering);
+      this.grpSourceDocs.Items.Add(this.btnGoToNextIncorrectDelimiter);
       this.grpSourceDocs.Label = "Source Documents";
       this.grpSourceDocs.Name = "grpSourceDocs";
       // 
@@ -255,6 +257,24 @@
       this.btnCheckSyncWithSource.OfficeImageId = "DataValidation";
       this.btnCheckSyncWithSource.ShowImage = true;
       this.btnCheckSyncWithSource.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnCheckSyncWithSource_Click);
+      // 
+      // btnFixNumbering
+      // 
+      this.btnFixNumbering.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+      this.btnFixNumbering.Label = "Fix Numbering";
+      this.btnFixNumbering.Name = "btnFixNumbering";
+      this.btnFixNumbering.OfficeImageId = "FormattingUnique";
+      this.btnFixNumbering.ShowImage = true;
+      this.btnFixNumbering.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnFixNumbering_Click);
+      // 
+      // btnGoToNextIncorrectDelimiter
+      // 
+      this.btnGoToNextIncorrectDelimiter.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+      this.btnGoToNextIncorrectDelimiter.Label = "Find Next Seq. Error";
+      this.btnGoToNextIncorrectDelimiter.Name = "btnGoToNextIncorrectDelimiter";
+      this.btnGoToNextIncorrectDelimiter.OfficeImageId = "ChartResetToMatchStyle";
+      this.btnGoToNextIncorrectDelimiter.ShowImage = true;
+      this.btnGoToNextIncorrectDelimiter.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnGoToNextIncorrectDelimiter_Click);
       // 
       // grpAnalysis
       // 
@@ -331,15 +351,6 @@
       this.btnAbout.ShowImage = true;
       this.btnAbout.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.AboutButton_Click);
       // 
-      // btnFixNumbering
-      // 
-      this.btnFixNumbering.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-      this.btnFixNumbering.Label = "Fix Numbering";
-      this.btnFixNumbering.Name = "btnFixNumbering";
-      this.btnFixNumbering.OfficeImageId = "FormattingUnique";
-      this.btnFixNumbering.ShowImage = true;
-      this.btnFixNumbering.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnFixNumbering_Click);
-      // 
       // MultiDFRibbon
       // 
       this.Name = "MultiDFRibbon";
@@ -397,6 +408,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup grpAbout;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnMergeAsDOCX;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnFixNumbering;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnGoToNextIncorrectDelimiter;
     }
 
     partial class ThisRibbonCollection
