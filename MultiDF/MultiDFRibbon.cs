@@ -293,11 +293,6 @@ namespace MultiDF
         ViewModelLocator.Main.SelectedProject.CheckSyncWithSourceCommand.Execute(null);
     }
 
-    private void btnFixNumbering_Click(object sender, RibbonControlEventArgs e)
-    {
-      ViewModelLocator.Main.FixNumberingCommand.Execute(null);
-    }
-
     private void btnProcess_Click(object sender, RibbonControlEventArgs e)
     {
       if (ViewModelLocator.Main.SelectedProject != null)
@@ -322,9 +317,12 @@ namespace MultiDF
         ViewModelLocator.Main.SelectedProject.ExportResultsCommand.Execute(null);
     }
 
-    private void btnGoToNextIncorrectDelimiter_Click(object sender, RibbonControlEventArgs e)
+    private void btnShowSeqErrorsPane_Click(object sender, RibbonControlEventArgs e)
     {
-      ViewModelLocator.Main.GoToNextIncorrectDelimeterCommand.Execute(null);
+      if (Globals.ThisAddIn.Application.ActiveDocument != null)
+        Globals.ThisAddIn.AddSeqErrorsTaskPane(Globals.ThisAddIn.Application.ActiveDocument);
+      else
+        ViewModelLocator.DialogService.ShowMessage("There is no active document.", true);
     }
   }
 }

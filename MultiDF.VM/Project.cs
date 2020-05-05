@@ -282,7 +282,7 @@ namespace MultiDF.VM
         ViewModelLocator.WordService.CreateMergedDocument(this.AllXMLDocs.Select(d => d.SourcePath).ToArray(), TempDocxPath, false);
         var WPs = ViewModelLocator.WordService.GetDocumentParagraphs(TempDocxPath, token, UpdateQAsProgressHandler, false);
         var DelimiterParas = ViewModelLocator.QAExtractionStrategy.ExtractDelimiterParagraphs(WPs, token, true);
-        ViewModelLocator.WordService.FixAllQANumbers(TempDocxPath, DelimiterParas, false);
+        ViewModelLocator.WordService.FixAllQANumbers(TempDocxPath, DelimiterParas);
 
         callback(TempDocxPath, OutputPath);
 
@@ -328,7 +328,7 @@ namespace MultiDF.VM
                 ViewModelLocator.Main.UpdateProgress(false, null, 100);
 
                 ViewModelLocator.Main.UpdateProgress(false, "Re-numbering merged QAs", 0);
-                ViewModelLocator.WordService.FixAllQANumbers(TempDocxPath, DelimiterParas, false);
+                ViewModelLocator.WordService.FixAllQANumbers(TempDocxPath, DelimiterParas);
                 ViewModelLocator.Main.UpdateProgress(false, null, 100);
 
                 return TempDocxPath;

@@ -160,6 +160,7 @@
     <Compile Include="Project.cs" />
     <Compile Include="Interfaces\IWordService.cs" />
     <Compile Include="QAComparer.cs" />
+    <Compile Include="SeqErrorsVM.cs" />
     <Compile Include="UploadExamVM.cs" />
     <Compile Include="StaticExtensions.cs" />
     <Compile Include="UnitTestDetector.cs" />
@@ -225,7 +226,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Reactor_Enabled="1" Reactor_Commands="-q" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\MultiDF.VM\MultiDF.VM.nrproj" Reactor_Configuration="Release" Reactor_Output="" Reactor_Deploy="0" />
+      <UserProperties Reactor_Deploy="0" Reactor_Output="" Reactor_Configuration="Release" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\MultiDF.VM\MultiDF.VM.nrproj" Reactor_Commands="-q" Reactor_Enabled="1" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

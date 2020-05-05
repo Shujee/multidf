@@ -151,6 +151,9 @@
     <Compile Include="FileComparisonTooltip.xaml.cs">
       <DependentUpon>FileComparisonTooltip.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SequenceErrorsView.xaml.cs">
+      <DependentUpon>SequenceErrorsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UploadExamDialog.xaml.cs">
       <DependentUpon>UploadExamDialog.xaml</DependentUpon>
     </Compile>
@@ -177,6 +180,10 @@
     <Page Include="ImageButtonStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SequenceErrorsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UploadExamDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -271,7 +278,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Reactor_Enabled="1" Reactor_Commands="-q" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\MultiDF.Views\MultiDF.Views.nrproj" Reactor_Configuration="Release" Reactor_Output="" Reactor_Deploy="0" />
+      <UserProperties Reactor_Deploy="0" Reactor_Output="" Reactor_Configuration="Release" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\MultiDF.Views\MultiDF.Views.nrproj" Reactor_Commands="-q" Reactor_Enabled="1" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

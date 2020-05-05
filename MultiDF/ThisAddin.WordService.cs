@@ -243,7 +243,7 @@ namespace MultiDF
     /// <param name="start"></param>
     /// <param name="end"></param>
     /// <param name="newText"></param>
-    public Dictionary<int, int> FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
+    public Dictionary<int, int> FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs)
     {
       var OpenResult = GetOrOpenDocument(docPath, true, false);
 
@@ -289,13 +289,6 @@ namespace MultiDF
 
           ViewModelLocator.Main.UpdateProgress(false, null, (((float)ExpectedIndex) / delimiterParagraphs.Count) * 100);
         }
-      }
-
-      OpenResult.doc.Save();
-
-      if (!OpenResult.alreadyOpen || closeAfterDone)
-      {
-        OpenResult.doc.Close(false);
       }
 
       return Fixes;

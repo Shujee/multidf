@@ -65,6 +65,33 @@ namespace MultiDF
       }
     }
 
+
+    // Add a custom task pane consisting of a AudioPlayer control 
+    public void AddSeqErrorsTaskPane(Word.Document doc)
+    {
+      if (!VM.ViewModelLocator.Register.IsRegistered)
+        return;
+
+      try
+      {
+        // Create a new custom task pane and add it to the collection of custom task panes belonging to this add-in.
+        // The first two arguments of the Add method specify a control to add to the custom task pane and the title to display on the task pane. 
+        // The third argument, which is optional, specifies the parent window for the custom task pane. 
+        var ucAP = new SeqErrorsPaneUC(doc);
+        var NewTaskPane = this.CustomTaskPanes.Add(ucAP, $"MultiDF Sequence Errors", doc.ActiveWindow);
+
+        NewTaskPane.DockPosition = Office.MsoCTPDockPosition.msoCTPDockPositionRight;
+        NewTaskPane.Width = 300;
+
+        // Display the custom task pane.
+        NewTaskPane.Visible = true;
+      }
+      catch (System.Exception ee)
+      {
+        LogException(ee);
+      }
+    }
+
     public void RemoveAllTaskPanes()
     {
       // First check if there are any open documents.

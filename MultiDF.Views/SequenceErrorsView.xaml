@@ -1,0 +1,65 @@
+﻿<UserControl x:Class="MultiDF.Views.SequenceErrorsView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MultiDF.Views"
+         xmlns:vm="clr-namespace:MultiDF.VM;assembly=MultiDF.VM"
+         xmlns:fa="http://schemas.fontawesome.io/icons/"
+         mc:Ignorable="d"
+        d:DesignHeight="800" d:DesignWidth="800"
+        d:DataContext="{d:DesignInstance Type=vm:SeqErrorsVM}"
+        >
+
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+    <ToolBar ToolBarTray.IsLocked="True">
+      <Button Command="{Binding AnalyzeCommand}" ToolTip="Analyze document for sequence errors">
+        <fa:ImageAwesome Width="16" Height="16" Icon="Flash" Margin="3" />
+      </Button>
+      <Button Command="{Binding FixAutomaticCommand}" ToolTip="Fix All Errors Automatically">
+        <fa:ImageAwesome Width="16" Height="16" Icon="CheckCircle" Margin="3" />
+      </Button>
+    </ToolBar>
+    
+    <ListBox Grid.Row="1" ItemsSource="{Binding Errors}">
+      <ListBox.ItemContainerStyle>
+        <Style TargetType="ListBoxItem">
+          <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+      </ListBox.ItemContainerStyle>
+      <ListBox.ItemTemplate>
+        <DataTemplate DataType="vm:SeqError">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock VerticalAlignment="Center">
+        Q. No.
+        <Run Text="{Binding Index}" />
+        on page
+        <Run Text="{Binding Page}" />
+        - Expected Index is 
+        <Run Text="{Binding ExpectedIndex}" />
+            </TextBlock>
+
+            <Button Grid.Column="1" Command="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=DataContext.GoToErrorCommand}" CommandParameter="{Binding}" Margin="6"
+                Background="{x:Null}" BorderBrush="{x:Null}">
+              <fa:ImageAwesome Width="16" Height="16" Icon="LocationArrow" Margin="3" />
+            </Button>
+          </Grid>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+  </Grid>
+</UserControl>
+
+
+

@@ -124,11 +124,6 @@ namespace MultiDF.TestingShell
       throw new NotImplementedException();
     }
 
-    public void FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
-    {
-      throw new NotImplementedException();
-    }
-
     public void CreateMergedDocument(string[] docs, string outputPath, bool closeAfterCreate)
     {
       throw new NotImplementedException();
@@ -142,7 +137,7 @@ namespace MultiDF.TestingShell
         MV.Visibility = Visibility.Visible;
     }
 
-    Dictionary<int, int> IWordService.FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
+    Dictionary<int, int> IWordService.FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs)
     {
       throw new NotImplementedException();
     }

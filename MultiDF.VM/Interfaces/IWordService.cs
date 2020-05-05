@@ -42,7 +42,7 @@ namespace MultiDF.VM
     /// <param name="start"></param>
     /// <param name="end"></param>
     /// <param name="newText"></param>
-    Dictionary<int, int> FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone);
+    Dictionary<int, int> FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs);
 
     /// <summary>
     /// Creates a single Word document by merge content of all the specified documents.

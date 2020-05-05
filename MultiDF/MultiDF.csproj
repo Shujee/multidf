@@ -198,6 +198,12 @@
     <Compile Include="..\SharedAssemblyInfo_MultiDF.cs">
       <Link>SharedAssemblyInfo_MultiDF.cs</Link>
     </Compile>
+    <Compile Include="SeqErrorsPaneUC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SeqErrorsPaneUC.designer.cs">
+      <DependentUpon>SeqErrorsPaneUC.cs</DependentUpon>
+    </Compile>
     <Compile Include="MultiDFPaneUC.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -218,6 +224,9 @@
     <Compile Include="ThisAddIn.TaskPane.cs" />
     <Compile Include="ThisAddin.WordService.cs" />
     <Compile Include="WordHelper.cs" />
+    <EmbeddedResource Include="SeqErrorsPaneUC.resx">
+      <DependentUpon>SeqErrorsPaneUC.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MultiDFPaneUC.resx">
       <DependentUpon>MultiDFPaneUC.cs</DependentUpon>
     </EmbeddedResource>
@@ -305,7 +314,7 @@
           <HostItem Name="ThisAddIn" Code="ThisAddIn.cs" CanonicalName="AddIn" PublishedHash="D6860CC95C028218058FF06D03D95AD7B4850908" CanActivate="false" IconIndex="1" Blueprint="ThisAddIn.Designer.xml" GeneratedCode="ThisAddIn.Designer.cs" />
         </Host>
       </FlavorProperties>
-      <UserProperties Reactor_Deploy="0" Reactor_Output="" Reactor_Configuration="Release" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\MultiDF\MultiDF.nrproj" Reactor_Commands="-q" Reactor_Enabled="1" />
+      <UserProperties Reactor_Enabled="1" Reactor_Commands="-q" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\MultiDF\MultiDF.nrproj" Reactor_Configuration="Release" Reactor_Output="" Reactor_Deploy="0" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>

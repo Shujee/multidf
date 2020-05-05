@@ -39,11 +39,6 @@ namespace MultiDF.Test
       throw new NotImplementedException();
     }
 
-    public void FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
-    {
-      throw new NotImplementedException();
-    }
-
     public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token, Action<int, int> progressCallback)
     {
       if (!string.IsNullOrEmpty(docPath) && System.IO.File.Exists(docPath))
@@ -108,7 +103,7 @@ namespace MultiDF.Test
       throw new NotImplementedException();
     }
 
-    Dictionary<int, int> IWordService.FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs, bool closeAfterDone)
+    Dictionary<int, int> IWordService.FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs)
     {
       throw new NotImplementedException();
     }

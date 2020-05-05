@@ -450,7 +450,7 @@ namespace MultiDF.VM
       }
 
 
-      if (i < paragraphs.Count && RE_QNumberWithHardReturn.IsMatch(paragraphs[i].Text))
+      if (i <= paragraphs.Count && RE_QNumberWithHardReturn.IsMatch(P.Text))
         return new KeyValuePair<int, WordParagraph>(Index, P);
       else
         return new KeyValuePair<int, WordParagraph>(-1, null);

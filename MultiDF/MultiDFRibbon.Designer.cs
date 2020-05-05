@@ -37,6 +37,7 @@
       this.tabMultiDF = this.Factory.CreateRibbonTab();
       this.grpPane = this.Factory.CreateRibbonGroup();
       this.btnShowHidePane = this.Factory.CreateRibbonButton();
+      this.btnShowSeqErrorsPane = this.Factory.CreateRibbonButton();
       this.grpUser = this.Factory.CreateRibbonGroup();
       this.btnLogin = this.Factory.CreateRibbonButton();
       this.btnLogout = this.Factory.CreateRibbonButton();
@@ -55,8 +56,6 @@
       this.separator2 = this.Factory.CreateRibbonSeparator();
       this.btnUpdateQAs = this.Factory.CreateRibbonButton();
       this.btnCheckSyncWithSource = this.Factory.CreateRibbonButton();
-      this.btnFixNumbering = this.Factory.CreateRibbonButton();
-      this.btnGoToNextIncorrectDelimiter = this.Factory.CreateRibbonButton();
       this.grpAnalysis = this.Factory.CreateRibbonGroup();
       this.btnProcess = this.Factory.CreateRibbonButton();
       this.btnStopProcess = this.Factory.CreateRibbonButton();
@@ -89,6 +88,7 @@
       // grpPane
       // 
       this.grpPane.Items.Add(this.btnShowHidePane);
+      this.grpPane.Items.Add(this.btnShowSeqErrorsPane);
       this.grpPane.Label = "Pane";
       this.grpPane.Name = "grpPane";
       // 
@@ -100,6 +100,15 @@
       this.btnShowHidePane.OfficeImageId = "PageOrientationPortrait";
       this.btnShowHidePane.ShowImage = true;
       this.btnShowHidePane.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ShowHidePaneButton_Click);
+      // 
+      // btnShowSeqErrorsPane
+      // 
+      this.btnShowSeqErrorsPane.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+      this.btnShowSeqErrorsPane.Label = "Show Seq. Errors Pane";
+      this.btnShowSeqErrorsPane.Name = "btnShowSeqErrorsPane";
+      this.btnShowSeqErrorsPane.OfficeImageId = "PageOrientationPortrait";
+      this.btnShowSeqErrorsPane.ShowImage = true;
+      this.btnShowSeqErrorsPane.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnShowSeqErrorsPane_Click);
       // 
       // grpUser
       // 
@@ -213,8 +222,6 @@
       this.grpSourceDocs.Items.Add(this.separator2);
       this.grpSourceDocs.Items.Add(this.btnUpdateQAs);
       this.grpSourceDocs.Items.Add(this.btnCheckSyncWithSource);
-      this.grpSourceDocs.Items.Add(this.btnFixNumbering);
-      this.grpSourceDocs.Items.Add(this.btnGoToNextIncorrectDelimiter);
       this.grpSourceDocs.Label = "Source Documents";
       this.grpSourceDocs.Name = "grpSourceDocs";
       // 
@@ -257,24 +264,6 @@
       this.btnCheckSyncWithSource.OfficeImageId = "DataValidation";
       this.btnCheckSyncWithSource.ShowImage = true;
       this.btnCheckSyncWithSource.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnCheckSyncWithSource_Click);
-      // 
-      // btnFixNumbering
-      // 
-      this.btnFixNumbering.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-      this.btnFixNumbering.Label = "Fix Numbering";
-      this.btnFixNumbering.Name = "btnFixNumbering";
-      this.btnFixNumbering.OfficeImageId = "FormattingUnique";
-      this.btnFixNumbering.ShowImage = true;
-      this.btnFixNumbering.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnFixNumbering_Click);
-      // 
-      // btnGoToNextIncorrectDelimiter
-      // 
-      this.btnGoToNextIncorrectDelimiter.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-      this.btnGoToNextIncorrectDelimiter.Label = "Find Next Seq. Error";
-      this.btnGoToNextIncorrectDelimiter.Name = "btnGoToNextIncorrectDelimiter";
-      this.btnGoToNextIncorrectDelimiter.OfficeImageId = "ChartResetToMatchStyle";
-      this.btnGoToNextIncorrectDelimiter.ShowImage = true;
-      this.btnGoToNextIncorrectDelimiter.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnGoToNextIncorrectDelimiter_Click);
       // 
       // grpAnalysis
       // 
@@ -407,8 +396,7 @@
     internal Microsoft.Office.Tools.Ribbon.RibbonSeparator separator1;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup grpAbout;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnMergeAsDOCX;
-        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnFixNumbering;
-        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnGoToNextIncorrectDelimiter;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnShowSeqErrorsPane;
     }
 
     partial class ThisRibbonCollection
