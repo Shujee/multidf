@@ -289,6 +289,8 @@ namespace MultiDF
 
           ViewModelLocator.Main.UpdateProgress(false, null, (((float)ExpectedIndex) / delimiterParagraphs.Count) * 100);
         }
+
+        OpenResult.doc.Save();
       }
 
       return Fixes;

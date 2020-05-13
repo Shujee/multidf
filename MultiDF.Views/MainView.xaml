@@ -21,6 +21,7 @@
         
         <BooleanToVisibilityConverter x:Key="B2VConverter" />
         <viewbase:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
+        <viewbase:GreenRedConverter x:Key="GreenRedConverter" />
         <viewbase:PathToFileNameConverter x:Key="PathToFileNameConverter" />
         <viewbase:NonZeroToTrueConverter x:Key="NonZeroToTrueConverter" />
 
@@ -270,7 +271,7 @@
 
             <Ellipse Width="12" Height="12" Stroke="Gray" HorizontalAlignment="Right" Margin="3">
               <Ellipse.Fill>
-                <SolidColorBrush Color="{Binding IsLoggedIn, Converter={StaticResource ConnectionStatusConverter}, FallbackValue=Red}" />
+                <SolidColorBrush Color="{Binding IsLoggedIn, Converter={StaticResource GreenRedConverter}, FallbackValue=Red}" />
               </Ellipse.Fill>
               <Ellipse.Style>
                 <Style TargetType="Ellipse">
@@ -294,7 +295,7 @@
                 </Style>
               </Ellipse.Style>
               <Ellipse.Effect>
-                <DropShadowEffect Color="{Binding IsLoggedIn, Converter={StaticResource ConnectionStatusConverter}, FallbackValue=Red}" BlurRadius="7" Direction="90" ShadowDepth="0" />
+                <DropShadowEffect Color="{Binding IsLoggedIn, Converter={StaticResource GreenRedConverter}, FallbackValue=Red}" BlurRadius="7" Direction="90" ShadowDepth="0" />
               </Ellipse.Effect>
             </Ellipse>
           </Border>

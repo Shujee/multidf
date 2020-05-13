@@ -23,7 +23,7 @@ namespace MultiDF.Views
       throw new NotImplementedException();
     }
 
-    public Dictionary<int, int> FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs)
+    public List<AutoFixResult> FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs)
     {
       throw new NotImplementedException();
     }
