@@ -144,6 +144,7 @@
     <Compile Include="..\SharedAssemblyInfo_MultiDF.cs">
       <Link>SharedAssemblyInfo_MultiDF.cs</Link>
     </Compile>
+    <Compile Include="AutoFixResult.cs" />
     <Compile Include="DefaultDocComparer.cs" />
     <Compile Include="DefaultQAExtractionStrategy.cs" />
     <Compile Include="DFResult.cs" />
@@ -226,7 +227,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Reactor_Deploy="0" Reactor_Output="" Reactor_Configuration="Release" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\MultiDF.VM\MultiDF.VM.nrproj" Reactor_Commands="-q" Reactor_Enabled="1" />
+      <UserProperties Reactor_Enabled="1" Reactor_Commands="-q" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\MultiDF.VM\MultiDF.VM.nrproj" Reactor_Configuration="Release" Reactor_Output="" Reactor_Deploy="0" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

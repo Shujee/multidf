@@ -243,12 +243,12 @@ namespace MultiDF
     /// <param name="start"></param>
     /// <param name="end"></param>
     /// <param name="newText"></param>
-    public Dictionary<int, int> FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs)
+    public List<AutoFixResult> FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs)
     {
       var OpenResult = GetOrOpenDocument(docPath, true, false);
 
       int ExpectedIndex = 1;
-      Dictionary<int ,  int> Fixes =  new Dictionary<int, int>();
+      List<AutoFixResult> Fixes =  new List<AutoFixResult>();
 
       if (OpenResult.doc != null)
       {
@@ -279,7 +279,7 @@ namespace MultiDF
                 R.Delete();
 
               R.Text = ExpectedIndex.ToString();
-              Fixes.Add(QIndex.Value, ExpectedIndex);
+              Fixes.Add(new AutoFixResult() { DocPath = docPath, OldIndex = QIndex.Value, NewIndex = ExpectedIndex });
 
               Offset += (ExpectedIndex.ToString().Length - QIndex.ToString().Length);
             }

@@ -138,7 +138,7 @@ namespace MultiDF.VM
 
             foreach(var Fix in Fixes)
             {
-              var FixedError = Errors.FirstOrDefault(e => e.Index == Fix.Key);
+              var FixedError = Errors.FirstOrDefault(e => e.Index == Fix.OldIndex);
 
               if (FixedError != null)
                 Errors.Remove(FixedError);
