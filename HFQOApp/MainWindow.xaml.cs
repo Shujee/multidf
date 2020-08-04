@@ -106,7 +106,7 @@ namespace HFQOApp
           var HighlightPage2 = sender as FixedPage;
 
           TB.RenderTransformOrigin = new Point(.5, .5);
-          TB.Opacity = .3;
+          TB.Opacity = .1;
           TB.Foreground = Brushes.LightGray;
           TB.FontFamily = new FontFamily("Arial Black");
           TB.TextAlignment = TextAlignment.Center;

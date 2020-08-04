@@ -760,12 +760,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_BBEE9278BC8549ACE9E7A4DF91981911"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_4B6B04A724BA425DAE3104CCAF0353C5"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1271,6 +1265,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_033467B0A3540D0583993E11E6BD7C45"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_BBEE9278BC8549ACE9E7A4DF91981911"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -1998,7 +1998,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MultiDF.Views, Version=1.8.3.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:MultiDF.Views, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_389BDBB468A2A405A15DC6FAB153C221"
@@ -3847,7 +3847,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MultiDF.VM, Version=1.8.3.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:MultiDF.VM, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_DA029F7CDCE883FCAF052590400B776D"
@@ -4292,15 +4292,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MultiDF"
-        "ProductCode" = "8:{C0D1658C-3C3A-4067-AE8D-EFB405A5CB45}"
-        "PackageCode" = "8:{66BDD33D-68BC-4957-BAC5-9E6B875144DE}"
+        "ProductCode" = "8:{2AFD0697-D066-448F-898F-793DDB4594B7}"
+        "PackageCode" = "8:{71196203-00A3-46E1-88FA-6403037AAAE9}"
         "UpgradeCode" = "8:{5A925BAF-47E5-4BF5-93C2-B0C3C245B96F}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.8.7"
+        "ProductVersion" = "8:1.9.1"
         "Manufacturer" = "8:MultiDF"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -5054,7 +5054,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_4B6B04A724BA425DAE3104CCAF0353C5"
             {
-            "SourcePath" = "8:..\\MultiDF\\obj\\Debug\\MultiDF.dll"
+            "SourcePath" = "8:..\\MultiDF\\obj\\Release\\MultiDF.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1C135586D8A74001A6AAD18DCCE0ECF3"

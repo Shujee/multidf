@@ -325,11 +325,11 @@ namespace MultiDF.VM
 
                 ViewModelLocator.Main.UpdateProgress(false, "Marking delimiters", 0);
                 var DelimiterParas = ViewModelLocator.QAExtractionStrategy.ExtractDelimiterParagraphs(WPs, token, true);
-                ViewModelLocator.Main.UpdateProgress(false, null, 100);
+                ViewModelLocator.Main.UpdateProgress(false, null, 1);
 
                 ViewModelLocator.Main.UpdateProgress(false, "Re-numbering merged QAs", 0);
                 ViewModelLocator.WordService.FixAllQANumbers(TempDocxPath, DelimiterParas);
-                ViewModelLocator.Main.UpdateProgress(false, null, 100);
+                ViewModelLocator.Main.UpdateProgress(false, null, 1);
 
                 return TempDocxPath;
 
@@ -343,13 +343,13 @@ namespace MultiDF.VM
                   ViewModelLocator.Main.UpdateProgress(false, "Creating XPS", 0);
                   var XPSFile = StaticExtensions.GetTempFileName(".xps");
                   ViewModelLocator.WordService.ExportDocumentToFixedFormat(ExportFixedFormat.XPS, TempDocxPath, XPSFile, true);
-                  ViewModelLocator.Main.UpdateProgress(false, null, 100);
+                  ViewModelLocator.Main.UpdateProgress(false, null, 1);
 
                   //Encrypt the XPS file
                   ViewModelLocator.Main.UpdateProgress(false, "Creating XML", 0);
                   var XPSFileEncrypted = Encryption.Encrypt(System.IO.File.ReadAllBytes(XPSFile));
                   File.WriteAllBytes(XPSFile, XPSFileEncrypted);
-                  ViewModelLocator.Main.UpdateProgress(false, null, 100);
+                  ViewModelLocator.Main.UpdateProgress(false, null, 1);
 
                   //Create the XML file
                   var XMLDoc = new XMLDoc() { SourcePath = TempDocxPath };
@@ -425,7 +425,7 @@ namespace MultiDF.VM
 
     private void UpdateQAsProgressHandler(int i, int Total)
     {
-      ViewModelLocator.Main.UpdateProgress(true, null, ((float)i / Total) * 100);
+      ViewModelLocator.Main.UpdateProgress(true, null, ((float)i / Total));
       ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.ElapsedTime));
       ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.EstimatedRemainingTime));
     }
@@ -658,7 +658,7 @@ namespace MultiDF.VM
             //progress increment
             TotalComparisons = graph.Vertices.Sum(v1 => graph.Vertices.Sum(v2 => v2.QAs.Count) * v1.QAs.Count);
             CompletedComparisons = 0;
-            Factor = 100 / TotalComparisons; //avoid computing constant factor over and over in the loop. just a small micro-optimization that I couldn't resist :)
+            Factor = 1 / TotalComparisons; //avoid computing constant factor over and over in the loop. just a small micro-optimization that I couldn't resist :)
 
             ViewModelLocator.Main.UpdateProgress(true, "Comparing QAs", 0);
 
@@ -703,7 +703,7 @@ namespace MultiDF.VM
               GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() => IsProcessing = false);
 #endif
 
-              ViewModelLocator.Main.UpdateProgress(false, "Analysis completed", 100);
+              ViewModelLocator.Main.UpdateProgress(false, "Analysis completed", 1);
 
               RaisePropertyChanged(nameof(Graph));
               ApplyDiffThresholdCommand.Execute(null);

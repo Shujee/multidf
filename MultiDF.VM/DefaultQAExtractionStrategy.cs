@@ -293,7 +293,7 @@ namespace MultiDF.VM
         if (token.IsCancellationRequested)
           return null;
 
-        ViewModelLocator.Main.UpdateProgress(false, null, (((float)i + 1) / paragraphs.Count) * 100);
+        ViewModelLocator.Main.UpdateProgress(false, null, (((float)i + 1) / paragraphs.Count));
       }
 
       return Result;
@@ -332,7 +332,7 @@ namespace MultiDF.VM
 
         ExpectedIndex++;
 
-        ViewModelLocator.Main.UpdateProgress(false, null, (((float)i + 1) / paragraphs.Count) * 100);
+        ViewModelLocator.Main.UpdateProgress(false, null, (((float)i + 1) / paragraphs.Count));
       }
 
       return null;
@@ -450,7 +450,7 @@ namespace MultiDF.VM
       }
 
 
-      if (i <= paragraphs.Count && RE_QNumberWithHardReturn.IsMatch(P.Text))
+      if (i <= paragraphs.Count && P != null && RE_QNumberWithHardReturn.IsMatch(P.Text))
         return new KeyValuePair<int, WordParagraph>(Index, P);
       else
         return new KeyValuePair<int, WordParagraph>(-1, null);

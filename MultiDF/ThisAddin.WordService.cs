@@ -226,7 +226,7 @@ namespace MultiDF
           R.InsertBreak(WdBreakType.wdPageBreak);         
         }
 
-        ViewModelLocator.Main.UpdateProgress(true, "Merging documents into one file", ((float)(i+1) / docs.Length) * 100);
+        ViewModelLocator.Main.UpdateProgress(true, "Merging documents into one file", ((float)(i+1) / docs.Length));
       }
 
       MergeDoc.SaveAs(outputPath);
@@ -234,7 +234,7 @@ namespace MultiDF
       if (closeAfterCreate)
         MergeDoc.Close(false);
 
-      ViewModelLocator.Main.UpdateProgress(true, "Merging documents into one file", 100);
+      ViewModelLocator.Main.UpdateProgress(true, "Merging documents into one file", 1);
     }
 
     /// <summary>
@@ -287,7 +287,7 @@ namespace MultiDF
 
           ExpectedIndex++;
 
-          ViewModelLocator.Main.UpdateProgress(false, null, (((float)ExpectedIndex) / delimiterParagraphs.Count) * 100);
+          ViewModelLocator.Main.UpdateProgress(false, null, (((float)ExpectedIndex) / delimiterParagraphs.Count));
         }
 
         OpenResult.doc.Save();

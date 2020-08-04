@@ -30,9 +30,13 @@ namespace VMBase
           _ProgressStartTime = DateTime.Now;
 
         if (msg != null)
+        {
           ProgressMessage = msg;
+          RaisePropertyChanged(nameof(ProgressMessage));
+        }
 
-        ProgressValue = value;
+        ProgressValue = value * 100;
+        RaisePropertyChanged(nameof(ProgressValue));
       });
     }
     #endregion

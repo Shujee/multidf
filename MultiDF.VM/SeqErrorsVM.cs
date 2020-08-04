@@ -62,7 +62,7 @@ namespace MultiDF.VM
 
             var Paragraphs = ViewModelLocator.WordService.GetDocumentParagraphs(_DocPath, tokenSource.Token, (i, Total) =>
             {
-              ViewModelLocator.Main.UpdateProgress(false, "Extracting content...", (i / (float)Total) * 100);
+              ViewModelLocator.Main.UpdateProgress(false, "Extracting content...", (i / (float)Total));
 
               ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.ElapsedTime));
               ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.EstimatedRemainingTime));
@@ -72,11 +72,11 @@ namespace MultiDF.VM
             {
               try
               {
-                ViewModelLocator.Main.UpdateProgress(false, "Locating QA delimeters", 40);
+                ViewModelLocator.Main.UpdateProgress(false, "Locating QA delimeters", .4);
 
                 _DelimiterParagraphs = ViewModelLocator.QAExtractionStrategy.ExtractDelimiterParagraphs(Paragraphs, tokenSource.Token, false);
 
-                ViewModelLocator.Main.UpdateProgress(false, "Comparing sequence numbers", 60);
+                ViewModelLocator.Main.UpdateProgress(false, "Comparing sequence numbers", .6);
 
                 //Report how many of the QAs have wrong sequence numbers. Our definition of "wrong" is "any QA whose sequence number is not N + 1, where N is the sequence number of previous QA".
                 //This dictionary will store out-of-sequence paragraphs and with their expected sequence number.
@@ -102,7 +102,7 @@ namespace MultiDF.VM
                     PrevSeqNumber = SeqNumber;
                 }
 
-                ViewModelLocator.Main.UpdateProgress(false, "Done", 100);
+                ViewModelLocator.Main.UpdateProgress(false, "Done", 1);
 
                 if (Errors.Count == 0)
                   ViewModelLocator.DialogService.ShowMessage("This document does not appear to have any sequencing problems.", false);
