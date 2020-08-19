@@ -138,7 +138,7 @@ namespace HFQOVM
 #endif
 
       //if an exam is currently open, we'll take a snapshot every once in a while.
-      if (!string.IsNullOrEmpty(this.XPSPath))
+      if (_DownloadId.HasValue && !string.IsNullOrEmpty(this.XPSPath))
       {
         var SnapshotTask = ViewModelLocator.CameraService.TakeCameraSnapshot();
 
@@ -231,6 +231,8 @@ namespace HFQOVM
             }
           }).Wait();
         }
+
+        _IsUploadingSnapshots = false;
       }
       finally
       {

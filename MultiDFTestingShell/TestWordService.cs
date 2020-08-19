@@ -54,17 +54,17 @@ namespace MultiDF.TestingShell
 
     public void ExportDocumentToFixedFormat(ExportFixedFormat format, string docPath, string outputPath, bool closeAfterDone)
     {
-      var OpenResult = GetOrOpenDocument(docPath, false);
+      var (doc, alreadyOpen) = GetOrOpenDocument(docPath, false);
 
-      if (OpenResult.doc != null)
+      if (doc != null)
       {
-        OpenResult.doc.ExportAsFixedFormat(
+        doc.ExportAsFixedFormat(
                                 OutputFileName: outputPath,
                                 ExportFormat: (format == ExportFixedFormat.XPS ? WdExportFormat.wdExportFormatXPS : WdExportFormat.wdExportFormatPDF), 
                                 OptimizeFor: WdExportOptimizeFor.wdExportOptimizeForOnScreen);
 
-        if (!OpenResult.alreadyOpen)
-          OpenResult.doc.Close();
+        if (!alreadyOpen)
+          doc.Close();
       }
     }
 
@@ -188,7 +188,7 @@ namespace MultiDF.TestingShell
         Sel.End = end.Value;
     }
 
-    public Dictionary<int,int> FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs)
+    public List<AutoFixResult> FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs)
     {
       throw new NotImplementedException();
     }

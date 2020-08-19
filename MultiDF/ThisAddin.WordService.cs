@@ -39,17 +39,17 @@ namespace MultiDF
 
     public void ExportDocumentToFixedFormat(ExportFixedFormat format, string docPath, string outputPath, bool closeAfterDone)
     {
-      var OpenResult = GetOrOpenDocument(docPath, false, true);
+      var (doc, alreadyOpen) = GetOrOpenDocument(docPath, false, true);
 
-      if (OpenResult.doc != null)
+      if (doc != null)
       {
-        OpenResult.doc.ExportAsFixedFormat(
+        doc.ExportAsFixedFormat(
                                 OutputFileName: outputPath,
                                 ExportFormat: (format == ExportFixedFormat.XPS ? WdExportFormat.wdExportFormatXPS : WdExportFormat.wdExportFormatPDF),
                                 OptimizeFor: WdExportOptimizeFor.wdExportOptimizeForOnScreen);
 
-        if (!OpenResult.alreadyOpen || closeAfterDone)
-          OpenResult.doc.Close(false);
+        if (!alreadyOpen || closeAfterDone)
+          doc.Close(false);
       }
     }
 
@@ -68,11 +68,11 @@ namespace MultiDF
         List<WordParagraph> Result = new List<WordParagraph>();
         int ParaCount;
 
-        var OpenResult = GetOrOpenDocument(docPath, false, true);
+        var (doc, alreadyOpen) = GetOrOpenDocument(docPath, false, true);
 
         int i = 0;
-        ParaCount = OpenResult.doc.Paragraphs.Count;
-        foreach (Paragraph p in OpenResult.doc.Paragraphs)
+        ParaCount = doc.Paragraphs.Count;
+        foreach (Paragraph p in doc.Paragraphs)
         {
           var R = p.Range;
 
@@ -134,9 +134,9 @@ namespace MultiDF
             break;
         }
 
-        if (!OpenResult.alreadyOpen && closeAfterDone)
+        if (!alreadyOpen && closeAfterDone)
         {
-          System.Threading.Tasks.Task.Run(() => OpenResult.doc.Close(SaveChanges: false));
+          System.Threading.Tasks.Task.Run(() => doc.Close(SaveChanges: false));
         }
 
         progressCallback?.Invoke(ParaCount, ParaCount);
@@ -147,10 +147,10 @@ namespace MultiDF
 
     public void OpenDocument(string docPath, bool openReadonly, int? start, int? end)
     {
-      var OpenResult = GetOrOpenDocument(docPath, true, openReadonly);
+      var (doc, _) = GetOrOpenDocument(docPath, true, openReadonly);
 
-      if (OpenResult.doc != null)
-        OpenResult.doc.Activate();
+      if (doc != null)
+        doc.Activate();
 
       if (start != null)
       {
@@ -245,12 +245,12 @@ namespace MultiDF
     /// <param name="newText"></param>
     public List<AutoFixResult> FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs)
     {
-      var OpenResult = GetOrOpenDocument(docPath, true, false);
+      var (doc, _) = GetOrOpenDocument(docPath, true, false);
 
       int ExpectedIndex = 1;
       List<AutoFixResult> Fixes =  new List<AutoFixResult>();
 
-      if (OpenResult.doc != null)
+      if (doc != null)
       {
         //Extra characters that we insert in the loop below will affect the start and end of all subsequent paragraph ranges. 
         //The following offset will keep track of the number of characters that we have inserted so far.
@@ -258,7 +258,7 @@ namespace MultiDF
 
         foreach (var Para in delimiterParagraphs)
         {
-          Range R = OpenResult.doc.Range(Para.Start + Offset, Para.End + Offset);
+          Range R = doc.Range(Para.Start + Offset, Para.End + Offset);
 
           if (R != null)
           {
@@ -267,13 +267,13 @@ namespace MultiDF
             if (QIndex == null || QIndex != ExpectedIndex)
             {
               //if question number starts with the letter Q, move one character ahead to skip letter Q
-              if (OpenResult.doc.Range(Para.Start + Offset).Characters[1].Text.ToUpper() == "Q")
+              if (doc.Range(Para.Start + Offset).Characters[1].Text.ToUpper() == "Q")
                 Offset++;
 
               //Non-inline shapes present a strange behavior. Word treats those shapes as part of the pervious Range
               //even though these are physically placed after the range. So if we modify the Text property of previous Range,
               //those shapes get overwritten. Here we deal with this problem by selectively removing one character at a time.
-              R = OpenResult.doc.Range(Para.Start + Offset, Para.Start + Offset);
+              R = doc.Range(Para.Start + Offset, Para.Start + Offset);
 
               for (int i = 0; i < QIndex.ToString().Length; i++)
                 R.Delete();
@@ -290,7 +290,7 @@ namespace MultiDF
           ViewModelLocator.Main.UpdateProgress(false, null, (((float)ExpectedIndex) / delimiterParagraphs.Count));
         }
 
-        OpenResult.doc.Save();
+        doc.Save();
       }
 
       return Fixes;

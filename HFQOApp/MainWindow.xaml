@@ -210,7 +210,7 @@
         </RadialGradientBrush>
       </Label.Background>
     </Label>
-    <DocumentViewer Name="DV" Grid.Row="2" Grid.Column="1" Document="{Binding XPSPath, Mode=OneWay, Converter={StaticResource PathToFixedDocumentConverter}}" Focusable="False"
+    <DocumentViewer x:Name="DV" Grid.Row="2" Grid.Column="1" Document="{Binding XPSPath, Mode=OneWay, Converter={StaticResource PathToFixedDocumentConverter}}" Focusable="False"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
       <DocumentViewer.Resources>
         <!-- Hides the toolbar -->

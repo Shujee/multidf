@@ -59,8 +59,8 @@ namespace HFQOViews
 
     private void CollectionViewSource_Filter(object sender, System.Windows.Data.FilterEventArgs e)
     {
-      e.Accepted = (e.Item as QA).Question.IndexOf(SearchBox.Text, StringComparison.OrdinalIgnoreCase) >= 0 ||
-                    (e.Item as QA).Choices.Any(c => c.IndexOf(SearchBox.Text, StringComparison.OrdinalIgnoreCase) >= 0);
+      e.Accepted = (e.Item as QA).Question.IndexOf(SearchBox.Text.Trim(), StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    (e.Item as QA).Choices.Any(c => c.IndexOf(SearchBox.Text.Trim(), StringComparison.OrdinalIgnoreCase) >= 0);
     }
 
     private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

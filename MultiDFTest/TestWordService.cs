@@ -39,7 +39,9 @@ namespace MultiDF.Test
       throw new NotImplementedException();
     }
 
+#pragma warning disable IDE0060 // Remove unused parameter
     public List<WordParagraph> GetDocumentParagraphs(string docPath, CancellationToken token, Action<int, int> progressCallback)
+#pragma warning restore IDE0060 // Remove unused parameter
     {
       if (!string.IsNullOrEmpty(docPath) && System.IO.File.Exists(docPath))
       {
@@ -103,7 +105,7 @@ namespace MultiDF.Test
       throw new NotImplementedException();
     }
 
-    Dictionary<int, int> IWordService.FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs)
+    public List<AutoFixResult> FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs)
     {
       throw new NotImplementedException();
     }

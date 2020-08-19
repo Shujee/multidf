@@ -100,15 +100,20 @@ namespace VMBase
 
               if (Expiry != null)
               {
-                var Setting = Properties.Settings.Default;
-                Setting.RegEmail = _RegEmail.Trim();
-                Setting.LicenseKey = _LicenseKey.Trim();
-                Setting.Save();
+                if (Expiry.Value < DateTime.Now)
+                  ViewModelLocatorBase.DialogService.ShowMessage("This license key has expired. Please contact vendor.", true);
+                else
+                {
+                  var Setting = Properties.Settings.Default;
+                  Setting.RegEmail = _RegEmail.Trim();
+                  Setting.LicenseKey = _LicenseKey.Trim();
+                  Setting.Save();
 
-                ViewModelLocatorBase.DialogService.ShowMessage("Congratulations. You have successfully registered the product. You can now close this window and start using the product.", false);
+                  ViewModelLocatorBase.DialogService.ShowMessage("Congratulations. You have successfully registered the product. You can now close this window and start using the product.", false);
 
-                RaisePropertyChanged(nameof(ExpiryDate));
-                RaisePropertyChanged(nameof(IsRegistered));
+                  RaisePropertyChanged(nameof(ExpiryDate));
+                  RaisePropertyChanged(nameof(IsRegistered));
+                }
               }
               else
                 ViewModelLocatorBase.DialogService.ShowMessage("License Key and/or e-mail address is incorrect. Please contact vendor.", true);

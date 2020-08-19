@@ -137,7 +137,7 @@ namespace MultiDF.TestingShell
         MV.Visibility = Visibility.Visible;
     }
 
-    Dictionary<int, int> IWordService.FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs)
+    public List<AutoFixResult> FixAllQANumbers(string docPath, List<WordParagraph> delimiterParagraphs)
     {
       throw new NotImplementedException();
     }
