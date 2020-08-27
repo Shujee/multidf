@@ -72,7 +72,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ReactorLocation>"C:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.exe"</ReactorLocation>
-    <ReactorProject>"F:\ACTIVE\DuplicateFinderMulti\HFQOApp\HFQOApp.nrproj"</ReactorProject>
+    <ReactorProject>"F:\ACTIVE\MultiDF\HFQOApp\HFQOApp.nrproj"</ReactorProject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FontAwesome.WPF, Version=4.7.0.37774, Culture=neutral, PublicKeyToken=0758b07a11a4f466, processorArchitecture=MSIL">
@@ -199,7 +199,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Reactor_Deploy="1" Reactor_Output="" Reactor_Configuration="Release" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\HFQOApp\HFQOApp.nrproj" Reactor_Commands="" Reactor_Enabled="0" />
+      <UserProperties Reactor_Deploy="1" Reactor_Output="" Reactor_Configuration="Release" Reactor_Project="F:\ACTIVE\MultiDF\HFQOApp\HFQOApp.nrproj" Reactor_Commands="" Reactor_Enabled="0" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

@@ -40,7 +40,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ReactorLocation>"C:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.exe"</ReactorLocation>
-    <ReactorProject>"F:\ACTIVE\DuplicateFinderMulti\Common\Common.nrproj"</ReactorProject>
+    <ReactorProject>"F:\ACTIVE\MultiDF\Common\Common.nrproj"</ReactorProject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -61,7 +61,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Reactor_Enabled="1" Reactor_Commands="-q" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\Common\Common.nrproj" Reactor_Configuration="Release" Reactor_Output="" Reactor_Deploy="1" />
+      <UserProperties Reactor_Enabled="1" Reactor_Commands="-q" Reactor_Project="F:\ACTIVE\MultiDF\Common\Common.nrproj" Reactor_Configuration="Release" Reactor_Output="" Reactor_Deploy="1" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="ReactorCall" AfterTargets="Compile">

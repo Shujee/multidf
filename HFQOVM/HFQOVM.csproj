@@ -36,7 +36,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ReactorLocation>"C:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.exe"</ReactorLocation>
-    <ReactorProject>"F:\ACTIVE\DuplicateFinderMulti\HFQOVM\HFQOVM.nrproj"</ReactorProject>
+    <ReactorProject>"F:\ACTIVE\MultiDF\HFQOVM\HFQOVM.nrproj"</ReactorProject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AForge, Version=2.2.5.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL">
@@ -108,7 +108,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Reactor_Enabled="1" Reactor_Commands="" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\HFQOVM\HFQOVM.nrproj" Reactor_Configuration="Release" Reactor_Output="" Reactor_Deploy="1" />
+      <UserProperties Reactor_Enabled="1" Reactor_Commands="" Reactor_Project="F:\ACTIVE\MultiDF\HFQOVM\HFQOVM.nrproj" Reactor_Configuration="Release" Reactor_Output="" Reactor_Deploy="1" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="ReactorCall" AfterTargets="Compile">

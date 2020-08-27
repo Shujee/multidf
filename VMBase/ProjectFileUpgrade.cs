@@ -21,9 +21,9 @@ namespace VMBase
       bool Changed = false;
 
       //replace old namespace with current one
-      if (xml.Contains("http://schemas.datacontract.org/2004/07/DuplicateFinderMulti.VM"))
+      if (xml.Contains("http://schemas.datacontract.org/2004/07/MultiDF.VM"))
       {
-        xml = xml.Replace("http://schemas.datacontract.org/2004/07/DuplicateFinderMulti.VM", "http://schemas.datacontract.org/2004/07/MultiDF.VM");
+        xml = xml.Replace("http://schemas.datacontract.org/2004/07/MultiDF.VM", "http://schemas.datacontract.org/2004/07/MultiDF.VM");
         Changed = true;
       }
 

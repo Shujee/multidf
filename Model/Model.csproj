@@ -88,11 +88,11 @@
   </PropertyGroup>
   <PropertyGroup>
     <ReactorLocation>"C:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.exe"</ReactorLocation>
-    <ReactorProject>"F:\ACTIVE\DuplicateFinderMulti\Model\Model.nrproj"</ReactorProject>
+    <ReactorProject>"F:\ACTIVE\MultiDF\Model\Model.nrproj"</ReactorProject>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Reactor_Enabled="1" Reactor_Commands="-q" Reactor_Project="F:\ACTIVE\DuplicateFinderMulti\Model\Model.nrproj" Reactor_Configuration="Release" Reactor_Output="" Reactor_Deploy="1" />
+      <UserProperties Reactor_Enabled="1" Reactor_Commands="-q" Reactor_Project="F:\ACTIVE\MultiDF\Model\Model.nrproj" Reactor_Configuration="Release" Reactor_Output="" Reactor_Deploy="1" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="ReactorCall" AfterTargets="Compile">
