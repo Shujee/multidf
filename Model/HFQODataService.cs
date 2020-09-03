@@ -111,7 +111,7 @@ namespace Model
 
     public bool UpdateExamFiles(string xpsPath, string xmlPath, int exam_id, int qa_count, string qa_json, string remarks, string origfilename)
     {
-      var Response = REST.ExecuteRest<bool>("exam/{exam}/update_files", Method.POST,
+      var Response = REST.ExecuteRest<Dictionary<string, string>>("exam/{exam}/update_files", Method.POST,
                               new[]
                               {
                                   new Parameter(){ Name = "Authorization", Value = "Bearer " + _BearerToken, Type = ParameterType.HttpHeader},
@@ -132,8 +132,8 @@ namespace Model
                                 new FileParameter() { Name = "xml_content", FileName = xmlPath, ContentType="application/octet-stream" },
                               });
 
-      //Check if credentials are correct
-      return Response;
+      //Check if server returns success message
+      return Response.Count > 0 && Response.ContainsKey("result") && Response["result"] == "true";
     }
 
     public async Task<AccessibleMasterFile[]> GetExamsDL()
