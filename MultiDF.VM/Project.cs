@@ -359,6 +359,14 @@ namespace MultiDF.VM
                     {
                       if (XMLDoc.QAs != null)
                       {
+                        var WrongStartPageEndPage = XMLDoc.QAs.FirstOrDefault(qa => qa.StartPage <= 0 || qa.EndPage <= 0);
+                        if (WrongStartPageEndPage != null)
+                        {
+                          ViewModelLocator.Logger.Error($"Some of the QAs do not have correct values for StartPage and/or EndPage. Q. No. {WrongStartPageEndPage.Index} has StartPage = {WrongStartPageEndPage.StartPage}, EndPage = {WrongStartPageEndPage.EndPage}.");
+                          ViewModelLocator.DialogService.ShowMessage($"Some of the QAs do not have correct values for StartPage and/or EndPage. This exam cannot be uploaded. Q. No. {WrongStartPageEndPage.Index} has StartPage = {WrongStartPageEndPage.StartPage}, EndPage = {WrongStartPageEndPage.EndPage}.", true);
+                          return;
+                        }
+
                         var XMLFile = StaticExtensions.GetTempFileName(".xml");
                         File.WriteAllText(XMLFile, XMLDoc.ToXML());
 

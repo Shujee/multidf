@@ -15,6 +15,15 @@ namespace MultiDF.VM
   {
     static ViewModelLocator()
     {
+      if (!GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
+      {
+        var LogDir = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "MultiDF");
+        if (!System.IO.Directory.Exists(LogDir))
+          System.IO.Directory.CreateDirectory(LogDir);
+
+        InitLogger("${specialfolder:folder=ApplicationData}/MultiDF/activity.log");
+      }
+
       App = "MultiDF";
       AppVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 

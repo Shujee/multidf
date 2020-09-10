@@ -25,11 +25,6 @@ namespace VMBase
         Properties.Settings.Default.Save();
       }
 
-      if (!GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
-      {
-        InitLogger();
-      }
-
       GalaSoft.MvvmLight.Threading.DispatcherHelper.Initialize();
 
       SimpleIoc.Default.Unregister<IDataService>();
@@ -79,17 +74,17 @@ namespace VMBase
     /// This is the global logger object that can be used to write debugging information to addin's log file. The log file is named "ghwordaddin.log" and is
     /// located in add-in's installation folder. For ClickOnce installation, this folder is in %appdata%.
     /// </summary>
-    public static Logger Logger => LogManager.GetLogger("DFMultiLogger");
+    public static Logger Logger => LogManager.GetLogger("MultiDFLogger");
 
-    private static void InitLogger()
+    protected static void InitLogger(string logPath)
     {
       // Step 1. Create configuration object 
       var config = new LoggingConfiguration();
 
       // Step 2. Create target log file
-      var fileTarget = new FileTarget("DFMultiLogger")
+      var fileTarget = new FileTarget("MultiDFLogger")
       {
-        FileName = "${basedir}hfqo_app.log",
+        FileName = logPath,
         Layout = "${longdate} ${level} ${message}  ${exception}"
       };
       config.AddTarget(fileTarget);
