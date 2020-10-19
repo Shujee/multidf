@@ -176,8 +176,12 @@ namespace HFQOVM
             _CameraTimer.Elapsed -= _CameraTimer_Elapsed;
             WriteToCache();
 
-            ViewModelLocator.Logger.Error("CameraService.TakeCameraSnapshot() returned null. Exiting. Error: " + t.Exception.Message);
+            ViewModelLocator.Logger.Error("CameraService.TakeCameraSnapshot() returned null.");
+            if (t.Exception != null)
+              ViewModelLocator.Logger.Error("Error: " + t.Exception.Message);
+
             ViewModelLocator.DialogService.ShowMessage("Your camera device is not accessible. The application will close now. Make sure your camera is turned on and restart the application to continue from where you left.", true);
+            ViewModelLocator.Logger.Error("Exiting.");
             ViewModelLocator.ApplicationService.Shutdown();
           }
 
