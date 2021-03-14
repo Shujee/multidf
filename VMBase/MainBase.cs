@@ -14,7 +14,7 @@ namespace VMBase
 
     protected DateTime _ProgressStartTime = DateTime.Now;
     public TimeSpan ElapsedTime => DateTime.Now.Subtract(_ProgressStartTime);
-    public TimeSpan EstimatedRemainingTime => ProgressValue == 0 ? TimeSpan.Zero : TimeSpan.FromSeconds((ElapsedTime.TotalSeconds / ProgressValue) * (1 - ProgressValue));
+    public TimeSpan EstimatedRemainingTime => ProgressValue == 0 ? TimeSpan.Zero : TimeSpan.FromSeconds((ElapsedTime.TotalSeconds / ProgressValue) * (100 - ProgressValue));
 
     /// <summary>
     /// Updates main progress bar message and value. Runs code on UI thread because UI elements is bound to these properties.

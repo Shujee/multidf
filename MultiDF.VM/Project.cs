@@ -323,7 +323,7 @@ namespace MultiDF.VM
                 ViewModelLocator.Main.UpdateProgress(false, "Extracting paragraphs from merged document", 0);
                 var WPs = ViewModelLocator.WordService.GetDocumentParagraphs(TempDocxPath, token, UpdateQAsProgressHandler, false);
 
-                ViewModelLocator.Main.UpdateProgress(false, "Marking delimiters", 0);
+               ViewModelLocator.Main.UpdateProgress(false, "Marking delimiters", 0);
                 var DelimiterParas = ViewModelLocator.QAExtractionStrategy.ExtractDelimiterParagraphs(WPs, token, true);
                 ViewModelLocator.Main.UpdateProgress(false, null, 1);
 
@@ -434,8 +434,12 @@ namespace MultiDF.VM
     private void UpdateQAsProgressHandler(int i, int Total)
     {
       ViewModelLocator.Main.UpdateProgress(true, null, ((float)i / Total));
-      ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.ElapsedTime));
-      ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.EstimatedRemainingTime));
+
+      GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+      {
+        ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.ElapsedTime));
+        ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.EstimatedRemainingTime));
+      });
     }
 
     private RelayCommand _AddDocsCommand;
@@ -655,7 +659,7 @@ namespace MultiDF.VM
         {
           _ProcessCommand = new RelayCommand(() =>
           {
-            if(graph.Vertices.Any(v => !v.IsSyncWithSource))
+            if (graph.Vertices.Any(v => !v.IsSyncWithSource))
             {
               if (!ViewModelLocator.DialogService.AskBooleanQuestion("One or more documents in this project are not synchronized with their source files. These documents will not be analyzed. Do you want to continue?"))
                 return;
@@ -670,10 +674,9 @@ namespace MultiDF.VM
 
             ViewModelLocator.Main.UpdateProgress(true, "Comparing QAs", 0);
 
-            List<Task> Tasks = new List<Task>();
             foreach (var V1 in graph.Vertices)
             {
-              if(V1.IsSyncWithSource)
+              if (V1.IsSyncWithSource)
               {
                 foreach (var V2 in graph.Vertices)
                 {
@@ -685,14 +688,15 @@ namespace MultiDF.VM
 
                       if (graph.AddEdge(Edge))
                       {
-                        var Task = ViewModelLocator.DocComparer.Compare(V1, V2, ViewModelLocator.QAComparer, true, token);
-                        Task.ContinueWith((t1) =>
-                        {
-                          Edge.Tag = t1.Result;
+                          var t = ViewModelLocator.DocComparer.Compare(V1, V2, ViewModelLocator.QAComparer, true, token);
+                          Edge.Tag = t;
                           IsDirty = true;
-                        });
 
-                        Tasks.Add(Task);
+                          GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                          {
+                            ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.ElapsedTime));
+                            ViewModelLocator.Main.RaisePropertyChanged(nameof(MainVM.EstimatedRemainingTime));
+                          });
                       }
                     }
                   }
@@ -700,23 +704,21 @@ namespace MultiDF.VM
               }
             }
 
-            Task.WhenAll(Tasks.ToArray()).ContinueWith(t =>
-            {
-#if(DEBUG)
-              if (UnitTestDetector.IsInUnitTest)
-                IsProcessing = false;
-              else
-                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() => IsProcessing = false);
+#if (DEBUG)
+            if (UnitTestDetector.IsInUnitTest)
+              IsProcessing = false;
+            else
+              GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() => IsProcessing = false);
 #else
               GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() => IsProcessing = false);
 #endif
 
-              ViewModelLocator.Main.UpdateProgress(false, "Analysis completed", 1);
+            ViewModelLocator.Main.UpdateProgress(false, "Analysis completed", 1);
 
-              RaisePropertyChanged(nameof(Graph));
-              ApplyDiffThresholdCommand.Execute(null);
-            });
+            RaisePropertyChanged(nameof(Graph));
+            ApplyDiffThresholdCommand.Execute(null);
           },
+
           () => !_IsProcessing && !_IsExtractingQA);
         }
 

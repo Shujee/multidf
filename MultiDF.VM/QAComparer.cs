@@ -14,16 +14,9 @@ namespace MultiDF.VM
 
     public double Distance(QA q1, QA q2, bool ignoreCase)
     {
-      Func<string, string, int> DistFunc;
+      var QDist = (Fastenshtein.Levenshtein.Distance(q1.QuestionUpper, q2.QuestionUpper) / (float)Math.Max(q1.QuestionUpper.Length, q2.QuestionUpper.Length));
 
-      if (ignoreCase)
-        DistFunc = Levenshtein.CalcLevenshteinDistanceIgnoreCase;
-      else
-        DistFunc = Levenshtein.CalcLevenshteinDistance;
-
-      var QDist = (DistFunc(q1.Question, q2.Question) / (float)Math.Max(q1.Question.Length, q2.Question.Length));
-
-      var ChoicesDist = CalcSetDistance(q1.Choices, q2.Choices, DistFunc);
+      var ChoicesDist = CalcSetDistance(q1.ChoicesUpper, q2.ChoicesUpper, Fastenshtein.Levenshtein.Distance);
 
       return QDist * (1 - ChoiceSectionWeightage) + ChoicesDist * ChoiceSectionWeightage;
     }

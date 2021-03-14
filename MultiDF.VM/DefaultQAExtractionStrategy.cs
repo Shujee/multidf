@@ -178,6 +178,7 @@ namespace MultiDF.VM
               {
                 state = QAExtractionState.Choices;
                 QA.Choices.Add(paragraphs[i].Text);
+                QA.ChoicesUpper.Add(paragraphs[i].Text.ToUpperInvariant());
               }
               else if (NormalizedText.Contains("answer area:"))
               {
@@ -197,6 +198,7 @@ namespace MultiDF.VM
               if (paragraphs[i].Type == ParagraphType.NumberedList || paragraphs[i].Type == ParagraphType.TableRow)
               {
                 QA.Choices.Add(paragraphs[i].Text);
+                QA.ChoicesUpper.Add(paragraphs[i].Text.ToUpperInvariant());
               }
               else
               {

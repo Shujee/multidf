@@ -64,16 +64,24 @@ namespace HFQOApp
     {
       try
       {
-        //scroll to the position of QA
-        var PH = DV.PageViews[0].DocumentPage.Size.Height;
-        var VH = DV.PageViews[0].ActualHeight;
+        if (qa.StartPage <= 0)
+        {
+          ViewModelLocator.DialogService.ShowMessage($"Cannot locate this QA because StartPage value for this QA is invalid. QA.StartPage = {qa.StartPage}", false);
+        }
+        else
+        {
+          //scroll to the position of QA
+          var PH = DV.PageViews[0].DocumentPage.Size.Height;
+          var VH = DV.PageViews[0].ActualHeight;
 
-        var XPSPageHeight = DV.PageViews[0].ActualHeight + DV.VerticalPageSpacing + 2;
-        var R = (qa.StartY / PH - 0.1) * VH;
+          var XPSPageHeight = DV.PageViews[0].ActualHeight + DV.VerticalPageSpacing + 2;
+          var R = (qa.StartY / PH - 0.1) * VH;
 
-        if (R < 0) R = 0;
+          if (R < 0) R = 0;
 
-        DV.VerticalOffset = (qa.StartPage - 1) * XPSPageHeight + R;
+
+          DV.VerticalOffset = (qa.StartPage - 1) * XPSPageHeight + R;
+        }
       }
       catch (Exception ee)
       {
@@ -139,7 +147,7 @@ namespace HFQOApp
     {
       ViewModelLocatorBase.DialogService.OpenAboutWindow();
 
-      
+
     }
 
     private void DeleteXPSFile(string xpsPath)

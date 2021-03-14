@@ -24,7 +24,7 @@ namespace Common
       var objLI = obj as LI;
 
       return objLI.app.Trim() == this.app.Trim() &&
-            objLI.email.Trim() == this.email.Trim() &&
+            objLI.email.Trim().ToLower() == this.email.Trim().ToLower() &&
             objLI.code.Trim() == this.code.Trim();
     }
 

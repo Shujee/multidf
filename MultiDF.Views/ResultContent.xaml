@@ -97,7 +97,7 @@
 
       <TextBlock Text="Difference Threshold:" Grid.Column="1" VerticalAlignment="Center" Margin="3,0" />
       <Slider VerticalAlignment="Center" Width="150" Margin="0,6" 
-              Minimum="0.0" Maximum="1.0" SmallChange="0.1" LargeChange="0.1" TickFrequency="0.1" IsSnapToTickEnabled="True"
+              Minimum="0.0" Maximum="0.5" SmallChange="0.05" LargeChange="0.1" TickFrequency="0.05" IsSnapToTickEnabled="True"
               Value="{Binding SelectedProject.Graph.DiffThreshold}" Style="{StaticResource FancySliderStyle}" Focusable="False" />
 
       <Button fa:Awesome.Content="Filter" FontSize="24" Style="{StaticResource ImageButtonStyle}" Focusable="False" Background="{x:Null}" BorderBrush="{x:Null}"

@@ -18,7 +18,7 @@ namespace MultiDF.VM
   
   public interface IDocComparer
   {
-    Task<DFResult> Compare(XMLDoc d1, XMLDoc d2, IQAComparer qaComparer, bool ignoreCase, CancellationToken token);
+    DFResult Compare(XMLDoc d1, XMLDoc d2, IQAComparer qaComparer, bool ignoreCase, CancellationToken token);
 
     event Action<XMLDoc, XMLDoc> DocCompareStarted;
     event QAComparedDelegate QACompared;

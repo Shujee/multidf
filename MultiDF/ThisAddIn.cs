@@ -59,7 +59,7 @@ namespace MultiDF
       {
         //Remove all our TaskPanes before quitting.
         RemoveOrphanedTaskPanes();
-        if (IsPaneVisible && this.Application.ShowWindowsInTaskbar)
+        if (!IsPaneVisible && this.Application.ShowWindowsInTaskbar)
           AddTaskPane(Doc);
       }
       catch (Exception ee)

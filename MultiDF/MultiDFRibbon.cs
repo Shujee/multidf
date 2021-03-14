@@ -150,6 +150,20 @@ namespace MultiDF
         //Now attach new Project's event listener
         if (ViewModelLocator.Main.SelectedProject != null)
         {
+          btnSaveProject.Enabled = _SelectedProject.SaveCommand.CanExecute(null);
+          btnExport.Enabled = _SelectedProject.ExportCommand.CanExecute(null);
+          btnAddSourceDoc.Enabled = _SelectedProject.AddDocsCommand.CanExecute(null);
+          btnRemoveSourceDoc.Enabled = _SelectedProject.RemoveSelectedDocCommand.CanExecute(null);
+          btnUpdateQAs.Enabled = _SelectedProject.UpdateQAsCommand.CanExecute(null);
+          btnCheckSyncWithSource.Enabled = _SelectedProject.CheckSyncWithSourceCommand.CanExecute(null);
+          btnProcess.Enabled = _SelectedProject.ProcessCommand.CanExecute(null);
+          btnStopProcess.Enabled = _SelectedProject.AbortProcessCommand.CanExecute(null);
+          btnOpenResultsWindow.Enabled = _SelectedProject.OpenResultsWindowCommand.CanExecute(null);
+          btnExportResults.Enabled = _SelectedProject.ExportResultsCommand.CanExecute(null);
+          btnMergeAsDOCX.Enabled = _SelectedProject.MergeAsDOCXCommand.CanExecute(null);
+          btnMergeAsPDF.Enabled = _SelectedProject.MergeAsPDFCommand.CanExecute(null);
+          btnUpload.Enabled = _SelectedProject.UploadExamCommand.CanExecute(null);
+
           _SelectedProject.SaveCommand.CanExecuteChanged += (sender2, e2) => btnSaveProject.Enabled = _SelectedProject.SaveCommand.CanExecute(null);
           _SelectedProject.ExportCommand.CanExecuteChanged += (sender2, e2) => btnExport.Enabled = _SelectedProject.ExportCommand.CanExecute(null);
           _SelectedProject.AddDocsCommand.CanExecuteChanged += (sender2, e2) => btnAddSourceDoc.Enabled = _SelectedProject.AddDocsCommand.CanExecute(null);

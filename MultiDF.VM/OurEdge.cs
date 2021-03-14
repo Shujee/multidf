@@ -95,7 +95,8 @@ namespace MultiDF.VM
       {
         foreach (var Res in value)
         {
-          this.AddEdge(new OurEdge(Res.Doc1, Res.Doc2, Res));
+          if(Res != null)
+            this.AddEdge(new OurEdge(Res.Doc1, Res.Doc2, Res));
         }
       }
     }

@@ -64,7 +64,6 @@ namespace MultiDF.Test
       UndirectedGraph<XMLDoc, OurEdge> graph = new UndirectedGraph<XMLDoc, OurEdge>();
       graph.AddVertexRange(P.AllXMLDocs);
 
-      List<Task> Tasks = new List<Task>();
       foreach (var V1 in graph.Vertices)
       {
         foreach (var V2 in graph.Vertices)
@@ -76,19 +75,13 @@ namespace MultiDF.Test
             if (graph.AddEdge(Edge))
             {
               var Task = ViewModelLocator.DocComparer.Compare(V1, V2, QAComparer, true, token);
-              Task.ContinueWith(t =>
-              {
-                Edge.Tag = t.Result;
-                System.Diagnostics.Debug.WriteLine($"{V1.Name} ({V1.QAs.Count}) - {V2.Name} ({V2.QAs.Count}): Result = {t.Result.Items.Count}");
-              });
-
-              Tasks.Add(Task);
+              
+                Edge.Tag = Task;
+                System.Diagnostics.Debug.WriteLine($"{V1.Name} ({V1.QAs.Count}) - {V2.Name} ({V2.QAs.Count}): Result = {Task.Items.Count}");
             }
           }
         }
       }
-
-      Task.WhenAll(Tasks.ToArray()).Wait();
     }
   }
 }

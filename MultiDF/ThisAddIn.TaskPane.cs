@@ -171,7 +171,7 @@ namespace MultiDF
     {
       try
       {
-        if (IsPaneVisible && this.Application.ShowWindowsInTaskbar && !this.CustomTaskPanes.Any(cp => WordHelper.GetWindowSafe(cp) == Doc.ActiveWindow))
+        if (!IsPaneVisible && this.Application.ShowWindowsInTaskbar && !this.CustomTaskPanes.Any(cp => WordHelper.GetWindowSafe(cp) == Doc.ActiveWindow))
           AddTaskPane(Doc);
       }
       catch (System.Exception ee)

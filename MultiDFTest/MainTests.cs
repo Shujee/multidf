@@ -224,17 +224,12 @@ namespace MultiDF.Test
       var QAComparer = new VM.DefaultQAComparer();
       var ResultTask = Comparer.Compare(Doc1, Doc2, QAComparer, true, token);
 
-      ResultTask.ContinueWith(t =>
-      {
-        System.Diagnostics.Debug.WriteLine($"FINAL RESULT COUNT: {t.Result.Items.Count}");
-        Assert.IsTrue(t.IsCanceled);
-      });
+      System.Diagnostics.Debug.WriteLine($"FINAL RESULT COUNT: {ResultTask.Items.Count}");
+      Assert.IsNotNull(ResultTask);
 
       Task.Delay(5000).Wait();
 
       _TokenSource.Cancel();
-
-      ResultTask.Wait(10000);
 
 
 
@@ -252,7 +247,6 @@ namespace MultiDF.Test
         UndirectedGraph<XMLDoc, OurEdge> graph = new UndirectedGraph<XMLDoc, OurEdge>();
         graph.AddVertexRange(P.AllXMLDocs);
 
-        List<Task> Tasks = new List<Task>();
         foreach (var V1 in graph.Vertices)
         {
           foreach (var V2 in graph.Vertices)
@@ -264,19 +258,13 @@ namespace MultiDF.Test
               if (graph.AddEdge(Edge))
               {
                 var Task = VM.ViewModelLocator.DocComparer.Compare(V1, V2, QAComparer, true, token);
-                Task.ContinueWith(t =>
-                  {
-                    Edge.Tag = t.Result;
-                    System.Diagnostics.Debug.WriteLine($"{V1.Name} ({V1.QAs.Count}) - {V2.Name} ({V2.QAs.Count}): Result = {t.Result.Items.Count}");
-                  });
+                Edge.Tag = Task;
+                System.Diagnostics.Debug.WriteLine($"{V1.Name} ({V1.QAs.Count}) - {V2.Name} ({V2.QAs.Count}): Result = {Task.Items.Count}");
 
-                Tasks.Add(Task);
               }
             }
           }
         }
-
-        Task.WaitAll(Tasks.ToArray());
       }
     }
 
@@ -294,7 +282,7 @@ namespace MultiDF.Test
         while (p.AllXMLDocs.Any(d => d.QAs == null))
           System.Threading.Thread.Sleep(300);
 
-        p.ProcessCommand.Execute(null);
+        p.ProcessCommand.ExecuteAsync().Wait();
 
         while (p.IsProcessing)
           System.Threading.Thread.Sleep(300);

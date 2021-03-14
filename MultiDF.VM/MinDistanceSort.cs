@@ -11,7 +11,7 @@ namespace MultiDF.VM
     /// </summary>
     /// <param name="a"></param>
     /// <param name="b"></param>
-    public static void Sort(List<string> inputa, List<string> inputb, Func<string, string, int> DistFunc)
+    public static void Sort(List<string> inputa, List<string> inputb, bool ignoreCase, Func<string, string, int> DistFunc)
     {
       if (inputa == null || inputb == null || inputa.Count == 0 || inputb.Count == 0)
         return;

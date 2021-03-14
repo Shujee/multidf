@@ -39,14 +39,13 @@ namespace MultiDF.VM
 
     public override bool Equals(object obj)
     {
-      if (obj == null || typeof(DFResultRow) != obj.GetType())
-        return false;
-      else
-      {
-        var Other = (DFResultRow)obj;
-        return (Q1.Equals(Other.Q1) && Q2.Equals(Other.Q2)) ||
-               (Q2.Equals(Other.Q1) && Q1.Equals(Other.Q2));
-      }
+      return 
+          obj != null &&
+          obj is DFResultRow other &&
+          (
+            (Q1.Equals(other.Q1) && Q2.Equals(other.Q2)) ||
+            (Q2.Equals(other.Q1) && Q1.Equals(other.Q2))
+          );
     }
 
     public override int GetHashCode()

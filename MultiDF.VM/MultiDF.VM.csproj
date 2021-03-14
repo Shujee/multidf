@@ -105,6 +105,9 @@
     <Reference Include="DiffPlex, Version=1.4.4.0, Culture=neutral, PublicKeyToken=1d35e91d1bd7bc0f, processorArchitecture=MSIL">
       <HintPath>..\packages\DiffPlex.1.4.4\lib\net40\DiffPlex.dll</HintPath>
     </Reference>
+    <Reference Include="Fastenshtein, Version=1.0.0.7, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Fastenshtein.1.0.0.7\lib\net452\Fastenshtein.dll</HintPath>
+    </Reference>
     <Reference Include="GalaSoft.MvvmLight, Version=5.4.1.0, Culture=neutral, PublicKeyToken=0ffbc31322e9d308, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibsStd10.5.4.1.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
@@ -227,7 +230,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Reactor_Enabled="1" Reactor_Commands="-q" Reactor_Project="F:\ACTIVE\MultiDF\MultiDF.VM\MultiDF.VM.nrproj" Reactor_Configuration="Release" Reactor_Output="" Reactor_Deploy="0" />
+      <UserProperties Reactor_Deploy="0" Reactor_Output="" Reactor_Configuration="Release" Reactor_Project="F:\ACTIVE\MultiDF\MultiDF.VM\MultiDF.VM.nrproj" Reactor_Commands="-q" Reactor_Enabled="1" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

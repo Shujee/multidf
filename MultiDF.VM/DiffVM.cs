@@ -47,7 +47,7 @@ namespace MultiDF.VM
             var Acopy = new List<string>(args.a1);
             var Bcopy = new List<string>(args.a2);
 
-            MinDistanceSort.Sort(Acopy, Bcopy, Levenshtein.CalcLevenshteinDistanceIgnoreCase);
+            MinDistanceSort.Sort(Acopy, Bcopy, true, Fastenshtein.Levenshtein.Distance);
             
             var Result2 = diff2.BuildDiffModel(string.Join(Environment.NewLine, Acopy), string.Join(Environment.NewLine, Bcopy), false);
 
