@@ -30,9 +30,11 @@ namespace HFQOApp
     {
       InitializeComponent();
 
+      ViewModelLocator.Logger.Info("Staring HFQApp");
+
       (ViewModelLocator.DialogService as HFQOViews.DialogPresenter).Owner = this;
 
-      this.Title = $"HFQApp (ver: { System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()})";
+      this.Title = $"HFQApp (ver: { System.Reflection.Assembly.GetExecutingAssembly().GetName().Version})";
 
       DV.FitToWidth();
 
@@ -146,8 +148,6 @@ namespace HFQOApp
     private void AboutButton_Click(object sender, RoutedEventArgs e)
     {
       ViewModelLocatorBase.DialogService.OpenAboutWindow();
-
-
     }
 
     private void DeleteXPSFile(string xpsPath)
@@ -163,10 +163,10 @@ namespace HFQOApp
 
       //if you don't remove the package from the PackageStore, you won't be able to
       //re-open the same file again later (due to System.IO.Packaging's Package store/caching
-      //rather than because of any file locks)
+      //and not because of any file locks)
       PackageStore.RemovePackage(XPSuri);
 
-      System.IO.File.Delete(xpsPath);
+      System.IO.File.Delete(xpsPath);      
     }
 
     private void FitWidthButton_Click(object sender, RoutedEventArgs e)

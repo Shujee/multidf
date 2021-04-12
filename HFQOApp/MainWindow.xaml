@@ -181,9 +181,9 @@
         </StackPanel>
       </Button>
 
-      <Button Click="AboutButton_Click" Style="{StaticResource ToolbarButton}">
+      <Button Style="{StaticResource ToolbarButton}" Command="{Binding OpenLogFileCommand}">
         <StackPanel>
-          <fa:FontAwesome Icon="InfoCircle" FontSize="24">
+          <fa:FontAwesome Icon="FileText" FontSize="24">
             <fa:FontAwesome.Style>
               <Style TargetType="fa:FontAwesome">
                 <Style.Triggers>
@@ -194,10 +194,26 @@
               </Style>
             </fa:FontAwesome.Style>
           </fa:FontAwesome>
+          <TextBlock Text="Error Log" HorizontalAlignment="Center" Margin="0,6,0,0" />
+        </StackPanel>
+      </Button>
+      <Button Click="AboutButton_Click" Style="{StaticResource ToolbarButton}" Margin="0,-2.5">
+        <StackPanel>
+          <fa:FontAwesome Icon="InfoCircle" FontSize="24">
+            <fa:FontAwesome.Style>
+              <Style TargetType="{x:Type fa:FontAwesome}">
+                <Style.Triggers>
+                  <Trigger Property="IsEnabled" Value="True">
+                    <Setter Property="TextElement.Foreground" Value="Black"/>
+                  </Trigger>
+                </Style.Triggers>
+              </Style>
+            </fa:FontAwesome.Style>
+          </fa:FontAwesome>
           <TextBlock Text="About" HorizontalAlignment="Center" Margin="0,6,0,0" />
         </StackPanel>
       </Button>
-    
+
     </ToolBar>
 
     <view:HFQPane Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" Margin="0,0,5,0 " QASelected="HFQPane_QASelected" />

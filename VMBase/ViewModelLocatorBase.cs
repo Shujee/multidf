@@ -71,7 +71,7 @@ namespace VMBase
     public static AboutVM About => SimpleIoc.Default.GetInstance<AboutVM>();
 
     /// <summary>
-    /// This is the global logger object that can be used to write debugging information to addin's log file. The log file is named "ghwordaddin.log" and is
+    /// This is the global logger object that can be used to write debugging information to addin's log file. The log file is named "activity.log" and is
     /// located in add-in's installation folder. For ClickOnce installation, this folder is in %appdata%.
     /// </summary>
     public static Logger Logger => LogManager.GetLogger("MultiDFLogger");

@@ -282,7 +282,7 @@ namespace MultiDF.Test
         while (p.AllXMLDocs.Any(d => d.QAs == null))
           System.Threading.Thread.Sleep(300);
 
-        p.ProcessCommand.ExecuteAsync().Wait();
+        p.ProcessCommand.Execute(null);
 
         while (p.IsProcessing)
           System.Threading.Thread.Sleep(300);
