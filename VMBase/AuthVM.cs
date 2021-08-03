@@ -146,7 +146,7 @@ namespace VMBase
               });
             });
           },
-          () => _IsLoggedIn
+          () => IsLoggedIn
           );
         }
 

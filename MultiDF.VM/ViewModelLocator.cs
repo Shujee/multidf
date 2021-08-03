@@ -21,7 +21,7 @@ namespace MultiDF.VM
         if (!System.IO.Directory.Exists(LogDir))
           System.IO.Directory.CreateDirectory(LogDir);
 
-        InitLogger("${specialfolder:folder=ApplicationData}/MultiDF/activity.log");
+        InitLogger("${specialfolder:folder=ApplicationData}/MultiDF/");
       }
 
       App = "MultiDF";

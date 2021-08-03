@@ -213,43 +213,56 @@ namespace HFQOVM
           while (_QueuedSnapshots.Count > 0)
           {
             var snap = _QueuedSnapshots.First();
-            _QueuedSnapshots.Remove(snap.Key);
+            var ImageFileName = snap.Key;
 
-            ViewModelLocator.Logger.Info($"Uploading snapshot {snap.Key}");
-            ViewModelLocator.DataService.UploadSnapshot(_DownloadId.Value, snap.Value.ToUniversalTime(), snap.Key).ContinueWith(t =>
+            _QueuedSnapshots.Remove(ImageFileName);
+
+            if (System.IO.File.Exists(ImageFileName))
             {
-              if (t.IsCompleted && !t.IsFaulted)
+              ViewModelLocator.Logger.Info($"Uploading snapshot {ImageFileName}");
+              ViewModelLocator.DataService.UploadSnapshot(_DownloadId.Value, snap.Value.ToUniversalTime(), ImageFileName).ContinueWith(t =>
               {
-                if (t.Result)
+                if (t.IsCompleted && !t.IsFaulted)
                 {
-                  try
+                  if (t.Result)
                   {
-                    ViewModelLocator.Logger.Info("Upload success. Deleting local snapshot file.");
+                    try
+                    {
+                      ViewModelLocator.Logger.Info("Upload success. Deleting local snapshot file.");
 
-                    //and remove the image file from the disk
-                    File.Delete(snap.Key);
+                      //and remove the image file from the disk
+                      File.Delete(ImageFileName);
 
-                    WriteToCache();
-                  }
-                  catch (Exception ee)
-                  {
-                    ViewModelLocator.Logger.Warn(ee, "Could not delete snapshot from local cache.");
+                      WriteToCache();
+                    }
+                    catch (Exception ee)
+                    {
+                      ViewModelLocator.Logger.Warn(ee, "Could not delete snapshot from local cache.");
+                    }
                   }
                 }
-              }
-              else
-              {
-                if (t.Exception == null)
-                  ViewModelLocator.Logger.Error($"Snapshot upload failed. Download Id: {_DownloadId}, Image File: {snap.Key}");
                 else
-                  ViewModelLocator.Logger.Error(t.Exception, $"Snapshot upload failed. Download Id: {_DownloadId}, Image File: {snap.Key}");
+                {
+                  if (t.Exception == null)
+                    ViewModelLocator.Logger.Error($"Snapshot upload failed. Download Id: {_DownloadId}, Image File: {ImageFileName}");
+                  else
+                  {
+                    ViewModelLocator.Logger.Error(t.Exception, $"Snapshot upload failed. Download Id: {_DownloadId}, Image File: {ImageFileName}");
+                  }
 
-                //if a snapshot fails, add it back to the queue.
-                FailedToUploadSnapshots.Add(snap.Key, snap.Value);
+                  //if a snapshot fails, add it back to the queue.
+                  FailedToUploadSnapshots.Add(ImageFileName, snap.Value);
 
-                WriteToCache();
-              }
-            }).Wait();
+                  WriteToCache();
+                }
+              }).Wait();
+            }
+            else
+            {
+              //Image file no longer exists on the disk. We'll ignore it and proceed to update our local cache. This will remove the image file entry from cache.
+              ViewModelLocator.Logger.Error($"Snapshot file does not exist on disk. Download Id: {_DownloadId}, Image File: {ImageFileName}");
+              WriteToCache();
+            }
           }
         }
 
@@ -265,8 +278,6 @@ namespace HFQOVM
 
           foreach (var failed in FailedToUploadSnapshots)
             _QueuedSnapshots.Add(failed.Key, failed.Value);
-
-          ViewModelLocator.DialogService.ShowMessage("Some snapshots could not be uploaded. HFQApp will try to upload them again shortly. See your HFQ log file for details.", true);
         }
       }
     }
@@ -473,7 +484,7 @@ namespace HFQOVM
 
                         ViewModelLocator.Auth.IsCommunicating = true;
 
-                        ViewModelLocator.Logger.Error($"Downloading Exam for Access ID: '{_SelectedAccess.access_id}");
+                        ViewModelLocator.Logger.Info($"Downloading Exam for Access ID: '{_SelectedAccess.access_id}");
 
                         MasterFile MF = null;
 
@@ -573,7 +584,7 @@ namespace HFQOVM
           {
             Process.Start(new ProcessStartInfo()
             {
-              FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"HFQApp\activity.log"),
+              FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"HFQApp\"),
               UseShellExecute = true
             });
           },

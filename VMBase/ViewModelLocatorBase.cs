@@ -76,7 +76,7 @@ namespace VMBase
     /// </summary>
     public static Logger Logger => LogManager.GetLogger("MultiDFLogger");
 
-    protected static void InitLogger(string logPath)
+    protected static void InitLogger(string logFolder)
     {
       // Step 1. Create configuration object 
       var config = new LoggingConfiguration();
@@ -84,8 +84,8 @@ namespace VMBase
       // Step 2. Create target log file
       var fileTarget = new FileTarget("MultiDFLogger")
       {
-        FileName = logPath,
-        Layout = "${longdate} ${level} ${message}  ${exception}"
+        FileName = logFolder + "${shortdate}.log",
+        Layout = "${longdate} ${level} ${message}  ${exception}"      
       };
       config.AddTarget(fileTarget);
 

@@ -96,22 +96,31 @@ namespace MultiDF.Views
       SearchBox.Text = "";
 
       //Refresh filtering
-      QAs.Refresh();
+      if (QAs != null)
+        QAs.Refresh();
     }
 
     private void SearchBox_KeyDown(object sender, KeyEventArgs e)
     {
       if (e.Key == Key.Enter)
       {
-        //Refresh filtering
-        QAs.Refresh();
+        if (QAs != null)
+        {
+          //Refresh filtering
+          QAs.Refresh();
+        }
+        else
+          ViewModelLocator.DialogService.ShowMessage("List of QAs is empty. There is nothing to search.", false);
       }
     }
 
     private void SearchButton_Click(object sender, RoutedEventArgs e)
     {
       //Refresh filtering
-      QAs.Refresh();
+      if (QAs != null)
+        QAs.Refresh();
+      else
+        ViewModelLocator.DialogService.ShowMessage("List of QAs is empty. There is nothing to search.", false);
     }
 
     private void CollectionViewSource_Filter(object sender, System.Windows.Data.FilterEventArgs e)

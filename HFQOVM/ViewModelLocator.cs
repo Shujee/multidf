@@ -19,7 +19,7 @@ namespace HFQOVM
         if (!System.IO.Directory.Exists(LogDir))
           System.IO.Directory.CreateDirectory(LogDir);
 
-        InitLogger("${specialfolder:folder=ApplicationData}/HFQApp/activity.log");
+        InitLogger("${specialfolder:folder=ApplicationData}/HFQApp/");
       }
 
       App = "HFQApp";
