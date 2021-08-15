@@ -1,7 +1,9 @@
-﻿namespace HFQOVM
+﻿using System.Threading.Tasks;
+
+namespace HFQOVM
 {
   public interface IDialogService : Common.IDialogService
   {
-    bool ShowExamsListDialog();
+    Task<Common.AccessibleMasterFile> ShowExamsListDialog();
   }
 }

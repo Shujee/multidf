@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using System.Windows;
 
 namespace HFQOViews
 {
@@ -9,12 +10,16 @@ namespace HFQOViews
 
     }
 
-    public bool ShowExamsListDialog()
+    public async Task<Common.AccessibleMasterFile> ShowExamsListDialog()
     {
-      var w = new ExamsListDialog();
+      var w = await ExamsListDialog.CreateAsync();
       MakeChild(w); //Show this dialog as child of Microsoft Word window.
       var Result = w.ShowDialog().Value;
-      return Result;
+
+      if (Result)
+        return w.SelectedAccess;
+      else
+        return null;
     }
   }
 }

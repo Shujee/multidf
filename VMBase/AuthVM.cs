@@ -75,16 +75,16 @@ namespace VMBase
       }
     }
 
-    private RelayCommand _LoginCommand;
-    public RelayCommand LoginCommand
+    private AsyncCommand _LoginCommand;
+    public AsyncCommand LoginCommand
     {
       get
       {
         if (_LoginCommand == null)
         {
-          _LoginCommand = new RelayCommand(() =>
+          _LoginCommand = new AsyncCommand(async () =>
           {
-            //Remember Me setting is not saved in AppSettings. We toggle it ON if e-mail or password setting is not blank.
+            //RememberMe setting is not saved in AppSettings. We toggle it ON if e-mail or password setting is not blank.
             if (!string.IsNullOrEmpty(Email) || !string.IsNullOrEmpty(Password))
               RememberMe = true;
 
@@ -92,7 +92,7 @@ namespace VMBase
             {
               IsCommunicating = true;
 
-              ViewModelLocatorBase.DataService.Login(_Email, _Password).ContinueWith(t =>
+              await ViewModelLocatorBase.DataService.Login(_Email, _Password).ContinueWith(t =>
               {
                 GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {

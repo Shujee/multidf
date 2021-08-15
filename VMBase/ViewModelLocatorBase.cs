@@ -42,11 +42,11 @@ namespace VMBase
       }
 
       SimpleIoc.Default.Unregister<AuthVM>();
-      SimpleIoc.Default.Unregister<RegisterVM>();
+      SimpleIoc.Default.Unregister<IRegistrationService>();
       SimpleIoc.Default.Unregister<AboutVM>();
 
       SimpleIoc.Default.Register<AuthVM>();
-      SimpleIoc.Default.Register<RegisterVM>();
+      SimpleIoc.Default.Register<IRegistrationService, RegisterVM>();
       SimpleIoc.Default.Register<AboutVM>();
     }
 
@@ -67,34 +67,13 @@ namespace VMBase
     public static IDialogService DialogService => SimpleIoc.Default.GetInstance<IDialogService>();
 
     public static AuthVM Auth => SimpleIoc.Default.GetInstance<AuthVM>();
-    public static RegisterVM Register => SimpleIoc.Default.GetInstance<RegisterVM>();
+    public static IRegistrationService Register => SimpleIoc.Default.GetInstance<IRegistrationService>();
     public static AboutVM About => SimpleIoc.Default.GetInstance<AboutVM>();
 
     /// <summary>
-    /// This is the global logger object that can be used to write debugging information to addin's log file. The log file is named "activity.log" and is
-    /// located in add-in's installation folder. For ClickOnce installation, this folder is in %appdata%.
+    /// This is the global logger object that can be used to write debugging information to addin's log file. Both MultiDF and HFQApp implement
+    /// their own version of logger and register it through IoC.
     /// </summary>
-    public static Logger Logger => LogManager.GetLogger("MultiDFLogger");
-
-    protected static void InitLogger(string logFolder)
-    {
-      // Step 1. Create configuration object 
-      var config = new LoggingConfiguration();
-
-      // Step 2. Create target log file
-      var fileTarget = new FileTarget("MultiDFLogger")
-      {
-        FileName = logFolder + "${shortdate}.log",
-        Layout = "${longdate} ${level} ${message}  ${exception}"      
-      };
-      config.AddTarget(fileTarget);
-
-
-      // Step 3. Define rules
-      config.AddRuleForAllLevels(fileTarget); // only errors to file
-
-      // Step 4. Activate the configuration
-      LogManager.Configuration = config;
-    }
+    public static ILogger Logger => SimpleIoc.Default.GetInstance<ILogger>();
   }
 }

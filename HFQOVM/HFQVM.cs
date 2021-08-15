@@ -26,6 +26,7 @@ namespace HFQOVM
       public Dictionary<string, DateTime> QueuedSnapshots { get; set; }
       public int? DownloadId { get; set; }
       public string ExamName { get; set; }
+      public AccessibleMasterFile SelectedAccess { get; set; }
     }
 
     public event Action<HFQResultRowVM> NewResultRowAdded;
@@ -45,6 +46,7 @@ namespace HFQOVM
     private readonly DataContractSerializer HFQSerializer;
     private int? _DownloadId = null;
     private DateTime _NextSnapshotTimestamp = DateTime.Now;
+    private readonly string ResultCacheFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "HFQApp", "result_cache.xml");
 
 #if (DEBUG)
     private const int MIN_SNAPSHOT_TIME = 1; //min. time to wait before taking next camera snapshot
@@ -79,13 +81,17 @@ namespace HFQOVM
       {
         if (e.PropertyName == nameof(ViewModelLocator.Auth.IsLoggedIn))
         {
-          ViewModelLocator.Logger.Info(nameof(ViewModelLocator.Auth.IsLoggedIn) + " changed to " + ViewModelLocator.Auth.IsLoggedIn);
+          ViewModelLocator.Logger.Info($"User '{ViewModelLocator.Auth.User.name}' logged in successfully.");
 
-          OpenExamCommand.RaiseCanExecuteChanged();
+          GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+          {
+            OpenExamCommand.RaiseCanExecuteChanged();
+            UploadResultCommand.RaiseCanExecuteChanged();
+          });
 
           if (ViewModelLocator.Auth.IsLoggedIn)
           {
-            if (File.Exists("result_cache.xml"))
+            if (File.Exists(ResultCacheFilePath))
             {
               ViewModelLocator.Logger.Info("Previous cache file exists. Loading data from cache file.");
 
@@ -96,14 +102,14 @@ namespace HFQOVM
               _DownloadId = Cache.DownloadId;
               ExamName = Cache.ExamName;
               _QueuedSnapshots = Cache.QueuedSnapshots;
+              SelectedAccess = Cache.SelectedAccess;
 
               ViewModelLocator.Logger.Info($"There are {_QueuedSnapshots.Count} snapshots in the uplaod queue.");
 
               RaisePropertyChanged(nameof(Result));
             }
 
-            UpdateProgress(true, "Fetching master files list", 0);
-            RefreshExamsList();
+            UpdateProgress(true, "Ready", 0);
           }
           else
           {
@@ -112,8 +118,8 @@ namespace HFQOVM
             Result.Clear();
             RaisePropertyChanged(nameof(Result));
 
-            if (File.Exists("result_cache.xml"))
-              File.Delete("result_cache.xml");
+            if (File.Exists(ResultCacheFilePath))
+              File.Delete(ResultCacheFilePath);
 
             _DownloadId = null;
             ExamName = "No Exam";
@@ -125,17 +131,21 @@ namespace HFQOVM
             XMLDoc = null;
           }
         }
+        else if (e.PropertyName == nameof(ViewModelLocator.Auth.User))
+        {
+          UploadResultCommand.RaiseCanExecuteChanged();
+        }
       };
     }
 
-    private void _CameraTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    private async void _CameraTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
 #if (!DEBUG)
       if (ViewModelLocator.HardwareHelper.HasMultipleScreens())
       {
         _CameraTimer.Stop();
         _CameraTimer.Elapsed -= _CameraTimer_Elapsed;
-        WriteToCache();
+        AutoSave();
 
         ViewModelLocator.Logger.Error("Multiple monitors or projector detected. Exiting.");
         ViewModelLocator.DialogService.ShowMessage("Multiple monitors or projector detected. The application will close now. Please fix the problem and restart the application to continue from where you left.", true);
@@ -147,11 +157,11 @@ namespace HFQOVM
       //if an exam is currently open and it is time to take next snapshot, we'll take a snapshot every once in a while.
       if (_DownloadId.HasValue && !string.IsNullOrEmpty(this.XPSPath) && DateTime.Now >= _NextSnapshotTimestamp)
       {
-        var SnapshotTask = ViewModelLocator.CameraService.TakeCameraSnapshot();
-
-        SnapshotTask.ContinueWith(t =>
+        try
         {
-          if (t.Result != null)
+         var snapshot = await ViewModelLocator.CameraService.TakeCameraSnapshot();
+
+          if (snapshot != null)
           {
             //Check if it's time for us to take next snapshot
             //Compute a random time for next snapshot (between MIN and MAX const values defined at the top of this class)
@@ -165,40 +175,44 @@ namespace HFQOVM
               string FileName = Timestamp.ToString("yyyyMMddHHmmss") + ".jpg";
               using (var fs = isoStore.CreateFile(FileName))
               {
-                t.Result.Save(fs, System.Drawing.Imaging.ImageFormat.Jpeg);
+                snapshot.Save(fs, System.Drawing.Imaging.ImageFormat.Jpeg);
 
                 var FullFilePath = fs.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(fs).ToString();
                 _QueuedSnapshots.Add(FullFilePath, Timestamp);
 
                 ViewModelLocator.Logger.Info($"Snapshot added to queue. Queue count: {_QueuedSnapshots.Count}");
 
-                WriteToCache();
+                AutoSave();
               }
             }
+
+            if (!_IsUploadingSnapshots && _QueuedSnapshots.Count > 0)
+              await UploadQueuedSnapshots();
           }
           else
           {
-            _CameraTimer.Stop();
-            _CameraTimer.Elapsed -= _CameraTimer_Elapsed;
-            WriteToCache();
-
-            ViewModelLocator.Logger.Error("CameraService.TakeCameraSnapshot() returned null.");
-            if (t.Exception != null)
-              ViewModelLocator.Logger.Error("Error: " + t.Exception.Message);
-
-            ViewModelLocator.DialogService.ShowMessage("Your camera device is not accessible. The application will close now. Make sure your camera is turned on and restart the application to continue from where you left.", true);
-            ViewModelLocator.Logger.Error("Exiting.");
-            ViewModelLocator.ApplicationService.Shutdown();
+            throw new Exception("CameraService.TakeCameraSnapshot() returned null.");
           }
+        }
+        catch (Exception e2)
+        {
+          _CameraTimer.Stop();
+          _CameraTimer.Elapsed -= _CameraTimer_Elapsed;
 
-          if (!_IsUploadingSnapshots && _QueuedSnapshots.Count > 0)
-            UploadQueuedSnapshots();
-        });
+          AutoSave();
+
+          ViewModelLocator.Logger.Error("Camera snapshot exception: " + e2.Message);
+          ViewModelLocator.Logger.Error("Exiting.");
+
+          ViewModelLocator.DialogService.ShowMessage("Your camera device is not accessible. The application will close now. Make sure your camera is turned on and restart the application to continue from where you left.", true);
+          
+          ViewModelLocator.ApplicationService.Shutdown();
+        }
       }
     }
 
     private bool _IsUploadingSnapshots = false;
-    private void UploadQueuedSnapshots()
+    private async Task UploadQueuedSnapshots()
     {
       _IsUploadingSnapshots = true;
 
@@ -217,56 +231,53 @@ namespace HFQOVM
 
             _QueuedSnapshots.Remove(ImageFileName);
 
-            if (System.IO.File.Exists(ImageFileName))
+            if (File.Exists(ImageFileName))
             {
               ViewModelLocator.Logger.Info($"Uploading snapshot {ImageFileName}");
-              ViewModelLocator.DataService.UploadSnapshot(_DownloadId.Value, snap.Value.ToUniversalTime(), ImageFileName).ContinueWith(t =>
+
+              bool result = false;
+              try
               {
-                if (t.IsCompleted && !t.IsFaulted)
+               result = await ViewModelLocator.DataService.UploadSnapshot(_DownloadId.Value, snap.Value.ToUniversalTime(), ImageFileName);
+              }
+              catch (Exception ee)
+              {
+                ViewModelLocator.Logger.Error(ee, $"Snapshot upload failed. Download Id: {_DownloadId}, Image File: {ImageFileName}");
+              }
+
+              if (result)
+              {
+                try
                 {
-                  if (t.Result)
-                  {
-                    try
-                    {
-                      ViewModelLocator.Logger.Info("Upload success. Deleting local snapshot file.");
+                  ViewModelLocator.Logger.Info("Upload success. Deleting local snapshot file.");
 
-                      //and remove the image file from the disk
-                      File.Delete(ImageFileName);
+                  //and remove the image file from the disk
+                  File.Delete(ImageFileName);
 
-                      WriteToCache();
-                    }
-                    catch (Exception ee)
-                    {
-                      ViewModelLocator.Logger.Warn(ee, "Could not delete snapshot from local cache.");
-                    }
-                  }
+                  AutoSave();
                 }
-                else
+                catch (Exception ee)
                 {
-                  if (t.Exception == null)
-                    ViewModelLocator.Logger.Error($"Snapshot upload failed. Download Id: {_DownloadId}, Image File: {ImageFileName}");
-                  else
-                  {
-                    ViewModelLocator.Logger.Error(t.Exception, $"Snapshot upload failed. Download Id: {_DownloadId}, Image File: {ImageFileName}");
-                  }
-
-                  //if a snapshot fails, add it back to the queue.
-                  FailedToUploadSnapshots.Add(ImageFileName, snap.Value);
-
-                  WriteToCache();
+                  ViewModelLocator.Logger.Warn(ee, "Could not delete snapshot from local cache.");
                 }
-              }).Wait();
+              }
+              else
+              {
+                ViewModelLocator.Logger.Error($"Snapshot upload failed. Download Id: {_DownloadId}, Image File: {ImageFileName}");
+
+                //if a snapshot fails, add it to failed uploads list. We'll add failed snapshots back to upload queue below.
+                FailedToUploadSnapshots.Add(ImageFileName, snap.Value);
+                AutoSave();
+              }
             }
             else
             {
               //Image file no longer exists on the disk. We'll ignore it and proceed to update our local cache. This will remove the image file entry from cache.
               ViewModelLocator.Logger.Error($"Snapshot file does not exist on disk. Download Id: {_DownloadId}, Image File: {ImageFileName}");
-              WriteToCache();
+              AutoSave();
             }
           }
         }
-
-        _IsUploadingSnapshots = false;
       }
       finally
       {
@@ -278,13 +289,15 @@ namespace HFQOVM
 
           foreach (var failed in FailedToUploadSnapshots)
             _QueuedSnapshots.Add(failed.Key, failed.Value);
+
+          AutoSave();
         }
       }
     }
 
     private HFQVMCache ReadFromCache()
     {
-      var xml = File.ReadAllText("result_cache.xml");
+      var xml = File.ReadAllText(ResultCacheFilePath);
       using (StringReader s = new StringReader(xml))
       {
         using (var reader = XmlReader.Create(s, new XmlReaderSettings() { CheckCharacters = false }))
@@ -297,16 +310,16 @@ namespace HFQOVM
     /// <summary>
     /// New calls to this function will wait for the previous ones to complete.
     /// </summary>
-    private bool writingToCache = false;
-    private bool WriteToCache()
+    private bool autoSaving = false;
+    private bool AutoSave()
     {
-      if (writingToCache)
+      if (autoSaving)
       {
-        ViewModelLocator.Logger.Info("WriteToCache is already running.");
+        ViewModelLocator.Logger.Info("AutoSave is already running.");
         return false;
       }
 
-      writingToCache = true;
+      autoSaving = true;
 
       var TempResult = new HFQVMCache()
       {
@@ -316,11 +329,12 @@ namespace HFQOVM
         QueuedSnapshots = _QueuedSnapshots,
         DownloadId = _DownloadId,
         ExamName = _ExamName,
+        SelectedAccess = SelectedAccess,
       };
 
       try
       {
-        using (FileStream fs = new FileStream("result_cache.xml", FileMode.Create))
+        using (FileStream fs = new FileStream(ResultCacheFilePath, FileMode.Create))
         {
           using (XmlWriter xmlWriter = XmlWriter.Create(fs, xmlWriterSettingsForWordDocs))
           {
@@ -334,44 +348,24 @@ namespace HFQOVM
       }
       catch (Exception ee)
       {
-        ViewModelLocator.Logger.Error("WriteToCache failed. Error message: " + ee.Message);
+        ViewModelLocator.Logger.Error("AutoSave failed. Error message: " + ee.Message);
         return false;
       }
       finally
       {
-        writingToCache = false;
+        autoSaving = false;
       }
     }
-
-    public void RefreshExamsList()
-    {
-      ViewModelLocator.DataService.GetExamsDL().ContinueWith(t2 =>
-      {
-        if (!t2.IsFaulted)
-        {
-          GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
-          {
-            UpdateProgress(true, "Ready", 0);
-            MyExams = t2.Result;
-            RaisePropertyChanged(nameof(MyExams));
-
-            if (MyExams.Length > 0)
-              SelectedAccess = MyExams[0];
-          });
-        }
-      });
-    }
-
-    /// <summary>
-    /// Important: ID field contains Access Id, not Exam Id.
-    /// </summary>
-    public AccessibleMasterFile[] MyExams { get; private set; }
 
     private AccessibleMasterFile _SelectedAccess;
     public AccessibleMasterFile SelectedAccess
     {
       get => _SelectedAccess;
-      set => Set(ref _SelectedAccess, value);
+      set
+      {
+        Set(ref _SelectedAccess, value);
+        UploadResultCommand.RaiseCanExecuteChanged();
+      }
     }
 
     private string _XPSPath;
@@ -429,14 +423,14 @@ namespace HFQOVM
 
     public bool IsWatching => !string.IsNullOrEmpty(this.XPSPath);
 
-    private RelayCommand _OpenExamCommand;
-    public RelayCommand OpenExamCommand
+    private AsyncCommand _OpenExamCommand;
+    public AsyncCommand OpenExamCommand
     {
       get
       {
         if (_OpenExamCommand == null)
         {
-          _OpenExamCommand = new RelayCommand(() =>
+          _OpenExamCommand = new AsyncCommand(async () =>
           {
             if (Result != null && Result.Count > 0 && Result.Any(r => r.A1 != null || r.A2 != null || r.A3 != null))
             {
@@ -453,118 +447,117 @@ namespace HFQOVM
 
             IsBusy = true;
 
-            ViewModelLocator.DataService.GetExamsDL().ContinueWith(t2 =>
+            try
             {
+              var Exams = await ViewModelLocator.DataService.GetExamsDL();
+
               IsBusy = false;
 
-              if (t2.IsFaulted)
+              ViewModelLocator.Logger.Info($"Opening new exam");
+              ViewModelLocator.Logger.Info($"Showing Exams List dialog");
+
+              var Res = await ViewModelLocator.DialogServiceHFQ.ShowExamsListDialog();
+
+              if (Res != null)
               {
-                ViewModelLocator.DialogService.ShowMessage("Could not fetch exams list from the server. Please try again later. The error message is: " + t2.Exception.Message, true);
+                SelectedAccess = Res;
+
+                try
+                {
+                  IsBusy = true;
+
+                  ViewModelLocator.Auth.IsCommunicating = true;
+
+                  ViewModelLocator.Logger.Info($"Downloading Exam for Access ID: '{_SelectedAccess.access_id}");
+
+                  MasterFile MF = null;
+
+                  try
+                  {
+                    MF = ViewModelLocator.DataService.DownloadExam(_SelectedAccess.access_id, Environment.MachineName);
+                  }
+                  catch (Exception ee)
+                  {
+                    ViewModelLocator.DialogService.ShowMessage(ee);
+                    return;
+                  }
+
+                  if (MF != null)
+                  {
+                    ViewModelLocator.Logger.Info($"Creating local XPS file");
+                    var XPSBytes = Encryption.Decrypt(Convert.FromBase64String(MF.xps));
+
+                    string XPSFilePath;
+
+                    //Store this downloaded data into an isolated storage file
+                    using (var isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null))
+                    {
+                      var XPSFileName = DateTime.Now.ToString("yyyyMMHHmmss") + $"_{MF.id}.gxr";
+                      using (IsolatedStorageFileStream isoStream = new IsolatedStorageFileStream(XPSFileName, FileMode.CreateNew, isoStore))
+                      {
+                        isoStream.Write(XPSBytes, 0, XPSBytes.Length);
+                        XPSFilePath = isoStream.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(isoStream).ToString();
+                        isoStream.Close();
+                      }
+
+                      isoStore.Close();
+                    }
+
+                    XPSPath = XPSFilePath;
+
+                    ViewModelLocator.Logger.Info($"Creating local XML file");
+                    var XMLString = Encoding.UTF8.GetString(Encryption.Decrypt(Convert.FromBase64String(MF.xml)));
+                    XMLDoc = XMLDoc.FromXML(XMLString);
+
+                    _DownloadId = MF.download_id;
+                    ExamName = MF.number + " - " + MF.name;
+
+                    ViewModelLocator.Logger.Info($"Clearing snapshots queue and results");
+                    _QueuedSnapshots.Clear();
+                    Result.Clear();
+                    RaisePropertyChanged(nameof(Result));
+
+                    var Row = new HFQResultRowVM() { Q = 1 };
+                    Result.Add(Row);
+                    NewResultRowAdded?.Invoke(Row);
+
+                    ViewModelLocator.Logger.Info($"Starting camera timer");
+                    _CameraTimer.Stop();
+                    _CameraTimer.Start();
+
+                    SelectedResultIndex = 0;
+
+                    ViewModelLocator.Logger.Info($"Updating results cache");
+                    AutoSave();
+                  }
+                }
+                catch (Exception ee)
+                {
+                  ViewModelLocator.DialogService.ShowMessage(ee.Message, true);
+                  ViewModelLocator.Logger.Error("OpenExam command failed. Error message is: " + ee.Message);
+                }
+                finally
+                {
+                  ViewModelLocator.Auth.IsCommunicating = false;
+                  IsBusy = false;
+                }
               }
               else
-              {
-                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                {
-                  UpdateProgress(true, "Ready", 0);
-                  MyExams = t2.Result;
-                  RaisePropertyChanged(nameof(MyExams));
-
-                  ViewModelLocator.Logger.Info($"Opening new exam");
-                  ViewModelLocator.Logger.Info($"Showing Exams List dialog");
-
-                  var Res = ViewModelLocator.DialogServiceHFQ.ShowExamsListDialog();
-
-                  if (Res)
-                  {
-                    if (_SelectedAccess != null)
-                    {
-                      try
-                      {
-                        IsBusy = true;
-
-                        ViewModelLocator.Auth.IsCommunicating = true;
-
-                        ViewModelLocator.Logger.Info($"Downloading Exam for Access ID: '{_SelectedAccess.access_id}");
-
-                        MasterFile MF = null;
-
-                        try
-                        {
-                          MF = ViewModelLocator.DataService.DownloadExam(_SelectedAccess.access_id, Environment.MachineName);
-                        }
-                        catch (Exception ee)
-                        {
-                          ViewModelLocator.DialogService.ShowMessage(ee);
-                          return;
-                        }
-
-                        if (MF != null)
-                        {
-                          ViewModelLocator.Logger.Info($"Creating local XPS file");
-                          var XPSBytes = Encryption.Decrypt(Convert.FromBase64String(MF.xps));
-
-                          string XPSFilePath;
-
-                          //Store this downloaded data into an isolated storage file
-                          using (var isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null))
-                          {
-                            var XPSFileName = DateTime.Now.ToString("yyyyMMHHmmss") + $"_{MF.id}.gxr";
-                            using (IsolatedStorageFileStream isoStream = new IsolatedStorageFileStream(XPSFileName, FileMode.CreateNew, isoStore))
-                            {
-                              isoStream.Write(XPSBytes, 0, XPSBytes.Length);
-                              XPSFilePath = isoStream.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(isoStream).ToString();
-                              isoStream.Close();
-                            }
-
-                            isoStore.Close();
-                          }
-
-                          XPSPath = XPSFilePath;
-
-                          ViewModelLocator.Logger.Info($"Creating local XML file");
-                          var XMLString = Encoding.UTF8.GetString(Encryption.Decrypt(Convert.FromBase64String(MF.xml)));
-                          XMLDoc = XMLDoc.FromXML(XMLString);
-
-                          _DownloadId = MF.download_id;
-                          ExamName = MF.number + " - " + MF.name;
-
-                          ViewModelLocator.Logger.Info($"Clearing snapshots queue and results");
-                          _QueuedSnapshots.Clear();
-                          Result.Clear();
-                          RaisePropertyChanged(nameof(Result));
-
-                          var Row = new HFQResultRowVM() { Q = 1 };
-                          Result.Add(Row);
-                          NewResultRowAdded?.Invoke(Row);
-
-                          ViewModelLocator.Logger.Info($"Starting camera timer");
-                          _CameraTimer.Stop();
-                          _CameraTimer.Start();
-
-                          SelectedResultIndex = 0;
-
-                          ViewModelLocator.Logger.Info($"Updating results cache");
-                          WriteToCache();
-                        }
-                      }
-                      catch (Exception ee)
-                      {
-                        ViewModelLocator.DialogService.ShowMessage(ee.Message, true);
-                        ViewModelLocator.Logger.Error("OpenExam command failed. Error message is: " + ee.Message);
-                      }
-                      finally
-                      {
-                        ViewModelLocator.Auth.IsCommunicating = false;
-                        IsBusy = false;
-                      }
-                    }
-                    else
-                      ViewModelLocator.DialogService.ShowMessage("You did not select a master file to download.", false);
-                  }
-                });
-              }
-            });
+                ViewModelLocator.DialogService.ShowMessage("You did not select a master file to download.", false);
+            }
+            catch (Exception ex)
+            {
+              if (ex is AggregateException aggex)
+                ViewModelLocator.DialogService.ShowMessage("Could not fetch exams list from the server. Please try again later. The error message is: " + aggex.InnerExceptions[0].Message, true);
+              else
+                ViewModelLocator.DialogService.ShowMessage("Could not fetch exams list from the server. Please try again later. The error message is: " + ex.Message, true);
+            }
+            finally
+            {
+              IsBusy = false;
+            }
           },
+
           () => ViewModelLocator.Auth.IsLoggedIn && (ViewModelLocator.Auth.User.type == UserType.Admin || ViewModelLocator.Auth.User.type == UserType.Downloader));
         }
 
@@ -617,17 +610,17 @@ namespace HFQOVM
                 if (R.A1 == null)
                 {
                   R.A1 = qa.Index;
-                  WriteToCache();
+                  AutoSave();
                 }
                 else if (R.A2 == null)
                 {
                   R.A2 = qa.Index;
-                  WriteToCache();
+                  AutoSave();
                 }
                 else if (R.A3 == null)
                 {
                   R.A3 = qa.Index;
-                  WriteToCache();
+                  AutoSave();
                 }
                 else
                   ViewModelLocator.DialogService.ShowMessage("This question has already been assign 3 matches.", false);
@@ -685,7 +678,7 @@ namespace HFQOVM
               NewResultRowAdded?.Invoke(Row);
               SelectedResultIndex = Result.Count - 1;
 
-              WriteToCache();
+              AutoSave();
             }
             else
             {
@@ -771,8 +764,8 @@ namespace HFQOVM
                       Result.Clear();
                       RaisePropertyChanged(nameof(Result));
 
-                      if (File.Exists("result_cache.xml"))
-                        File.Delete("result_cache.xml");
+                      if (File.Exists(ResultCacheFilePath))
+                        File.Delete(ResultCacheFilePath);
 
                       SelectedResultIndex = 0;
                       SearchText = "";
@@ -802,7 +795,7 @@ namespace HFQOVM
               }
             }
           },
-          () => ViewModelLocator.Auth.IsLoggedIn && (ViewModelLocator.Auth.User.type == UserType.Admin || ViewModelLocator.Auth.User.type == UserType.Downloader) && _SelectedAccess != null && Result.Count > 0);
+          () => ViewModelLocator.Auth.IsLoggedIn && (ViewModelLocator.Auth.User?.type == UserType.Admin || ViewModelLocator.Auth.User?.type == UserType.Downloader) && _SelectedAccess != null && Result.Count > 0);
         }
 
         return _UploadResultCommand;

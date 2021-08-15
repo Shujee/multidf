@@ -1,17 +1,18 @@
-﻿using System;
+﻿using HFQOVM;
+using System;
 using System.Drawing;
 using System.Threading.Tasks;
 
-namespace HFQOVM
+namespace HFQAppTest
 {
   /// <summary>
   /// Used for testing.
   /// </summary>
-  internal class DummyCameraService : ICameraService
+  internal class TestCameraService : ICameraService
   {
     public object BestResCamera => null;
 
-    public bool IsCameraShutdown { get; set; } = false;
+    public bool IsCameraShutdown { get; set; }
 
     public event Action SnapshotCaptured;
 

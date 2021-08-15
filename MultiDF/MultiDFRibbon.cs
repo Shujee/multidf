@@ -228,9 +228,9 @@ namespace MultiDF
       ViewModelLocator.DialogService.OpenAboutWindow();
     }
 
-    private void btnLogin_Click(object sender, RibbonControlEventArgs e)
+    private async void btnLogin_Click(object sender, RibbonControlEventArgs e)
     {
-      ViewModelLocator.Auth.LoginCommand.Execute(null);
+      await ViewModelLocator.Auth.LoginCommand.ExecuteAsync();
     }
 
     private void btnLogout_Click(object sender, RibbonControlEventArgs e)

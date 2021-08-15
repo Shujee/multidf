@@ -31,6 +31,12 @@ namespace HFQOViews
     private void MyVM_NewResultRowAdded(HFQResultRowVM obj)
     {
       SearchBox.Text = "";
+      //Robert has asked not to refresh QAs
+      //QAs.Refresh();
+
+      //if(lstQAs.Items.Count > 0)
+      //  lstQAs.ScrollIntoView(lstQAs.Items[0]);
+
       SearchBox.Focus();
     }
 

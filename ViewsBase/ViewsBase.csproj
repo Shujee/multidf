@@ -134,7 +134,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ReactorLocation>"C:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.exe"</ReactorLocation>
-    <ReactorProject>"ReactorProject"</ReactorProject>
+    <ReactorProject>"F:\ACTIVE\MultiDF\ViewsBase\ViewsBase.nrproj"</ReactorProject>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>

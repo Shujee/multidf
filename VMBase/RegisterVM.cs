@@ -5,7 +5,7 @@ using System;
 
 namespace VMBase
 {
-  public class RegisterVM : ViewModelBase
+  public class RegisterVM : ViewModelBase, IRegistrationService
   {
     public RegisterVM()
     {
@@ -85,7 +85,7 @@ namespace VMBase
         {
           _RegisterCommand = new RelayCommand(() =>
           {
-            if (string.IsNullOrEmpty(_RegEmail.Trim()) || string.IsNullOrEmpty( _LicenseKey.Trim()))
+            if (string.IsNullOrEmpty(_RegEmail.Trim()) || string.IsNullOrEmpty(_LicenseKey.Trim()))
               ViewModelLocatorBase.DialogService.ShowMessage("E-mail and License Key must be provided.", true);
             else
             {

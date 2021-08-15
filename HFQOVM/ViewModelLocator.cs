@@ -13,35 +13,21 @@ namespace HFQOVM
   {
     static ViewModelLocator()
     {
-      if (!GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
-      {
-        var LogDir = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "HFQApp");
-        if (!System.IO.Directory.Exists(LogDir))
-          System.IO.Directory.CreateDirectory(LogDir);
-
-        InitLogger("${specialfolder:folder=ApplicationData}/HFQApp/");
-      }
-
       App = "HFQApp";
       AppVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-
-      SimpleIoc.Default.Unregister<HFQVM>();
-      SimpleIoc.Default.Unregister<IHardwareHelper>();
-      SimpleIoc.Default.Unregister<ICameraService>();
-      
+     
       SimpleIoc.Default.Register<HFQVM>();
       SimpleIoc.Default.Register<IHardwareHelper, HardwareHelper>();
 
-#if(DEBUG)
+#if (DEBUG)
       SimpleIoc.Default.Register<ICameraService, DummyCameraService>();
-      //SimpleIoc.Default.Register<ICameraService, CameraService>();      
 #else
-      SimpleIoc.Default.Register<ICameraService, CameraService>();      
+      SimpleIoc.Default.Register<ICameraService, CameraService>();
 #endif
     }
 
     public static HFQVM HFQ => SimpleIoc.Default.GetInstance<HFQVM>();
-    public static IDialogService DialogServiceHFQ => SimpleIoc.Default.GetInstance<IDialogService>();
+    public static HFQOVM.IDialogService DialogServiceHFQ => SimpleIoc.Default.GetInstance<HFQOVM.IDialogService>();
     public static IHardwareHelper HardwareHelper => SimpleIoc.Default.GetInstance<IHardwareHelper>();
     public static ICameraService CameraService => SimpleIoc.Default.GetInstance<ICameraService>();
     public static IApplicationService ApplicationService => SimpleIoc.Default.GetInstance<IApplicationService>();

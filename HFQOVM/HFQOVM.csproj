@@ -74,8 +74,8 @@
     <Compile Include="..\SharedAssemblyInfo_HFQ.cs">
       <Link>SharedAssemblyInfo_HFQ.cs</Link>
     </Compile>
-    <Compile Include="DummyCameraService.cs" />
     <Compile Include="CameraService.cs" />
+    <Compile Include="HFQLogger.cs" />
     <Compile Include="HFQResultRowVM.cs" />
     <Compile Include="HFQVM.cs" />
     <Compile Include="IApplicationService.cs" />
@@ -84,6 +84,7 @@
     <Compile Include="IHardwareHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HardwareHelper.cs" />
+    <Compile Include="DummyCameraService.cs" />
     <Compile Include="ViewModelLocator.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -108,7 +109,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Reactor_Enabled="1" Reactor_Commands="" Reactor_Project="F:\ACTIVE\MultiDF\HFQOVM\HFQOVM.nrproj" Reactor_Configuration="Release" Reactor_Output="" Reactor_Deploy="1" />
+      <UserProperties Reactor_Deploy="1" Reactor_Output="" Reactor_Configuration="Release" Reactor_Project="F:\ACTIVE\MultiDF\HFQOVM\HFQOVM.nrproj" Reactor_Commands="" Reactor_Enabled="1" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="ReactorCall" AfterTargets="Compile">

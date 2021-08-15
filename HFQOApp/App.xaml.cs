@@ -17,6 +17,7 @@ namespace HFQOApp
     {
       base.OnStartup(e);
 
+      SimpleIoc.Default.Register<VMBase.ILogger, HFQOVM.HFQLogger>();
       SimpleIoc.Default.Register<Common.IDialogService>(() => DLG);
       SimpleIoc.Default.Register<HFQOVM.IDialogService>(() => DLG);
 
@@ -59,7 +60,40 @@ namespace HFQOApp
       }
 #endif
 
+      this.DispatcherUnhandledException += App_DispatcherUnhandledException;
+      AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
       this.StartupUri = new Uri("MainWindow.xaml", UriKind.Relative);
+    }
+
+    private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+      string msg = "";
+
+      if (e.IsTerminating)
+        msg += "TERMINATION: ";
+
+      if (e.ExceptionObject is Exception ee)
+      {
+        msg += ee.Message;
+        msg += ee.StackTrace;
+
+        ViewModelLocator.Logger.Error(msg);
+        ViewModelLocator.DialogService.ShowMessage("The following unhandled exception occurred in HFQ application: " + msg, true);
+      }
+      else
+        ViewModelLocator.DialogService.ShowMessage("An unhandled exception occurred in HFQ application. The type of ExceptionObject is " + e.ExceptionObject.GetType().Name, true);
+    }
+
+    private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+    {
+      string msg = "TERMINATION: ";
+
+      msg += e.Exception.Message;
+      msg += e.Exception.StackTrace;
+
+      ViewModelLocator.Logger.Error(msg);
+      ViewModelLocator.DialogService.ShowMessage("The following unhandled exception occurred in HFQ application: " + msg, true);
     }
 
     void IApplicationService.Shutdown()

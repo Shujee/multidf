@@ -152,7 +152,7 @@
     <Compile Include="DefaultQAExtractionStrategy.cs" />
     <Compile Include="DFResult.cs" />
     <Compile Include="DiffVM.cs" />
-    <Compile Include="IAsyncCommand.cs" />
+    <Compile Include="MultiDFLogger.cs" />
     <Compile Include="Interfaces\IDialogService.cs" />
     <Compile Include="Interfaces\IDupFinder.cs" />
     <Compile Include="Interfaces\IDocComparer.cs" />

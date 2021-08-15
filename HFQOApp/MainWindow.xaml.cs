@@ -26,6 +26,8 @@ namespace HFQOApp
 
     private HFQOVM.HFQVM VM => this.DataContext as HFQOVM.HFQVM;
 
+    private bool lastStateOfUploadResultCommand = false;
+
     public MainWindow()
     {
       InitializeComponent();
@@ -40,16 +42,27 @@ namespace HFQOApp
 
       VM.PropertyChanged += (sender2, e2) =>
       {
-        if (e2.PropertyName == nameof(HFQOVM.HFQVM.XPSPath) && !string.IsNullOrEmpty(VM.XPSPath))
+        if (e2.PropertyName == nameof(HFQOVM.HFQVM.XPSPath) && !string.IsNullOrEmpty(ViewModelLocator.HFQ.XPSPath))
         {
-          AddWatermark(new string[] { ViewModelLocatorBase.Auth.User.name, ViewModelLocatorBase.Auth.Email });
+          GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+          {
+            AddWatermark(new string[] { ViewModelLocatorBase.Auth.User.name, ViewModelLocatorBase.Auth.Email });
+          });
         }
       };
 
-      VM.UploadResultCommand.CanExecuteChanged += (sender2, e2) =>
+      //Adding this event handler to dig out why UploadResultCommand sometimes gets disabled mysteriously.
+      VM.UploadResultCommand.CanExecuteChanged += (sender, e2) =>
       {
-        UploadButton.IsEnabled = VM.UploadResultCommand.CanExecute(null);
+        var canExec = !ViewModelLocator.HFQ.UploadResultCommand.CanExecute(null);
+
+        if (canExec != lastStateOfUploadResultCommand)
+        {
+          lastStateOfUploadResultCommand = canExec;
+          ViewModelLocator.Logger.Error("UploadResultCommand has changed to ." + canExec.ToString() + Environment.StackTrace);
+        }
       };
+
 
       VM.ExamUploaded += DeleteXPSFile;
 

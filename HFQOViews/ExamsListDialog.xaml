@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HFQOViews"
         xmlns:vm="clr-namespace:HFQOVM;assembly=HFQOVM"
         xmlns:common="clr-namespace:Common;assembly=Common"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
@@ -12,8 +13,8 @@
         AllowsTransparency="True" Background="{x:Null}"
         Width="500" SizeToContent="Height"
         FocusManager.FocusedElement="{Binding ElementName=txtValue}"
-        DataContext="{x:Static vm:ViewModelLocator.HFQ}"
-        d:DataContext="{d:DesignInstance Type=vm:HFQVM, IsDesignTimeCreatable=True}">
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
+        d:DataContext="{d:DesignInstance Type=local:ExamsListDialog, IsDesignTimeCreatable=True}">
 
   <Window.Resources>
     <ResourceDictionary>

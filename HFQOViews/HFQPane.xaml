@@ -60,7 +60,7 @@
       </Button>
     </Grid>
 
-    <ListBox ItemsSource="{Binding Source={StaticResource QACVS}}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Grid.Row="1" Padding="0" Margin="3">
+    <ListBox x:Name="lstQAs" ItemsSource="{Binding Source={StaticResource QACVS}}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Grid.Row="1" Padding="0" Margin="3">
       <ListBox.ItemContainerStyle>
         <Style TargetType="ListBoxItem">
           <Setter Property="HorizontalContentAlignment" Value="Stretch" />
