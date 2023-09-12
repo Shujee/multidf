@@ -226,7 +226,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ReactorLocation>"C:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.exe"</ReactorLocation>
-    <ReactorProject>"F:\ACTIVE\MultiDF\MultiDF.VM\MultiDF.VM.nrproj"</ReactorProject>
+    <ReactorProject>"$(ProjectDir)MultiDF.VM.nrproj"</ReactorProject>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>

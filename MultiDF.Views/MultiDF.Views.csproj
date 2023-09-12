@@ -274,7 +274,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ReactorLocation>"C:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.exe"</ReactorLocation>
-    <ReactorProject>"F:\ACTIVE\MultiDF\MultiDF.Views\MultiDF.Views.nrproj"</ReactorProject>
+    <ReactorProject>"$(ProjectDir)MultiDF.Views.nrproj"</ReactorProject>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>

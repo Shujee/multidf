@@ -40,7 +40,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ReactorLocation>"C:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.exe"</ReactorLocation>
-    <ReactorProject>"F:\ACTIVE\MultiDF\Common\Common.nrproj"</ReactorProject>
+    <ReactorProject>"$(ProjectDir)Common.nrproj"</ReactorProject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

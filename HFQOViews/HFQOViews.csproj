@@ -34,7 +34,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ReactorLocation>"C:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.exe"</ReactorLocation>
-    <ReactorProject>"F:\ACTIVE\MultiDF\HFQOViews\HFQOViews.nrproj"</ReactorProject>
+    <ReactorProject>"$(ProjectDir)HFQOViews.nrproj"</ReactorProject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FontAwesome.WPF, Version=4.7.0.37774, Culture=neutral, PublicKeyToken=0758b07a11a4f466, processorArchitecture=MSIL">

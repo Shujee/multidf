@@ -79,7 +79,7 @@ namespace Model
         }
       }
       
-      request.Timeout = 10 * 60 * 1000;
+      request.Timeout = 30 * 60 * 1000;
 
       var Response = this.Execute(request);
 

@@ -55,10 +55,10 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>0D66465A4AD661ACE70BD6CD114DA35ABC1AE7F4</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>1AEC0952318EF8507B1182517BAE5E5F52549C6D</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>MultiDFKeyGen_1_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>MultiDFKeyGen_2_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -117,6 +117,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="MultiDFKeyGen_1_TemporaryKey.pfx" />
+    <None Include="MultiDFKeyGen_2_TemporaryKey.pfx" />
     <None Include="MultiDFKeyGen_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -155,7 +156,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Reactor_Deploy="0" Reactor_Output="" Reactor_Configuration="Release" Reactor_Project="" Reactor_Commands="" Reactor_Enabled="1" />
+      <UserProperties Reactor_Enabled="1" Reactor_Commands="" Reactor_Project="" Reactor_Configuration="Release" Reactor_Output="" Reactor_Deploy="0" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
